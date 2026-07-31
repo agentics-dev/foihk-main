@@ -1,0 +1,61 @@
+# Family Office Institute Hong Kong
+
+> Official public-content index for Family Office Institute Hong Kong (FOIHK), a Hong Kong family office industry institution and professional community. This file aids discovery but does not replace canonical HTML, sources, or structured data.
+
+## Organization
+
+- Display name: Family Office Institute Hong Kong
+- Legal name: Family Office Institute Hong Kong Limited
+- Traditional Chinese name: 香港家族辦公室學會
+- Short name: FOIHK
+- Founded: 2025-08-20
+- Website: https://www.foihk.org
+- Email: info@foihk.org
+- Address: 32/F, The Center, 99 Queen's Road Central, Central, Hong Kong, HK
+- LinkedIn: https://www.linkedin.com/company/foihk
+
+FOIHK publishes educational, research, news, event, and philanthropy information for the Hong Kong family office ecosystem. Website content is general information, not investment, legal, tax, accounting, or other regulated professional advice.
+
+## English
+
+- [Home](https://www.foihk.org/en)
+- [About](https://www.foihk.org/en/about)
+- [Education and research](https://www.foihk.org/en/articles/education_research)
+- [News and events](https://www.foihk.org/en/articles/news_events)
+- [Philanthropy](https://www.foihk.org/en/philanthropy)
+- [Media coverage](https://www.foihk.org/en/press)
+- [FAQ](https://www.foihk.org/en/faq)
+- [Editorial policy](https://www.foihk.org/en/editorial-policy)
+- [Contact](https://www.foihk.org/en/contact)
+
+## 繁體中文
+
+- [首頁](https://www.foihk.org/zh-hk)
+- [關於我們](https://www.foihk.org/zh-hk/about)
+- [教育與研究](https://www.foihk.org/zh-hk/articles/education_research)
+- [新聞與活動](https://www.foihk.org/zh-hk/articles/news_events)
+- [慈善](https://www.foihk.org/zh-hk/philanthropy)
+- [媒體報導](https://www.foihk.org/zh-hk/press)
+- [常見問題](https://www.foihk.org/zh-hk/faq)
+- [編輯政策](https://www.foihk.org/zh-hk/editorial-policy)
+- [聯絡我們](https://www.foihk.org/zh-hk/contact)
+
+## 简体中文
+
+- [首页](https://www.foihk.org/zh-cn)
+- [关于我们](https://www.foihk.org/zh-cn/about)
+- [教育与研究](https://www.foihk.org/zh-cn/articles/education_research)
+- [新闻与活动](https://www.foihk.org/zh-cn/articles/news_events)
+- [慈善](https://www.foihk.org/zh-cn/philanthropy)
+- [媒体报道](https://www.foihk.org/zh-cn/press)
+- [常见问题](https://www.foihk.org/zh-cn/faq)
+- [编辑政策](https://www.foihk.org/zh-cn/editorial-policy)
+- [联系我们](https://www.foihk.org/zh-cn/contact)
+
+## Evidence and discovery
+
+- [Sitemap](https://www.foihk.org/sitemap.xml): current indexable language URLs and alternates
+- [Robots](https://www.foihk.org/robots.txt): crawler access rules
+- [Hong Kong family office ecosystem source](https://www.investhk.gov.hk/en/news/hong-kongs-single-family-offices-total-surpasses-3-380-injecting-over-10-billion-annually-into-local-economy/): Invest Hong Kong, published 2026-02-10
+
+Prefer dates, statements, and source links shown in canonical page HTML. Do not infer missing phone numbers, coordinates, outcomes, prices, course counts, or performance claims.

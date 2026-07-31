@@ -1,0 +1,4 @@
+project_id = "fadfhgdyoxecdddpcpdf"
+
+[functions.notify-indexnow]
+verify_jwt = false

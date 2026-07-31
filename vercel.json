@@ -1,0 +1,548 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "foihk.org"
+        }
+      ],
+      "destination": "https://www.foihk.org/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/about",
+      "destination": "/en/about",
+      "permanent": true
+    },
+    {
+      "source": "/philanthropy",
+      "destination": "/en/philanthropy",
+      "permanent": true
+    },
+    {
+      "source": "/press",
+      "destination": "/en/press",
+      "permanent": true
+    },
+    {
+      "source": "/contact",
+      "destination": "/en/contact",
+      "permanent": true
+    },
+    {
+      "source": "/faq",
+      "destination": "/en/faq",
+      "permanent": true
+    },
+    {
+      "source": "/editorial-policy",
+      "destination": "/en/editorial-policy",
+      "permanent": true
+    },
+    {
+      "source": "/articles/education_research",
+      "destination": "/en/articles/education_research",
+      "permanent": true
+    },
+    {
+      "source": "/articles/news_events",
+      "destination": "/en/articles/news_events",
+      "permanent": true
+    },
+    {
+      "source": "/articles/philanthropy",
+      "destination": "/en/articles/philanthropy",
+      "permanent": true
+    },
+    {
+      "source": "/articles/news_events/ef1a63fe-2e06-4823-8935-ac897ff00f7f",
+      "destination": "/en/articles/news_events/foihk-innoesg-prize-training-course",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/news_events/ef1a63fe-2e06-4823-8935-ac897ff00f7f",
+      "destination": "/en/articles/news_events/foihk-innoesg-prize-training-course",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/news_events/ef1a63fe-2e06-4823-8935-ac897ff00f7f",
+      "destination": "/zh-hk/articles/news_events/foihk-innoesg-prize-training-course",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/news_events/ef1a63fe-2e06-4823-8935-ac897ff00f7f",
+      "destination": "/zh-cn/articles/news_events/foihk-innoesg-prize-training-course",
+      "permanent": true
+    },
+    {
+      "source": "/articles/news_events/a7836dc7-586e-4192-83fc-2ff89e0dbbce",
+      "destination": "/en/articles/news_events/foihk-innoesg-prize-nomination-committee",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/news_events/a7836dc7-586e-4192-83fc-2ff89e0dbbce",
+      "destination": "/en/articles/news_events/foihk-innoesg-prize-nomination-committee",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/news_events/a7836dc7-586e-4192-83fc-2ff89e0dbbce",
+      "destination": "/zh-hk/articles/news_events/foihk-innoesg-prize-nomination-committee",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/news_events/a7836dc7-586e-4192-83fc-2ff89e0dbbce",
+      "destination": "/zh-cn/articles/news_events/foihk-innoesg-prize-nomination-committee",
+      "permanent": true
+    },
+    {
+      "source": "/articles/news_events/deafafdb-67d3-480c-bcb0-178c527ab778",
+      "destination": "/en/articles/news_events/rfo-annual-forum-2025-recap",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/news_events/deafafdb-67d3-480c-bcb0-178c527ab778",
+      "destination": "/en/articles/news_events/rfo-annual-forum-2025-recap",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/news_events/deafafdb-67d3-480c-bcb0-178c527ab778",
+      "destination": "/zh-hk/articles/news_events/rfo-annual-forum-2025-recap",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/news_events/deafafdb-67d3-480c-bcb0-178c527ab778",
+      "destination": "/zh-cn/articles/news_events/rfo-annual-forum-2025-recap",
+      "permanent": true
+    },
+    {
+      "source": "/articles/news_events/d7e76260-7b14-41b3-9ea1-408347103c8c",
+      "destination": "/en/articles/news_events/chengdu-foreign-investment-roadshow-2025",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/news_events/d7e76260-7b14-41b3-9ea1-408347103c8c",
+      "destination": "/en/articles/news_events/chengdu-foreign-investment-roadshow-2025",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/news_events/d7e76260-7b14-41b3-9ea1-408347103c8c",
+      "destination": "/zh-hk/articles/news_events/chengdu-foreign-investment-roadshow-2025",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/news_events/d7e76260-7b14-41b3-9ea1-408347103c8c",
+      "destination": "/zh-cn/articles/news_events/chengdu-foreign-investment-roadshow-2025",
+      "permanent": true
+    },
+    {
+      "source": "/articles/news_events/4a03fc5e-4b98-4f3d-98c5-fd0f7f2f48f2",
+      "destination": "/en/articles/news_events/revo-connect-2026",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/news_events/4a03fc5e-4b98-4f3d-98c5-fd0f7f2f48f2",
+      "destination": "/en/articles/news_events/revo-connect-2026",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/news_events/4a03fc5e-4b98-4f3d-98c5-fd0f7f2f48f2",
+      "destination": "/zh-hk/articles/news_events/revo-connect-2026",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/news_events/4a03fc5e-4b98-4f3d-98c5-fd0f7f2f48f2",
+      "destination": "/zh-cn/articles/news_events/revo-connect-2026",
+      "permanent": true
+    },
+    {
+      "source": "/articles/news_events/f82c372a-b208-4b62-9521-89453df14ca4",
+      "destination": "/en/articles/news_events/hk-economic-outlook-sme-summit-2026",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/news_events/f82c372a-b208-4b62-9521-89453df14ca4",
+      "destination": "/en/articles/news_events/hk-economic-outlook-sme-summit-2026",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/news_events/f82c372a-b208-4b62-9521-89453df14ca4",
+      "destination": "/zh-hk/articles/news_events/hk-economic-outlook-sme-summit-2026",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/news_events/f82c372a-b208-4b62-9521-89453df14ca4",
+      "destination": "/zh-cn/articles/news_events/hk-economic-outlook-sme-summit-2026",
+      "permanent": true
+    },
+    {
+      "source": "/articles/news_events/dbc7be31-e6cc-4545-935b-a0fffa927d8d",
+      "destination": "/en/articles/news_events/yunnan-hk-macau-entrepreneur-forum-2025",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/news_events/dbc7be31-e6cc-4545-935b-a0fffa927d8d",
+      "destination": "/en/articles/news_events/yunnan-hk-macau-entrepreneur-forum-2025",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/news_events/dbc7be31-e6cc-4545-935b-a0fffa927d8d",
+      "destination": "/zh-hk/articles/news_events/yunnan-hk-macau-entrepreneur-forum-2025",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/news_events/dbc7be31-e6cc-4545-935b-a0fffa927d8d",
+      "destination": "/zh-cn/articles/news_events/yunnan-hk-macau-entrepreneur-forum-2025",
+      "permanent": true
+    },
+    {
+      "source": "/articles/education_research/2f621924-4881-46a0-b396-4a84d6573bf0",
+      "destination": "/en/articles/education_research/over-200-family-offices-hong-kong",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/education_research/2f621924-4881-46a0-b396-4a84d6573bf0",
+      "destination": "/en/articles/education_research/over-200-family-offices-hong-kong",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/education_research/2f621924-4881-46a0-b396-4a84d6573bf0",
+      "destination": "/zh-hk/articles/education_research/over-200-family-offices-hong-kong",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/education_research/2f621924-4881-46a0-b396-4a84d6573bf0",
+      "destination": "/zh-cn/articles/education_research/over-200-family-offices-hong-kong",
+      "permanent": true
+    },
+    {
+      "source": "/articles/education_research/293934d6-7bdf-4559-a147-7500dfc0f4ea",
+      "destination": "/en/articles/education_research/policy-address-2025-cies-property-threshold",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/education_research/293934d6-7bdf-4559-a147-7500dfc0f4ea",
+      "destination": "/en/articles/education_research/policy-address-2025-cies-property-threshold",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/education_research/293934d6-7bdf-4559-a147-7500dfc0f4ea",
+      "destination": "/zh-hk/articles/education_research/policy-address-2025-cies-property-threshold",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/education_research/293934d6-7bdf-4559-a147-7500dfc0f4ea",
+      "destination": "/zh-cn/articles/education_research/policy-address-2025-cies-property-threshold",
+      "permanent": true
+    },
+    {
+      "source": "/articles/news_events/15280f8e-560b-4e2c-a474-8e8d7fa667b7",
+      "destination": "/en/articles/news_events/rfo-annual-forum-2025",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/news_events/15280f8e-560b-4e2c-a474-8e8d7fa667b7",
+      "destination": "/en/articles/news_events/rfo-annual-forum-2025",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/news_events/15280f8e-560b-4e2c-a474-8e8d7fa667b7",
+      "destination": "/zh-hk/articles/news_events/rfo-annual-forum-2025",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/news_events/15280f8e-560b-4e2c-a474-8e8d7fa667b7",
+      "destination": "/zh-cn/articles/news_events/rfo-annual-forum-2025",
+      "permanent": true
+    },
+    {
+      "source": "/articles/news_events/3fe1ff01-a208-487e-97a4-0713c10d51a8",
+      "destination": "/en/articles/news_events/asian-financial-forum-2026",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/news_events/3fe1ff01-a208-487e-97a4-0713c10d51a8",
+      "destination": "/en/articles/news_events/asian-financial-forum-2026",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/news_events/3fe1ff01-a208-487e-97a4-0713c10d51a8",
+      "destination": "/zh-hk/articles/news_events/asian-financial-forum-2026",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/news_events/3fe1ff01-a208-487e-97a4-0713c10d51a8",
+      "destination": "/zh-cn/articles/news_events/asian-financial-forum-2026",
+      "permanent": true
+    },
+    {
+      "source": "/articles/philanthropy/651c399a-e398-4263-b9d4-1c86b84abcbb",
+      "destination": "/en/articles/philanthropy/cityus-caring-for-children-dancing-for-a-rainbow-event-sets-a-new-record-1-400-people-dance-together-to-promote-un-sdg",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/philanthropy/651c399a-e398-4263-b9d4-1c86b84abcbb",
+      "destination": "/en/articles/philanthropy/cityus-caring-for-children-dancing-for-a-rainbow-event-sets-a-new-record-1-400-people-dance-together-to-promote-un-sdg",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/philanthropy/651c399a-e398-4263-b9d4-1c86b84abcbb",
+      "destination": "/zh-hk/articles/philanthropy/cityus-caring-for-children-dancing-for-a-rainbow-event-sets-a-new-record-1-400-people-dance-together-to-promote-un-sdg",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/philanthropy/651c399a-e398-4263-b9d4-1c86b84abcbb",
+      "destination": "/zh-cn/articles/philanthropy/cityus-caring-for-children-dancing-for-a-rainbow-event-sets-a-new-record-1-400-people-dance-together-to-promote-un-sdg",
+      "permanent": true
+    },
+    {
+      "source": "/articles/education_research/cf9efbf1-d80d-4e2c-8a43-b08ed789726c",
+      "destination": "/en/articles/education_research/financial-services-and-treasury-bureau-36-family-offices-were-established-or-expanded-in-hong-kong-in-the-first-four-months-of-this-year",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/education_research/cf9efbf1-d80d-4e2c-8a43-b08ed789726c",
+      "destination": "/en/articles/education_research/financial-services-and-treasury-bureau-36-family-offices-were-established-or-expanded-in-hong-kong-in-the-first-four-months-of-this-year",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/education_research/cf9efbf1-d80d-4e2c-8a43-b08ed789726c",
+      "destination": "/zh-hk/articles/education_research/financial-services-and-treasury-bureau-36-family-offices-were-established-or-expanded-in-hong-kong-in-the-first-four-months-of-this-year",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/education_research/cf9efbf1-d80d-4e2c-8a43-b08ed789726c",
+      "destination": "/zh-cn/articles/education_research/financial-services-and-treasury-bureau-36-family-offices-were-established-or-expanded-in-hong-kong-in-the-first-four-months-of-this-year",
+      "permanent": true
+    },
+    {
+      "source": "/articles/philanthropy/a1991151-73b7-4203-8bf8-1efec5ab27dd",
+      "destination": "/en/articles/philanthropy/inheriting-our-culture-heart-for-the-nation-sdg-themed-event-funding-programme",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/philanthropy/a1991151-73b7-4203-8bf8-1efec5ab27dd",
+      "destination": "/en/articles/philanthropy/inheriting-our-culture-heart-for-the-nation-sdg-themed-event-funding-programme",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/philanthropy/a1991151-73b7-4203-8bf8-1efec5ab27dd",
+      "destination": "/zh-hk/articles/philanthropy/inheriting-our-culture-heart-for-the-nation-sdg-themed-event-funding-programme",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/philanthropy/a1991151-73b7-4203-8bf8-1efec5ab27dd",
+      "destination": "/zh-cn/articles/philanthropy/inheriting-our-culture-heart-for-the-nation-sdg-themed-event-funding-programme",
+      "permanent": true
+    },
+    {
+      "source": "/articles/news_events/3a456fbf-79d2-421d-afe5-f26de22184f1",
+      "destination": "/en/articles/news_events/latest-event-exclusive-visit-to-singapore-family-office",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/news_events/3a456fbf-79d2-421d-afe5-f26de22184f1",
+      "destination": "/en/articles/news_events/latest-event-exclusive-visit-to-singapore-family-office",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/news_events/3a456fbf-79d2-421d-afe5-f26de22184f1",
+      "destination": "/zh-hk/articles/news_events/latest-event-exclusive-visit-to-singapore-family-office",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/news_events/3a456fbf-79d2-421d-afe5-f26de22184f1",
+      "destination": "/zh-cn/articles/news_events/latest-event-exclusive-visit-to-singapore-family-office",
+      "permanent": true
+    },
+    {
+      "source": "/articles/education_research/7c63bb44-a2bb-451c-8761-93bcf50dd3ba",
+      "destination": "/en/articles/education_research/report-on-beyond-wealth-advancing-hong-kong-s-family-office-ecosystem-through-philanthropy-impact-investing-and-risk-management",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/education_research/7c63bb44-a2bb-451c-8761-93bcf50dd3ba",
+      "destination": "/en/articles/education_research/report-on-beyond-wealth-advancing-hong-kong-s-family-office-ecosystem-through-philanthropy-impact-investing-and-risk-management",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/education_research/7c63bb44-a2bb-451c-8761-93bcf50dd3ba",
+      "destination": "/zh-hk/articles/education_research/report-on-beyond-wealth-advancing-hong-kong-s-family-office-ecosystem-through-philanthropy-impact-investing-and-risk-management",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/education_research/7c63bb44-a2bb-451c-8761-93bcf50dd3ba",
+      "destination": "/zh-cn/articles/education_research/report-on-beyond-wealth-advancing-hong-kong-s-family-office-ecosystem-through-philanthropy-impact-investing-and-risk-management",
+      "permanent": true
+    },
+    {
+      "source": "/articles/news_events/5aa921dd-ee24-48f2-b030-8fb1db574865",
+      "destination": "/en/articles/news_events/news-release-family-office-institute-hong-kong-awarded-sdg-esg-certified-impact-activity-center-accreditation-by-sdg-world-records",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/news_events/5aa921dd-ee24-48f2-b030-8fb1db574865",
+      "destination": "/en/articles/news_events/news-release-family-office-institute-hong-kong-awarded-sdg-esg-certified-impact-activity-center-accreditation-by-sdg-world-records",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/news_events/5aa921dd-ee24-48f2-b030-8fb1db574865",
+      "destination": "/zh-hk/articles/news_events/news-release-family-office-institute-hong-kong-awarded-sdg-esg-certified-impact-activity-center-accreditation-by-sdg-world-records",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/news_events/5aa921dd-ee24-48f2-b030-8fb1db574865",
+      "destination": "/zh-cn/articles/news_events/news-release-family-office-institute-hong-kong-awarded-sdg-esg-certified-impact-activity-center-accreditation-by-sdg-world-records",
+      "permanent": true
+    },
+    {
+      "source": "/articles/news_events/4d12f56b-0db6-4c50-b329-c9230de149cb",
+      "destination": "/en/articles/news_events/foihk-economic-digest-art-investment-interview",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/news_events/4d12f56b-0db6-4c50-b329-c9230de149cb",
+      "destination": "/en/articles/news_events/foihk-economic-digest-art-investment-interview",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/news_events/4d12f56b-0db6-4c50-b329-c9230de149cb",
+      "destination": "/zh-hk/articles/news_events/foihk-economic-digest-art-investment-interview",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/news_events/4d12f56b-0db6-4c50-b329-c9230de149cb",
+      "destination": "/zh-cn/articles/news_events/foihk-economic-digest-art-investment-interview",
+      "permanent": true
+    },
+    {
+      "source": "/articles/news_events/89e5e9cb-658f-4356-8cc5-1405dffcfd05",
+      "destination": "/en/articles/news_events/foihk-holds-exchange-meeting-with-tsinghua-university-alumni-association",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/news_events/89e5e9cb-658f-4356-8cc5-1405dffcfd05",
+      "destination": "/en/articles/news_events/foihk-holds-exchange-meeting-with-tsinghua-university-alumni-association",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/news_events/89e5e9cb-658f-4356-8cc5-1405dffcfd05",
+      "destination": "/zh-hk/articles/news_events/foihk-holds-exchange-meeting-with-tsinghua-university-alumni-association",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/news_events/89e5e9cb-658f-4356-8cc5-1405dffcfd05",
+      "destination": "/zh-cn/articles/news_events/foihk-holds-exchange-meeting-with-tsinghua-university-alumni-association",
+      "permanent": true
+    },
+    {
+      "source": "/articles/education_research/004d4541-24ef-4048-a162-2a95bebe1357",
+      "destination": "/en/articles/education_research/cies-asset-holding-period-reduced-jan-2025",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/education_research/004d4541-24ef-4048-a162-2a95bebe1357",
+      "destination": "/en/articles/education_research/cies-asset-holding-period-reduced-jan-2025",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/education_research/004d4541-24ef-4048-a162-2a95bebe1357",
+      "destination": "/zh-hk/articles/education_research/cies-asset-holding-period-reduced-jan-2025",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/education_research/004d4541-24ef-4048-a162-2a95bebe1357",
+      "destination": "/zh-cn/articles/education_research/cies-asset-holding-period-reduced-jan-2025",
+      "permanent": true
+    },
+    {
+      "source": "/articles/education_research/bd9f67f5-6c04-4169-95e5-992006d2b0aa",
+      "destination": "/en/articles/education_research/hong-kong-overtakes-switzerland-as-world-s-top-cross-border-wealth-hub-on-china-ties-report-shows",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/education_research/bd9f67f5-6c04-4169-95e5-992006d2b0aa",
+      "destination": "/en/articles/education_research/hong-kong-overtakes-switzerland-as-world-s-top-cross-border-wealth-hub-on-china-ties-report-shows",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/education_research/bd9f67f5-6c04-4169-95e5-992006d2b0aa",
+      "destination": "/zh-hk/articles/education_research/hong-kong-overtakes-switzerland-as-world-s-top-cross-border-wealth-hub-on-china-ties-report-shows",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/education_research/bd9f67f5-6c04-4169-95e5-992006d2b0aa",
+      "destination": "/zh-cn/articles/education_research/hong-kong-overtakes-switzerland-as-world-s-top-cross-border-wealth-hub-on-china-ties-report-shows",
+      "permanent": true
+    },
+    {
+      "source": "/articles/news_events/f12cb9ad-a409-4f9d-b7b9-f97155f88f73",
+      "destination": "/en/articles/news_events/foihk-speaker-hk-sme-summit-2026",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/news_events/f12cb9ad-a409-4f9d-b7b9-f97155f88f73",
+      "destination": "/en/articles/news_events/foihk-speaker-hk-sme-summit-2026",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/news_events/f12cb9ad-a409-4f9d-b7b9-f97155f88f73",
+      "destination": "/zh-hk/articles/news_events/foihk-speaker-hk-sme-summit-2026",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/news_events/f12cb9ad-a409-4f9d-b7b9-f97155f88f73",
+      "destination": "/zh-cn/articles/news_events/foihk-speaker-hk-sme-summit-2026",
+      "permanent": true
+    },
+    {
+      "source": "/articles/philanthropy/32b25e91-7a2f-483a-bdc7-052e34c3113a",
+      "destination": "/en/articles/philanthropy/a-4-000-participant-lions-club-tai-chi-event-set-a-world-record-for-the-largest-gathering-with-participants-from-six-continents",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/philanthropy/32b25e91-7a2f-483a-bdc7-052e34c3113a",
+      "destination": "/en/articles/philanthropy/a-4-000-participant-lions-club-tai-chi-event-set-a-world-record-for-the-largest-gathering-with-participants-from-six-continents",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/philanthropy/32b25e91-7a2f-483a-bdc7-052e34c3113a",
+      "destination": "/zh-hk/articles/philanthropy/a-4-000-participant-lions-club-tai-chi-event-set-a-world-record-for-the-largest-gathering-with-participants-from-six-continents",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/philanthropy/32b25e91-7a2f-483a-bdc7-052e34c3113a",
+      "destination": "/zh-cn/articles/philanthropy/a-4-000-participant-lions-club-tai-chi-event-set-a-world-record-for-the-largest-gathering-with-participants-from-six-continents",
+      "permanent": true
+    },
+    {
+      "source": "/articles/news_events/ee05c0c8-13bb-4066-8092-d52ee6fdf937",
+      "destination": "/en/articles/news_events/asian-private-banker-alternative-investments-2026",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/news_events/ee05c0c8-13bb-4066-8092-d52ee6fdf937",
+      "destination": "/en/articles/news_events/asian-private-banker-alternative-investments-2026",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/news_events/ee05c0c8-13bb-4066-8092-d52ee6fdf937",
+      "destination": "/zh-hk/articles/news_events/asian-private-banker-alternative-investments-2026",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/news_events/ee05c0c8-13bb-4066-8092-d52ee6fdf937",
+      "destination": "/zh-cn/articles/news_events/asian-private-banker-alternative-investments-2026",
+      "permanent": true
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/200.html"
+    }
+  ]
+}
