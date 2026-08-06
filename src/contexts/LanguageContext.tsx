@@ -108,6 +108,7 @@ const translations: Record<Language, TranslationNode> = {
       newsEvents: "News & Events",
       philanthropy: "Philanthropy",
       about: "About Us",
+      faq: "FAQ",
       contact: "Contact Us",
       admin: "Admin",
       viewAll: "View All Articles",
@@ -119,9 +120,9 @@ const translations: Record<Language, TranslationNode> = {
       viewAllPhilanthropy: "View All Philanthropy"
     },
     home: {
-      heroTitle: "Empowering Family Office Institute",
-      heroSubtitle: "in Hong Kong",
-      heroDescription: "Connecting professionals, sharing knowledge, and advancing excellence",
+      heroTitle: "Family Office Institute Hong Kong",
+      heroSubtitle: "FOIHK",
+      heroDescription: "Family Office Institute Hong Kong (FOIHK) is a Hong Kong family office industry institution and professional community.",
       exploreResources: "Explore Resources",
       whatWeOffer: "What We Offer",
       whatWeOfferDesc: "Comprehensive resources and networking opportunities for family office professionals",
@@ -264,6 +265,7 @@ const translations: Record<Language, TranslationNode> = {
       newsEvents: "新聞與活動",
       philanthropy: "慈善事業",
       about: "關於我們",
+      faq: "常見問題",
       contact: "聯絡我們",
       admin: "管理",
       viewAll: "查看所有文章",
@@ -275,9 +277,9 @@ const translations: Record<Language, TranslationNode> = {
       viewAllPhilanthropy: "查看所有慈善文章"
     },
     home: {
-      heroTitle: "在香港賦能家族辦公室行業",
-      heroSubtitle: "立足香港",
-      heroDescription: "連接專業人士，分享知識，追求卓越",
+      heroTitle: "香港家族辦公室學會",
+      heroSubtitle: "FOIHK",
+      heroDescription: "香港家族辦公室學會（FOIHK）是立足香港的家族辦公室行業機構與專業社群。",
       exploreResources: "探索資源",
       whatWeOffer: "我們提供什麼",
       whatWeOfferDesc: "為家族辦公室專業人士提供全面的資源和交流機會",
@@ -420,6 +422,7 @@ const translations: Record<Language, TranslationNode> = {
       newsEvents: "新闻与活动",
       philanthropy: "慈善事业",
       about: "关于我们",
+      faq: "常见问题",
       contact: "联系我们",
       admin: "管理",
       viewAll: "查看所有文章",
@@ -431,9 +434,9 @@ const translations: Record<Language, TranslationNode> = {
       viewAllPhilanthropy: "查看所有慈善文章"
     },
     home: {
-      heroTitle: "在香港赋能家族办公室行业",
-      heroSubtitle: "立足香港",
-      heroDescription: "连接专业人士，分享知识，追求卓越",
+      heroTitle: "香港家族办公室学会",
+      heroSubtitle: "FOIHK",
+      heroDescription: "香港家族办公室学会（FOIHK）是立足香港的家族办公室行业机构与专业社群。",
       exploreResources: "探索资源",
       whatWeOffer: "我们提供什么",
       whatWeOfferDesc: "为家族办公室专业人士提供全面的资源和交流机会",

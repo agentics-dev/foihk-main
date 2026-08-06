@@ -1,0 +1,68 @@
+{
+  "reviewed_at": "2026-08-04",
+  "canonical_profile": {
+    "display_name": "Family Office Institute Hong Kong",
+    "legal_name": "Family Office Institute Hong Kong Limited",
+    "traditional_chinese_name": "香港家族辦公室學會有限公司",
+    "short_name": "FOIHK",
+    "category": "Hong Kong family office industry institution and professional community",
+    "founded": "2025-08-20",
+    "business_registration_number": "78655051",
+    "website": "https://www.foihk.org",
+    "email": "info@foihk.org",
+    "address": "32/F, The Center, 99 Queen's Road Central, Central, Hong Kong",
+    "official_linkedin": "https://www.linkedin.com/company/foihk",
+    "phone": "[needs source]",
+    "description": "Family Office Institute Hong Kong (FOIHK) is a Hong Kong family office industry institution and professional community for education, research, events, philanthropy, and cross-sector exchange. It is not a family office, financial institution, regulator, or government agency."
+  },
+  "verified_footprint": [
+    {
+      "surface": "Hong Kong Companies Registry",
+      "status": "verified_official_record",
+      "url": "https://www.cr.gov.hk/docs/wrpt/wk_new%26changednamecoys_20250818.pdf",
+      "control": "third_party_official"
+    },
+    {
+      "surface": "LinkedIn",
+      "status": "live_official_profile",
+      "url": "https://www.linkedin.com/company/foihk",
+      "control": "foihk_controlled"
+    },
+    {
+      "surface": "Economic Digest",
+      "status": "independent_editorial_coverage",
+      "url": "https://www.edigest.hk/%E6%8A%95%E8%B3%87/%E5%B0%81%E9%9D%A2%E6%95%85%E4%BA%8B-%E8%97%9D%E8%A1%93-%E5%AE%B6%E6%97%8F%E8%BE%A6%E5%85%AC%E5%AE%A4-%E6%8A%95%E8%B3%87%E8%97%9D%E8%A1%93%E5%93%81-3%E6%9C%88%E8%97%9D%E8%A1%93%E6%9C%88-1997853/",
+      "control": "independent_editorial"
+    },
+    {
+      "surface": "996co",
+      "status": "automatic_directory_listing_detected",
+      "url": "https://www.996co.com/hk/company/78655051",
+      "control": "independent_directory"
+    },
+    {
+      "surface": "Hong Kong Company List Dataset",
+      "status": "automatic_directory_listing_detected_category_correction_needed",
+      "url": "https://hkg.databasesets.com/zh-hant/gongsimingdan/number/78655051",
+      "control": "independent_directory",
+      "correction": "Replace the unverified category with 'family office industry institution and professional community'; link the official website; do not describe FOIHK as a charity, regulator, financial institution, or accredited awarding body."
+    },
+    {
+      "surface": "CompaDB",
+      "status": "automatic_directory_listing_detected",
+      "url": "https://www.compadb.com/FAMILY/4",
+      "control": "independent_directory"
+    }
+  ],
+  "wikimedia": {
+    "wikipedia_status": "deferred",
+    "wikidata_status": "deferred",
+    "reason": "One independent editorial feature plus directory and registry records is not yet a strong basis for an encyclopaedic article. Reassess after multiple independent, reliable sources provide significant coverage of FOIHK itself.",
+    "do_not_do": [
+      "Do not create promotional or undisclosed conflict-of-interest Wikipedia copy.",
+      "Do not place a Wikidata search URL or a fabricated Q identifier in sameAs.",
+      "Do not treat company directories, FOIHK social posts, or event attendance as proof of encyclopaedic notability."
+    ],
+    "reassessment_trigger": "At least two additional independent, reliable publications with significant FOIHK-focused coverage and enough factual detail to support neutral statements."
+  }
+}

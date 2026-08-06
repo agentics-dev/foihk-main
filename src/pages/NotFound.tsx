@@ -35,7 +35,7 @@ const NotFound = () => {
               </Link>
             </Button>
             <Button asChild variant="outline" size="lg">
-              <Link to="/articles/education_research">
+              <Link to="/articles/education-research">
                 <Search className="mr-2 h-4 w-4" />
                 {t("notFound.browseResources")}
               </Link>

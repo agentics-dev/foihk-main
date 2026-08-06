@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -31,7 +31,7 @@ export const ArticleList = ({ category, onEdit }: ArticleListProps) => {
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
-  const fetchArticles = async () => {
+  const fetchArticles = useCallback(async () => {
     setLoading(true);
     const { data, error } = await supabase
       .from("articles")
@@ -49,11 +49,11 @@ export const ArticleList = ({ category, onEdit }: ArticleListProps) => {
       setArticles(data || []);
     }
     setLoading(false);
-  };
+  }, [category, toast]);
 
   useEffect(() => {
     fetchArticles();
-  }, [category]);
+  }, [fetchArticles]);
 
   const handleDelete = async (article: ArticleRow) => {
     const { error } = await supabase.from("articles").delete().eq("id", article.id);

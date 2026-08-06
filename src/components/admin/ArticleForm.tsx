@@ -13,8 +13,6 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
 import {
   DndContext,
   closestCenter,
@@ -35,7 +33,9 @@ import { CSS } from "@dnd-kit/utilities";
 
 import { ImageCropperDialog, ImageCropData } from "./ImageCropperDialog";
 import { ArticlePreviewDialog } from "./ArticlePreviewDialog";
+import { RichTextEditor } from "./RichTextEditor";
 import { CroppedImage } from "@/components/CroppedImage";
+import { sanitizeArticleHtml } from "@/lib/articleHtml";
 import type { Json, Tables } from "@/integrations/supabase/types";
 
 interface ArticleFormProps {
@@ -74,23 +74,6 @@ export const ArticleForm = ({ article, category, onSuccess, onCancel }: ArticleF
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
-
-  const quillModules = {
-    toolbar: [
-      [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-      [{ 'font': ['arial', 'times-new-roman', 'courier-new', 'georgia', 'verdana', ''] }],
-      [{ 'size': ['small', false, 'large', 'huge'] }],
-      ['bold', 'italic', 'underline', 'strike'],
-      [{ 'color': [] }, { 'background': [] }],
-      [{ 'align': [] }],
-      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-      [{ 'indent': '-1'}, { 'indent': '+1' }],
-      ['link', 'image', 'video'],
-      ['blockquote', 'code-block'],
-      [{ 'script': 'sub'}, { 'script': 'super' }],
-      ['clean']
-    ]
-  };
 
   useEffect(() => {
     if (article) {
@@ -226,6 +209,20 @@ export const ArticleForm = ({ article, category, onSuccess, onCancel }: ArticleF
     setLoading(true);
 
     try {
+      const sanitizedContent = sanitizeArticleHtml(content, title || "Article image");
+      const sanitizedContentZhTw = contentZhTw.trim() ? sanitizeArticleHtml(contentZhTw, titleZhTw || title || "Article image") : "";
+      const sanitizedContentZhCn = contentZhCn.trim() ? sanitizeArticleHtml(contentZhCn, titleZhCn || title || "Article image") : "";
+
+      if (!sanitizedContent.trim()) {
+        toast({
+          title: "Missing content",
+          description: "English article content is required",
+          variant: "destructive",
+        });
+        setLoading(false);
+        return;
+      }
+
       // Upload new images
       const newImages = await uploadImages();
       const allImageUrls = [...existingImages, ...newImages.map(img => img.url)];
@@ -255,9 +252,9 @@ export const ArticleForm = ({ article, category, onSuccess, onCancel }: ArticleF
         excerpt: description,
         excerpt_zhtw: descriptionZhTw || null,
         excerpt_zhcn: descriptionZhCn || null,
-        content,
-        content_zhtw: contentZhTw || null,
-        content_zhcn: contentZhCn || null,
+        content: sanitizedContent,
+        content_zhtw: sanitizedContentZhTw || null,
+        content_zhcn: sanitizedContentZhCn || null,
         image_urls: allImageUrls.length > 0 ? allImageUrls : null,
         image_metadata: Object.keys(finalImageMetadata).length > 0 ? (finalImageMetadata as unknown as Json) : null,
         category,
@@ -350,40 +347,12 @@ export const ArticleForm = ({ article, category, onSuccess, onCancel }: ArticleF
 
           <div className="space-y-2">
             <Label htmlFor="content">Content * (English)</Label>
-            <style>{`
-              .ql-font-arial { font-family: Arial, sans-serif; }
-              .ql-font-times-new-roman { font-family: 'Times New Roman', serif; }
-              .ql-font-courier-new { font-family: 'Courier New', monospace; }
-              .ql-font-georgia { font-family: Georgia, serif; }
-              .ql-font-verdana { font-family: Verdana, sans-serif; }
-              .ql-picker-label[data-value="arial"]::before,
-              .ql-picker-item[data-value="arial"]::before { content: 'Arial'; font-family: Arial, sans-serif; }
-              .ql-picker-label[data-value="times-new-roman"]::before,
-              .ql-picker-item[data-value="times-new-roman"]::before { content: 'Times New Roman'; font-family: 'Times New Roman', serif; }
-              .ql-picker-label[data-value="courier-new"]::before,
-              .ql-picker-item[data-value="courier-new"]::before { content: 'Courier New'; font-family: 'Courier New', monospace; }
-              .ql-picker-label[data-value="georgia"]::before,
-              .ql-picker-item[data-value="georgia"]::before { content: 'Georgia'; font-family: Georgia, serif; }
-              .ql-picker-label[data-value="verdana"]::before,
-              .ql-picker-item[data-value="verdana"]::before { content: 'Verdana'; font-family: Verdana, sans-serif; }
-            `}</style>
-            <ReactQuill
-              theme="snow"
+            <RichTextEditor
+              id="content"
               value={content}
               onChange={setContent}
-              modules={quillModules}
-              formats={[
-                'header', 'font', 'size',
-                'bold', 'italic', 'underline', 'strike',
-                'color', 'background',
-                'align',
-                'list', 'bullet', 'indent',
-                'link', 'image', 'video',
-                'blockquote', 'code-block',
-                'script'
-              ]}
-              className="bg-background"
-              placeholder="Write your article content in English..."
+              placeholder="Write safe article HTML in English, for example <p>...</p><h2>...</h2><ul><li>...</li></ul>"
+              required
             />
           </div>
         </TabsContent>
@@ -412,40 +381,11 @@ export const ArticleForm = ({ article, category, onSuccess, onCancel }: ArticleF
 
           <div className="space-y-2">
             <Label htmlFor="content-zhtw">內容 (繁體中文)</Label>
-            <style>{`
-              .ql-font-arial { font-family: Arial, sans-serif; }
-              .ql-font-times-new-roman { font-family: 'Times New Roman', serif; }
-              .ql-font-courier-new { font-family: 'Courier New', monospace; }
-              .ql-font-georgia { font-family: Georgia, serif; }
-              .ql-font-verdana { font-family: Verdana, sans-serif; }
-              .ql-picker-label[data-value="arial"]::before,
-              .ql-picker-item[data-value="arial"]::before { content: 'Arial'; font-family: Arial, sans-serif; }
-              .ql-picker-label[data-value="times-new-roman"]::before,
-              .ql-picker-item[data-value="times-new-roman"]::before { content: 'Times New Roman'; font-family: 'Times New Roman', serif; }
-              .ql-picker-label[data-value="courier-new"]::before,
-              .ql-picker-item[data-value="courier-new"]::before { content: 'Courier New'; font-family: 'Courier New', monospace; }
-              .ql-picker-label[data-value="georgia"]::before,
-              .ql-picker-item[data-value="georgia"]::before { content: 'Georgia'; font-family: Georgia, serif; }
-              .ql-picker-label[data-value="verdana"]::before,
-              .ql-picker-item[data-value="verdana"]::before { content: 'Verdana'; font-family: Verdana, sans-serif; }
-            `}</style>
-            <ReactQuill
-              theme="snow"
+            <RichTextEditor
+              id="content-zhtw"
               value={contentZhTw}
               onChange={setContentZhTw}
-              modules={quillModules}
-              formats={[
-                'header', 'font', 'size',
-                'bold', 'italic', 'underline', 'strike',
-                'color', 'background',
-                'align',
-                'list', 'bullet', 'indent',
-                'link', 'image', 'video',
-                'blockquote', 'code-block',
-                'script'
-              ]}
-              className="bg-background"
-              placeholder="輸入繁體中文文章內容..."
+              placeholder="輸入安全的繁體中文 HTML，例如 <p>...</p><h2>...</h2><ul><li>...</li></ul>"
             />
           </div>
         </TabsContent>
@@ -474,40 +414,11 @@ export const ArticleForm = ({ article, category, onSuccess, onCancel }: ArticleF
 
           <div className="space-y-2">
             <Label htmlFor="content-zhcn">内容 (简体中文)</Label>
-            <style>{`
-              .ql-font-arial { font-family: Arial, sans-serif; }
-              .ql-font-times-new-roman { font-family: 'Times New Roman', serif; }
-              .ql-font-courier-new { font-family: 'Courier New', monospace; }
-              .ql-font-georgia { font-family: Georgia, serif; }
-              .ql-font-verdana { font-family: Verdana, sans-serif; }
-              .ql-picker-label[data-value="arial"]::before,
-              .ql-picker-item[data-value="arial"]::before { content: 'Arial'; font-family: Arial, sans-serif; }
-              .ql-picker-label[data-value="times-new-roman"]::before,
-              .ql-picker-item[data-value="times-new-roman"]::before { content: 'Times New Roman'; font-family: 'Times New Roman', serif; }
-              .ql-picker-label[data-value="courier-new"]::before,
-              .ql-picker-item[data-value="courier-new"]::before { content: 'Courier New'; font-family: 'Courier New', monospace; }
-              .ql-picker-label[data-value="georgia"]::before,
-              .ql-picker-item[data-value="georgia"]::before { content: 'Georgia'; font-family: Georgia, serif; }
-              .ql-picker-label[data-value="verdana"]::before,
-              .ql-picker-item[data-value="verdana"]::before { content: 'Verdana'; font-family: Verdana, sans-serif; }
-            `}</style>
-            <ReactQuill
-              theme="snow"
+            <RichTextEditor
+              id="content-zhcn"
               value={contentZhCn}
               onChange={setContentZhCn}
-              modules={quillModules}
-              formats={[
-                'header', 'font', 'size',
-                'bold', 'italic', 'underline', 'strike',
-                'color', 'background',
-                'align',
-                'list', 'bullet', 'indent',
-                'link', 'image', 'video',
-                'blockquote', 'code-block',
-                'script'
-              ]}
-              className="bg-background"
-              placeholder="输入简体中文文章内容..."
+              placeholder="输入安全的简体中文 HTML，例如 <p>...</p><h2>...</h2><ul><li>...</li></ul>"
             />
           </div>
         </TabsContent>
@@ -677,6 +588,7 @@ export const ArticleForm = ({ article, category, onSuccess, onCancel }: ArticleF
         onOpenChange={setPreviewOpen}
         title={langTab === "en" ? title : langTab === "zhtw" ? titleZhTw : titleZhCn}
         excerpt={langTab === "en" ? description : langTab === "zhtw" ? descriptionZhTw : descriptionZhCn}
+        content={langTab === "en" ? content : langTab === "zhtw" ? contentZhTw : contentZhCn}
         createdDate={createdDate}
         imageUrl={existingImages.length > 0 ? existingImages[0] : imageFiles.length > 0 ? URL.createObjectURL(imageFiles[0]) : null}
         imageMetadata={existingImages.length > 0 ? imageMetadata[existingImages[0]] : imageFiles.length > 0 ? imageMetadata["new-0"] : null}

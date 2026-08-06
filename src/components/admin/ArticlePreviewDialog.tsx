@@ -3,6 +3,7 @@ import { Card, CardHeader } from "@/components/ui/card";
 import { Calendar } from "lucide-react";
 import { CroppedImage } from "@/components/CroppedImage";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { sanitizeArticleHtml } from "@/lib/articleHtml";
 import type { ImageCropData } from "./ImageCropperDialog";
 
 interface ArticlePreviewDialogProps {
@@ -10,6 +11,7 @@ interface ArticlePreviewDialogProps {
   onOpenChange: (open: boolean) => void;
   title: string;
   excerpt: string;
+  content: string;
   createdDate: Date;
   imageUrl: string | null;
   imageMetadata?: ImageCropData;
@@ -20,11 +22,13 @@ export const ArticlePreviewDialog = ({
   onOpenChange,
   title,
   excerpt,
+  content,
   createdDate,
   imageUrl,
   imageMetadata,
 }: ArticlePreviewDialogProps) => {
   const { language } = useLanguage();
+  const sanitizedContent = sanitizeArticleHtml(content, title || "Article preview image");
 
   const card = (
     <div className="h-full">
@@ -117,6 +121,18 @@ export const ArticlePreviewDialog = ({
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {card}
               </div>
+            </div>
+          </div>
+
+          <div>
+            <p className="text-xs font-medium text-muted-foreground mb-3 uppercase tracking-wider px-4">
+              Article body
+            </p>
+            <div className="mx-auto max-w-3xl rounded-lg border border-border bg-background p-6">
+              <div
+                className="prose prose-lg max-w-none text-foreground"
+                dangerouslySetInnerHTML={{ __html: sanitizedContent || "<p>&nbsp;</p>" }}
+              />
             </div>
           </div>
         </div>

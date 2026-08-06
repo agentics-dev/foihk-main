@@ -19,9 +19,7 @@ const ArticleDetail = lazy(() => import("./pages/ArticleDetail"));
 const About = lazy(() => import("./pages/About"));
 const Philanthropy = lazy(() => import("./pages/Philanthropy"));
 const Contact = lazy(() => import("./pages/Contact"));
-const Press = lazy(() => import("./pages/Press"));
 const FAQ = lazy(() => import("./pages/FAQ"));
-const EditorialPolicy = lazy(() => import("./pages/EditorialPolicy"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -56,12 +54,12 @@ const App = () => (
                   <Route path="about" element={<About />} />
                   <Route path="philanthropy" element={<Philanthropy />} />
                   <Route path="contact" element={<Contact />} />
-                  <Route path="press" element={<Press />} />
                   <Route path="faq" element={<FAQ />} />
-                  <Route path="editorial-policy" element={<EditorialPolicy />} />
                   <Route path="articles/:category" element={<Articles />} />
                   <Route path="articles/:category/:articleKey" element={<ArticleDetail />} />
+                  <Route path="*" element={<NotFound />} />
                 </Route>
+                <Route path="/admin-login" element={<Auth />} />
                 <Route path="/admin" element={<Auth />} />
                 <Route path="/admin/dashboard" element={<AdminDashboard />} />
                 <Route path="*" element={<NotFound />} />

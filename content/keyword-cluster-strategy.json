@@ -1,0 +1,144 @@
+{
+  "market": "Hong Kong",
+  "languages": ["en", "zh-hk", "zh-cn"],
+  "measurement_note": "Search volume and keyword difficulty are N/A because no Google Search Console or paid keyword dataset was supplied. Intent and GEO suitability are editorial classifications, not measured ranking data.",
+  "priority_matrix": {
+    "high": [
+      { "keyword": "Family Office Institute Hong Kong", "canonical_path": "/en/guides/family-office-institute-hong-kong" },
+      { "keyword": "Hong Kong Family Office Institute", "canonical_path": "/en/guides/family-office-institute-hong-kong" },
+      { "keyword": "Hong Kong Non Profit Organization", "canonical_path": "/en/articles/education-research/hong-kong-non-profit-organization" }
+    ],
+    "medium": [
+      { "keyword": "Family Office Institute Hong Kong Comparison", "canonical_path": "/en/articles/education-research/hong-kong-family-office-institute-organisation-association-comparison" },
+      { "keyword": "How to choose Family Office Institute", "canonical_path": "/en/articles/education-research/how-to-choose-family-office-institute-and-services-hong-kong" },
+      { "keyword": "Hong Kong Family Office Services", "canonical_path": "/en/articles/education-research/hong-kong-family-office-services" }
+    ],
+    "low": [
+      { "keyword": "What is Family Office Institute Hong Kong", "canonical_path": "/en/articles/education-research/what-is-family-office-institute-hong-kong" },
+      { "keyword": "Role of Family Office Institute", "canonical_path": "/en/articles/education-research/role-of-family-office-institute" },
+      { "keyword": "Hong Kong Family Office Trends", "canonical_path": "/en/articles/education-research/hong-kong-family-office-trends" }
+    ]
+  },
+  "clusters": [
+    {
+      "id": "family-office-institute-hong-kong",
+      "label": "Family Office Institute Hong Kong",
+      "intent": "Informational and navigational",
+      "funnel": "TOFU/MOFU",
+      "search_volume": "N/A",
+      "keyword_difficulty": "N/A",
+      "geo_opportunity": "High: entity definition, role clarification, named-entity disambiguation, and concise answers",
+      "pillar": {
+        "slug": "family-office-institute-hong-kong",
+        "canonical_path": "/guides/family-office-institute-hong-kong",
+        "title": "Family Office Institute Hong Kong: Definitive Guide",
+        "primary_keyword": "Family Office Institute Hong Kong",
+        "secondary_keywords": [
+          "Hong Kong Family Office Institute",
+          "what is Family Office Institute Hong Kong",
+          "role of Family Office Institute",
+          "FOIHK",
+          "family office organisation Hong Kong",
+          "family office organisation comparison"
+        ]
+      },
+      "supporting_pages": [
+        "what-is-family-office-institute-hong-kong",
+        "role-of-family-office-institute",
+        "hong-kong-family-office-institute-organisation-association-comparison",
+        "/about",
+        "/editorial-policy"
+      ]
+    },
+    {
+      "id": "hong-kong-family-office-services",
+      "label": "Hong Kong Family Office Services",
+      "intent": "Commercial investigation and informational",
+      "funnel": "MOFU/BOFU",
+      "search_volume": "N/A",
+      "keyword_difficulty": "N/A",
+      "geo_opportunity": "High: service taxonomy, selection checklist, comparisons, and activity-based regulatory explanation",
+      "pillar": {
+        "slug": "hong-kong-family-office-services",
+        "title": "Hong Kong Family Office Services: Complete Guide",
+        "primary_keyword": "Hong Kong family office services",
+        "secondary_keywords": [
+          "family office services Hong Kong",
+          "how to choose a family office",
+          "single family office services",
+          "multi family office services",
+          "family office vs private bank",
+          "family office service providers Hong Kong"
+        ]
+      },
+      "supporting_pages": [
+        "how-to-choose-family-office-institute-and-services-hong-kong",
+        "single-family-office-vs-multi-family-office",
+        "family-office-vs-private-bank",
+        "/faq"
+      ]
+    },
+    {
+      "id": "hong-kong-family-office-trends",
+      "label": "Hong Kong Family Office Trends",
+      "intent": "Informational and research",
+      "funnel": "TOFU/MOFU",
+      "search_volume": "N/A",
+      "keyword_difficulty": "N/A",
+      "geo_opportunity": "High: dated facts, trend synthesis, source attribution, monitoring checklist, and quotable statistics",
+      "pillar": {
+        "slug": "hong-kong-family-office-trends",
+        "title": "Hong Kong Family Office Trends: Evidence Guide",
+        "primary_keyword": "Hong Kong family office trends",
+        "secondary_keywords": [
+          "Hong Kong family office ecosystem",
+          "family office industry Hong Kong",
+          "family office policy Hong Kong",
+          "family office governance trends",
+          "family office outlook Hong Kong",
+          "Hong Kong single family offices"
+        ]
+      },
+      "supporting_pages": [
+        "hong-kong-family-office-trends-2026",
+        "hong-kong-family-office-ecosystem-guide-2026",
+        "/articles/philanthropy",
+        "/articles/news-events"
+      ]
+    },
+    {
+      "id": "hong-kong-non-profit-organization",
+      "label": "Hong Kong Non Profit Organization",
+      "intent": "Informational and verification",
+      "funnel": "TOFU/MOFU",
+      "search_volume": "N/A",
+      "keyword_difficulty": "N/A",
+      "geo_opportunity": "High: direct definition, legal-structure distinction, official-register checks, and current section 88 data",
+      "pillar": {
+        "slug": "hong-kong-non-profit-organization",
+        "title": "Hong Kong Non Profit Organization: Structures and Verification Guide",
+        "primary_keyword": "Hong Kong Non Profit Organization",
+        "secondary_keywords": [
+          "Hong Kong nonprofit organization",
+          "non-profit-distributing organization Hong Kong",
+          "section 88 charity Hong Kong",
+          "company limited by guarantee Hong Kong",
+          "Hong Kong tax-exempt charity"
+        ]
+      },
+      "supporting_pages": [
+        "/faq",
+        "/credentials",
+        "/philanthropy",
+        "/guides/family-office-institute-hong-kong"
+      ]
+    }
+  ],
+  "publishing_rules": [
+    "Every matrix target must have one indexable canonical page; do not publish the excluded duplicate brand-pillar draft.",
+    "Each supporting article should link to its pillar once with descriptive anchor text; each pillar should link to every support page in its cluster.",
+    "Keep annual statistics and proposals dated, sourced, and separate from evergreen definitions.",
+    "Do not create another page targeting the exact primary keyword of a pillar without a distinct search intent.",
+    "Keep English, Traditional Chinese, and Simplified Chinese versions materially equivalent."
+  ]
+}

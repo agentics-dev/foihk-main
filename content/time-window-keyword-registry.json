@@ -1,0 +1,50 @@
+{
+  "market": "Hong Kong",
+  "languages": ["en", "zh-hk", "zh-cn"],
+  "metrics": {
+    "volume": "N/A - no connected measured keyword-volume source",
+    "keyword_difficulty": "N/A - no connected measured KD source"
+  },
+  "last_verified": "2026-08-03",
+  "review_cadence": "monthly",
+  "next_review_on_or_before": "2026-09-03",
+  "publication_status": "local Supabase drafts only",
+  "articles": [
+    {
+      "target_keyword": "2026 Hong Kong Family Office Policy",
+      "intent": "time-window informational with commercial investigation support",
+      "slug": "2026-hong-kong-family-office-policy",
+      "source_file": "supabase/seed-data/foihk-time-window-2026-drafts.json",
+      "refresh_triggers": [
+        "Legislative Council passage or amendment of the 2026 preferential tax regimes bill",
+        "gazettal or commencement notice",
+        "change to New CIES family-office conditions",
+        "new FSTB or InvestHK family-office policy statement"
+      ]
+    },
+    {
+      "target_keyword": "Family Office New Regulations 2026",
+      "intent": "time-window regulatory information",
+      "slug": "hong-kong-family-office-regulations-2026",
+      "source_file": "supabase/seed-data/foihk-time-window-2026-drafts.json",
+      "refresh_triggers": [
+        "SFC family-office licensing guidance update",
+        "IRD FIHV guidance update",
+        "Legislative Council passage or amendment of the 2026 preferential tax regimes bill",
+        "new regulation or commencement date affecting family-office activities"
+      ]
+    },
+    {
+      "target_keyword": "Hong Kong Wealth Management 2026",
+      "intent": "time-window market research",
+      "slug": "hong-kong-wealth-management-2026",
+      "source_file": "supabase/seed-data/foihk-time-window-2026-drafts.json",
+      "refresh_triggers": [
+        "new SFC asset and wealth management statistics",
+        "new Cross-boundary Wealth Management Connect statistics",
+        "new New CIES application or investment figures",
+        "new official Hong Kong family-office count"
+      ]
+    }
+  ]
+}

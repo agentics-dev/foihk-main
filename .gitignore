@@ -12,6 +12,8 @@ dist
 .env*
 !.env.example
 backups
+reports
+fohk-website
 dist-ssr
 *.local
 

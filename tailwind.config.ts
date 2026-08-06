@@ -16,8 +16,8 @@ export default {
     extend: {
       fontFamily: {
         arial: ['Arial', 'sans-serif'],
-        serif: ['Noto Serif', 'Georgia', 'serif'],
-        sans: ['Noto Sans', 'Arial', 'Helvetica', 'sans-serif'],
+        serif: ['Georgia', 'Times New Roman', 'serif'],
+        sans: ['Arial', 'Helvetica', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",

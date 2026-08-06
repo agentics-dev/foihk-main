@@ -5,7 +5,11 @@ const ALLOWED_ORIGINS = new Set([
   "http://localhost:8080",
   "http://localhost:5173",
 ]);
-const CATEGORIES = new Set(["education_research", "news_events", "philanthropy"]);
+const CATEGORY_PATHS = new Map([
+  ["education_research", "education-research"],
+  ["news_events", "news-events"],
+  ["philanthropy", "philanthropy"],
+]);
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const KEY_PATTERN = /^[A-Za-z0-9-]{8,128}$/;
 const BASE_URL = "https://www.foihk.org";
@@ -76,7 +80,8 @@ Deno.serve(async (request) => {
   }
   const category = typeof payload.category === "string" ? payload.category : "";
   const slug = typeof payload.slug === "string" ? payload.slug : "";
-  if (!CATEGORIES.has(category) || !SLUG_PATTERN.test(slug) || slug.length > 160) {
+  const categoryPath = CATEGORY_PATHS.get(category);
+  if (!categoryPath || !SLUG_PATTERN.test(slug) || slug.length > 160) {
     return json({ error: "Invalid category or slug" }, 400, origin);
   }
 
@@ -86,7 +91,7 @@ Deno.serve(async (request) => {
   }
 
   const urlList = LANGUAGES.map(
-    (language) => `${BASE_URL}/${language}/articles/${category}/${slug}`
+    (language) => `${BASE_URL}/${language}/articles/${categoryPath}/${slug}`
   );
   const response = await fetch("https://api.indexnow.org/indexnow", {
     method: "POST",

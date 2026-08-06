@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { LocalizedLink as Link } from "@/components/LocalizedLink";
-import { supabase } from "@/integrations/supabase/client";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { CroppedImage } from "@/components/CroppedImage";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
@@ -12,13 +11,14 @@ import { getLocalizedField, normalizeArticleSlug } from "@/lib/utils";
 import { SEO } from "@/components/SEO";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Heart, Handshake, BookOpen, Globe, Lightbulb, ArrowRight, Calendar, Search } from "lucide-react";
-import communityBg from "@/assets/community-bg.jpg";
+import communityBg from "@/assets/community-bg.webp";
 import {
   ORGANIZATION_ENGLISH_NAME,
   ORGANIZATION_LEGAL_NAME,
   ORGANIZATION_URL,
 } from "@/lib/schema";
 import type { Tables } from "@/integrations/supabase/types";
+import { loadPublishedArticles } from "@/lib/articles";
 
 type ArticleRow = Tables<"articles">;
 
@@ -38,19 +38,17 @@ const Philanthropy = () => {
   useEffect(() => {
     const fetchArticles = async () => {
       setLoading(true);
-      const { data } = await supabase
-        .from("articles")
-        .select("*")
-        .eq("category", "philanthropy")
-        .eq("published", true)
-        .order("created_at", { ascending: false });
-
-      setArticles(data || []);
+      try {
+        setArticles(await loadPublishedArticles("philanthropy", language));
+      } catch (error) {
+        console.error("Error fetching philanthropy articles:", error);
+        setArticles([]);
+      }
       setLoading(false);
     };
 
     fetchArticles();
-  }, []);
+  }, [language]);
   const homeLabel = language === "en" ? "Home" : language === "zh-hk" ? "首頁" : "首页";
   const meta = language === "en"
     ? { title: "Family Office Philanthropy in Hong Kong", description: "Explore FOIHK education, dialogue, and community initiatives concerning responsible family philanthropy and social impact in Hong Kong." }
@@ -77,12 +75,9 @@ const Philanthropy = () => {
             "url": ORGANIZATION_URL
           },
         }}
-        breadcrumbs={[
-          { name: homeLabel, url: `${ORGANIZATION_URL}/${language}` },
-          { name: t("philanthropy.title"), url: `${ORGANIZATION_URL}/${language}/philanthropy` },
-        ]}
       />
       <Navigation />
+      <main>
       
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto">
@@ -194,10 +189,10 @@ const Philanthropy = () => {
             }`}
           >
             <div className="relative h-48 w-full overflow-hidden">
-              <img src={communityBg} alt="FOIHK Philanthropy - Family Office Charity Hong Kong" className="w-full h-full object-cover" />
+              <img src={communityBg} alt="FOIHK Philanthropy - Family Office Charity Hong Kong" width="1200" height="400" loading="lazy" decoding="async" className="w-full h-full object-cover" />
             </div>
             <CardHeader>
-              <CardTitle className="text-2xl">{t("philanthropy.ourMission")}</CardTitle>
+              <h2 className="text-2xl font-semibold leading-none">{t("philanthropy.ourMission")}</h2>
             </CardHeader>
             <CardContent className="prose prose-slate dark:prose-invert max-w-none">
               <p className="text-base leading-relaxed">{t("philanthropy.missionText")}</p>
@@ -213,7 +208,7 @@ const Philanthropy = () => {
             }`}
           >
             <CardHeader>
-              <CardTitle className="text-2xl">{t("philanthropy.approachTitle")}</CardTitle>
+              <h2 className="text-2xl font-semibold leading-none">{t("philanthropy.approachTitle")}</h2>
             </CardHeader>
             <CardContent className="prose prose-slate dark:prose-invert max-w-none">
               <p className="text-base leading-relaxed">{t("philanthropy.approachText")}</p>
@@ -229,7 +224,7 @@ const Philanthropy = () => {
             }`}
           >
             <CardHeader>
-              <CardTitle className="text-2xl">{t("philanthropy.whatWeDo")}</CardTitle>
+              <h2 className="text-2xl font-semibold leading-none">{t("philanthropy.whatWeDo")}</h2>
             </CardHeader>
             <CardContent>
               <div className="grid md:grid-cols-2 gap-6">
@@ -288,6 +283,7 @@ const Philanthropy = () => {
           </Card>
         </div>
       </div>
+      </main>
 
       <Footer />
     </div>

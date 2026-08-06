@@ -50,19 +50,48 @@ const origin = `http://127.0.0.1:${address.port}`;
 const failures = [];
 let browser;
 
+const launchBrowser = () => puppeteer.launch({
+  headless: true,
+  args: ["--disable-dev-shm-usage", "--no-sandbox"],
+});
+
+const withTimeout = (promise, timeoutMs, label) => Promise.race([
+  promise,
+  new Promise((_, reject) => setTimeout(() => reject(new Error(label)), timeoutMs)),
+]);
+
+const closeWithTimeout = async (closePromise) => {
+  try {
+    await Promise.race([
+      closePromise,
+      new Promise((resolveClose) => setTimeout(resolveClose, 5_000)),
+    ]);
+  } catch {
+    // Closing can occasionally race with aborted asset requests during prerender.
+  }
+};
+
+const openPageWithRetry = async (route) => {
+  try {
+    return await withTimeout(browser.newPage(), 10_000, `${route}: opening a new prerender page timed out`);
+  } catch {
+    if (browser) await closeWithTimeout(browser.close());
+    browser = await launchBrowser();
+    return withTimeout(browser.newPage(), 10_000, `${route}: opening a new prerender page timed out after browser restart`);
+  }
+};
+
 for (let index = 0; index < routes.length; index += 1) {
   if (index % 20 === 0) {
-    if (browser) await browser.close();
-    browser = await puppeteer.launch({
-      headless: true,
-      args: ["--disable-dev-shm-usage", "--no-sandbox"],
-    });
+    if (browser) await closeWithTimeout(browser.close());
+    browser = await launchBrowser();
   }
 
   const route = routes[index];
   if (browser) {
-    const page = await browser.newPage();
+    let page;
     try {
+      page = await openPageWithRetry(route);
       await page.setRequestInterception(true);
       page.on("request", (request) => {
         if (["font", "image", "media"].includes(request.resourceType())) {
@@ -80,6 +109,9 @@ for (let index = 0; index < routes.length; index += 1) {
         { timeout: 15_000 },
         `${BASE_URL}${route}`
       );
+      if (/\/articles\/(?:education-research|news-events|philanthropy)$/.test(route)) {
+        await page.waitForSelector('main[data-content-ready="true"]', { timeout: 30_000 });
+      }
       const html = await page.content();
       const outputDir = join(DIST, route.replace(/^\/+/, ""));
       mkdirSync(outputDir, { recursive: true });
@@ -88,18 +120,30 @@ for (let index = 0; index < routes.length; index += 1) {
     } catch (error) {
       failures.push(`${route}: ${error instanceof Error ? error.message : String(error)}`);
     } finally {
-      await page.close();
+      if (page) await closeWithTimeout(page.close());
     }
   }
 }
 
-if (browser) await browser.close();
+if (browser && !routeFilter) {
+  const notFoundPage = await browser.newPage();
+  try {
+    await notFoundPage.goto(`${origin}/en/seo-audit-not-found`, { waitUntil: "networkidle2", timeout: 45_000 });
+    await notFoundPage.waitForSelector("h1", { timeout: 15_000 });
+    await notFoundPage.waitForFunction(
+      () => document.querySelector('meta[name="robots"]')?.content.includes("noindex"),
+      { timeout: 15_000 }
+    );
+    writeFileSync(join(DIST, "404.html"), await notFoundPage.content());
+  } catch (error) {
+    failures.push(`/404.html: ${error instanceof Error ? error.message : String(error)}`);
+  } finally {
+    await closeWithTimeout(notFoundPage.close());
+  }
+}
+
+if (browser) await closeWithTimeout(browser.close());
 server.close();
-const fallbackHtml = readFileSync(join(DIST, "index.html"), "utf8").replace(
-  "</title>",
-  "</title><meta name=\"description\" content=\"FOIHK public website fallback page for Hong Kong family office research, education, philanthropy, events, and professional exchange.\" />"
-);
-writeFileSync(join(DIST, "200.html"), fallbackHtml);
 
 if (failures.length > 0) {
   console.error(`\nPrerender failed for ${failures.length} route(s):\n${failures.join("\n")}`);

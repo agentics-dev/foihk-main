@@ -105,6 +105,9 @@ export type Database = {
           email: string
           subject: string
           message: string
+          request_fingerprint: string | null
+          user_agent: string | null
+          page_url: string | null
           created_at: string
         }
         Insert: {
@@ -113,6 +116,9 @@ export type Database = {
           email: string
           subject: string
           message: string
+          request_fingerprint?: string | null
+          user_agent?: string | null
+          page_url?: string | null
           created_at?: string
         }
         Update: {
@@ -121,6 +127,9 @@ export type Database = {
           email?: string
           subject?: string
           message?: string
+          request_fingerprint?: string | null
+          user_agent?: string | null
+          page_url?: string | null
           created_at?: string
         }
         Relationships: []

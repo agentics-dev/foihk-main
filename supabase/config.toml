@@ -1,4 +1,7 @@
 project_id = "fadfhgdyoxecdddpcpdf"
 
 [functions.notify-indexnow]
+verify_jwt = true
+
+[functions.submit-contact]
 verify_jwt = false

@@ -25,7 +25,7 @@ All colors MUST be HSL.
     --secondary-foreground: 220 60% 20%;
 
     --muted: 210 40% 96%;
-    --muted-foreground: 220 15% 50%;
+    --muted-foreground: 220 15% 44%;
 
     --accent: 43 85% 50%;
     --accent-foreground: 220 60% 20%;
@@ -107,8 +107,12 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
+  html {
+    @apply overflow-x-hidden;
+  }
+
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-background text-foreground font-sans overflow-x-hidden;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -117,5 +121,62 @@ All colors MUST be HSL.
 
   :focus-visible {
     @apply outline-2 outline-offset-2 outline-accent rounded;
+  }
+}
+
+@layer components {
+  .foihk-text-sm {
+    font-size: 0.9em;
+    line-height: 1.75;
+  }
+
+  .foihk-text-lg {
+    font-size: 1.15em;
+    line-height: 1.75;
+  }
+
+  .foihk-admin-editor {
+    @apply text-base leading-7 text-foreground;
+  }
+
+  .foihk-admin-editor p {
+    @apply my-4;
+  }
+
+  .foihk-admin-editor h2 {
+    @apply mb-4 mt-8 font-serif text-2xl font-bold text-foreground;
+  }
+
+  .foihk-admin-editor h3 {
+    @apply mb-3 mt-6 font-serif text-xl font-bold text-foreground;
+  }
+
+  .foihk-admin-editor ul {
+    @apply my-4 list-disc pl-6;
+  }
+
+  .foihk-admin-editor ol {
+    @apply my-4 list-decimal pl-6;
+  }
+
+  .foihk-admin-editor blockquote {
+    @apply my-5 border-l-4 border-primary bg-secondary/30 py-3 pl-4;
+  }
+
+  .foihk-admin-editor a {
+    @apply text-primary underline underline-offset-4;
+  }
+
+  .foihk-admin-editor table {
+    @apply my-6 w-full border-collapse text-sm;
+  }
+
+  .foihk-admin-editor th,
+  .foihk-admin-editor td {
+    @apply border border-border px-3 py-2 align-top;
+  }
+
+  .foihk-admin-editor img {
+    @apply my-6 max-h-[360px] max-w-full rounded-md object-contain;
   }
 }

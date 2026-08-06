@@ -1,6 +1,7 @@
 import { Helmet } from "react-helmet-async";
 import { useLocation } from "react-router-dom";
 import { useLanguage, Language } from "@/contexts/LanguageContext";
+import { SITE_CONTENT_REVIEWED_DATE } from "@/lib/schema";
 
 type StructuredData = Record<string, unknown>;
 
@@ -12,7 +13,6 @@ interface SEOProps {
   ogType?: "website" | "article";
   noindex?: boolean;
   structuredData?: StructuredData | StructuredData[];
-  breadcrumbs?: { name: string; url: string }[];
   alternateLanguages?: Language[];
 }
 
@@ -29,7 +29,6 @@ export const SEO = ({
   ogType = "website",
   noindex = false,
   structuredData,
-  breadcrumbs,
   alternateLanguages = LANGUAGES,
 }: SEOProps) => {
   const { language } = useLanguage();
@@ -55,24 +54,29 @@ export const SEO = ({
     return `${BASE_URL}/${lang}${canonicalPath === "/" ? "" : canonicalPath}`;
   };
 
-  const breadcrumbLD = breadcrumbs
-    ? {
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        "itemListElement": breadcrumbs.map((b, i) => ({
-          "@type": "ListItem",
-          "position": i + 1,
-          "name": b.name,
-          "item": b.url,
-        })),
-      }
-    : null;
-
   const structuredDataItems = structuredData
     ? Array.isArray(structuredData)
       ? structuredData
       : [structuredData]
     : [];
+
+  const structuredDateModified = structuredDataItems
+    .map((item) => item.dateModified)
+    .find((date): date is string => typeof date === "string" && date.length > 0);
+  const effectiveDateModified = structuredDateModified || SITE_CONTENT_REVIEWED_DATE;
+  const freshnessLD = structuredDateModified
+    ? null
+    : {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "@id": `${url}#webpage`,
+        "url": url,
+        "name": fullTitle,
+        "description": description,
+        "inLanguage": language === "en" ? "en" : language === "zh-hk" ? "zh-Hant" : "zh-Hans",
+        "dateModified": effectiveDateModified,
+        "isPartOf": { "@id": `${BASE_URL}/#website` },
+      };
 
   const htmlLang = language === "zh-hk" ? "zh-Hant" : language === "zh-cn" ? "zh-Hans" : "en";
   const ogLocale = language === "zh-hk" ? "zh_HK" : language === "zh-cn" ? "zh_CN" : "en_US";
@@ -105,6 +109,7 @@ export const SEO = ({
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
       <meta property="og:locale" content={ogLocale} />
+      {ogType === "article" && <meta property="article:modified_time" content={effectiveDateModified} />}
       {ogLocaleAlternates.map((locale) => (
         <meta key={locale} property="og:locale:alternate" content={locale} />
       ))}
@@ -115,16 +120,17 @@ export const SEO = ({
       <meta name="twitter:image" content={ogImage} />
 
       {structuredDataItems.map((item, index) => (
-        <script key={`structured-data-${index}`} type="application/ld+json">
+        <script key={`structured-data-${index}-${JSON.stringify(item)}`} type="application/ld+json">
           {JSON.stringify(item)}
         </script>
       ))}
 
-      {breadcrumbLD && (
+      {freshnessLD && (
         <script type="application/ld+json">
-          {JSON.stringify(breadcrumbLD)}
+          {JSON.stringify(freshnessLD)}
         </script>
       )}
+
     </Helmet>
   );
 };

@@ -3,6 +3,7 @@ import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { LocalizedLink as Link } from "@/components/LocalizedLink";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -35,6 +36,7 @@ type PressItem = {
   title: string;
   description: string;
   url: string;
+  relatedUrls?: string[];
   source: string;
   datePublished?: string;
   structuredData: Record<string, unknown>;
@@ -166,39 +168,30 @@ const getPressItems = (t: (key: string) => string): PressItem[] => [
       "mentions": [organizationMention],
     },
   },
-  ...WECHAT_EVENT_URLS.map((url, index) => ({
-    title: `${t("press.items.wechat.title")} ${index + 1}`,
+  {
+    title: t("press.items.wechat.title"),
     description: t("press.items.wechat.description"),
-    url,
+    url: WECHAT_EVENT_URLS[0],
+    relatedUrls: WECHAT_EVENT_URLS,
     source: "WeChat",
     structuredData: {
-      "@type": "Article",
-      "headline": `${t("press.items.wechat.title")} ${index + 1}`,
+      "@type": "Thing",
+      "name": t("press.items.wechat.title"),
       "description": t("press.items.wechat.description"),
-      "inLanguage": "zh-HK",
-      "url": url,
-      "publisher": {
-        "@type": "Organization",
-        "name": "WeChat",
-        "url": "https://mp.weixin.qq.com",
-      },
-      "about": [
-        {
-          "@type": "Thing",
-          "name": "Tai Chi",
-        },
-        {
-          "@type": "Thing",
-          "name": "Cultural Exchange",
-        },
-        {
-          "@type": "Thing",
-          "name": "World Record",
-        },
-      ],
       "mentions": [organizationMention],
+      "subjectOf": WECHAT_EVENT_URLS.map((url, index) => ({
+        "@type": "Article",
+        "headline": `${t("press.items.wechat.title")} - ${index + 1}`,
+        "inLanguage": "zh-HK",
+        "url": url,
+        "publisher": {
+          "@type": "Organization",
+          "name": "WeChat",
+          "url": "https://mp.weixin.qq.com",
+        },
+      })),
     },
-  })),
+  },
 ];
 
 const getItemListStructuredData = (
@@ -212,6 +205,7 @@ const getItemListStructuredData = (
   "description": t("press.metaDescription"),
   "url": url,
   "inLanguage": language === "en" ? "en" : language === "zh-hk" ? "zh-Hant" : "zh-Hans",
+  "dateModified": "2026-08-04",
   "itemListElement": getPressItems(t).map((item, index) => ({
     "@type": "ListItem",
     "position": index + 1,
@@ -235,6 +229,7 @@ const Press = () => {
     sourceLabel: t("press.sourceLabel"),
     dateLabel: t("press.dateLabel"),
     readMore: t("press.readMore"),
+    mediaKit: language === "en" ? "Open the media and verification kit" : language === "zh-hk" ? "開啟媒體與核實資料包" : "打开媒体与核实资料包",
   };
 
   return (
@@ -243,10 +238,6 @@ const Press = () => {
         title={copy.introTitle}
         description={copy.metaDescription}
         structuredData={itemListStructuredData}
-        breadcrumbs={[
-          { name: homeLabel, url: `${ORGANIZATION_URL}/${language}` },
-          { name: copy.introTitle, url: pressUrl },
-        ]}
       />
       <Navigation />
 
@@ -259,8 +250,12 @@ const Press = () => {
             </div>
             <h1 className="mb-4 text-4xl font-bold text-foreground">{copy.introTitle}</h1>
             <p className="mx-auto max-w-3xl text-lg text-muted-foreground">{copy.introText}</p>
+            <Button variant="outline" asChild className="mt-6">
+              <Link to="/media-kit">{copy.mediaKit}</Link>
+            </Button>
           </div>
 
+          <h2 className="sr-only">{copy.introTitle}</h2>
           <div className="space-y-6">
             {pressItems.map((item) => (
               <Card key={item.url} className="border-border/50 shadow-elegant">
@@ -286,12 +281,16 @@ const Press = () => {
 
                   <p className="leading-7 text-foreground">{item.description}</p>
 
-                  <Button asChild>
-                    <a href={item.url} target="_blank" rel="noopener noreferrer">
-                      {copy.readMore}
-                      <ExternalLink className="ml-2 h-4 w-4" />
-                    </a>
-                  </Button>
+                  <div className="flex flex-wrap gap-3">
+                    {(item.relatedUrls ?? [item.url]).map((url, index, urls) => (
+                      <Button key={url} asChild>
+                        <a href={url} target="_blank" rel="noopener noreferrer">
+                          {copy.readMore}{urls.length > 1 ? ` ${index + 1}` : ""}
+                          <ExternalLink className="ml-2 h-4 w-4" />
+                        </a>
+                      </Button>
+                    ))}
+                  </div>
                 </CardContent>
               </Card>
             ))}
@@ -299,7 +298,7 @@ const Press = () => {
         </div>
       </main>
 
-      <Footer />
+      <Footer lastUpdated="2026-08-04" />
     </div>
   );
 };

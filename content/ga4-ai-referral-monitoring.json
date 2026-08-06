@@ -1,0 +1,125 @@
+{
+  "property": "FOIHK GA4",
+  "implementation_status": "code_ready_measurement_id_missing",
+  "verified_on": "2026-08-03",
+  "activation": {
+    "required_environment_variables": {
+      "VITE_ENABLE_ANALYTICS": "true",
+      "VITE_GA_MEASUREMENT_ID": "G-XXXXXXXXXX"
+    },
+    "current_local_status": "disabled",
+    "current_vercel_production_status": "measurement ID and enable flag not configured",
+    "privacy_requirement": "Obtain privacy approval before setting VITE_ENABLE_ANALYTICS=true."
+  },
+  "collection": {
+    "events": [
+      {
+        "name": "page_view",
+        "parameters": [
+          "page_location",
+          "page_path",
+          "page_title",
+          "page_referrer",
+          "traffic_source_type",
+          "ai_referral_source",
+          "referral_hostname"
+        ]
+      },
+      {
+        "name": "ai_referral_landing",
+        "frequency": "once per browser tab session when the external referrer is a recognised AI assistant",
+        "parameters": [
+          "ai_referral_source",
+          "referral_hostname",
+          "landing_page",
+          "site_language"
+        ]
+      }
+    ],
+    "recognised_sources": {
+      "chatgpt": ["chatgpt.com", "chat.openai.com"],
+      "perplexity": ["perplexity.ai"],
+      "claude": ["claude.ai"],
+      "copilot": ["copilot.microsoft.com", "copilot.cloud.microsoft"],
+      "gemini": ["gemini.google.com"]
+    },
+    "privacy_defaults": {
+      "google_signals": false,
+      "advertising_personalisation": false,
+      "personally_identifiable_form_values": "not collected"
+    }
+  },
+  "ga4_admin_setup": {
+    "custom_dimensions": [
+      {
+        "name": "AI referral source",
+        "scope": "Event",
+        "event_parameter": "ai_referral_source"
+      },
+      {
+        "name": "Referral hostname",
+        "scope": "Event",
+        "event_parameter": "referral_hostname"
+      },
+      {
+        "name": "Traffic source type",
+        "scope": "Event",
+        "event_parameter": "traffic_source_type"
+      },
+      {
+        "name": "Site language",
+        "scope": "Event",
+        "event_parameter": "site_language"
+      }
+    ],
+    "custom_channel_group": {
+      "name": "FOIHK acquisition channels",
+      "dimension": "Source",
+      "operator": "matches regex",
+      "channels_in_order": [
+        {
+          "name": "AI - ChatGPT",
+          "regex": "^(chatgpt\\.com|chat\\.openai\\.com)$"
+        },
+        {
+          "name": "AI - Perplexity",
+          "regex": "^(www\\.)?perplexity\\.ai$"
+        },
+        {
+          "name": "AI - Claude",
+          "regex": "^(www\\.)?claude\\.ai$"
+        },
+        {
+          "name": "AI - Copilot",
+          "regex": "^(copilot\\.microsoft\\.com|copilot\\.cloud\\.microsoft)$"
+        },
+        {
+          "name": "AI - Gemini",
+          "regex": "^gemini\\.google\\.com$"
+        }
+      ],
+      "ordering_rule": "Place all AI channels above Referral because GA4 uses the first matching channel.",
+      "report_locations": [
+        "Reports > Acquisition > User acquisition",
+        "Reports > Acquisition > Traffic acquisition",
+        "Explore using AI referral source and Landing page"
+      ]
+    }
+  },
+  "monthly_review": {
+    "cadence": "monthly",
+    "metrics": [
+      "Users and sessions by AI channel",
+      "Landing pages by AI referral source",
+      "Engaged sessions and engagement rate",
+      "Enquiry or contact key events where separately configured",
+      "Month-on-month movement with absolute counts",
+      "New AI referral hostnames appearing under ordinary Referral"
+    ],
+    "interpretation_rule": "Report measured counts and rates only. Do not attribute conversions to GEO without the relevant GA4 attribution context and a sufficient baseline period."
+  },
+  "official_documentation": [
+    "https://support.google.com/analytics/answer/13051316?hl=en",
+    "https://support.google.com/analytics/answer/14240153?hl=en"
+  ]
+}

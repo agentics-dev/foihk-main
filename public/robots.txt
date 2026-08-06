@@ -38,6 +38,10 @@ User-agent: Google-Extended
 Allow: /
 Disallow: /admin
 
+User-agent: Bytespider
+Allow: /
+Disallow: /admin
+
 User-agent: *
 Allow: /
 Disallow: /admin

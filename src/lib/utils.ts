@@ -47,3 +47,23 @@ export function normalizeArticleSlug(value: string): string {
   if (value.includes("經濟一週")) return "foihk-economic-digest-art-investment-interview";
   return "article";
 }
+
+export type ArticleCategory = "education_research" | "news_events" | "philanthropy";
+
+export function getArticleCategoryPath(category: ArticleCategory | string): string {
+  return category.replace(/_/g, "-");
+}
+
+export function parseArticleCategory(value: string | undefined): ArticleCategory | null {
+  const normalized = value?.replace(/-/g, "_");
+  return normalized === "education_research" || normalized === "news_events" || normalized === "philanthropy"
+    ? normalized
+    : null;
+}
+
+export function optimizeArticleImageUrl(url: string, width = 1200): string {
+  if (!url.includes(".supabase.co/storage/v1/object/public/")) return url;
+  const optimized = url.replace("/storage/v1/object/public/", "/storage/v1/render/image/public/");
+  const separator = optimized.includes("?") ? "&" : "?";
+  return `${optimized}${separator}width=${width}&quality=80&resize=contain`;
+}

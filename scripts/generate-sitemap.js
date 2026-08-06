@@ -1,5 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -12,15 +12,17 @@ const STATIC_PATHS = [
   "",
   "/about",
   "/philanthropy",
-  "/press",
   "/contact",
   "/faq",
-  "/editorial-policy",
-  "/articles/education_research",
-  "/articles/news_events",
+  "/articles/education-research",
+  "/articles/news-events",
   "/articles/philanthropy",
 ];
-const STATIC_LAST_MODIFIED = "2026-07-29";
+const STATIC_LAST_MODIFIED = "2026-08-03";
+const STATIC_LAST_MODIFIED_BY_PATH = new Map([
+  ["", "2026-08-04"],
+]);
+const SNAPSHOT_PATH = resolve(ROOT, "public", "published-articles.json");
 
 if (!SUPABASE_URL || !SUPABASE_KEY) {
   console.error("Missing VITE_SUPABASE_URL or VITE_SUPABASE_PUBLISHABLE_KEY");
@@ -64,6 +66,62 @@ const normalizeSlug = (value) => {
   return "article";
 };
 
+const getCategoryPath = (category) => category.replaceAll("_", "-");
+const CONTENT_FIELDS = ["content", "content_zhtw", "content_zhcn"];
+const SOURCE_LABELS = {
+  content: "Source",
+  content_zhtw: "資料來源",
+  content_zhcn: "资料来源",
+};
+const AUTHORITATIVE_SOURCE_BY_SLUG = new Map([
+  [
+    "over-200-family-offices-hong-kong",
+    "https://www.familyofficehk.gov.hk/en/news/fstb-and-investhk-jointly-attract-over-200-family-offices-to-hong-kong-and-achieve-early-completion-of-kpi/index.html",
+  ],
+]);
+
+const getExternalUrls = (value) => [...new Set(
+  [...(value || "").matchAll(/https?:\/\/[^\s"'<>]+/g)]
+    .map((match) => match[0].replace(/[),.;，。]+$/, ""))
+    .filter((url) => !url.startsWith(BASE_URL))
+)];
+
+const hasSourceNote = (value) =>
+  /(資料來源|资料来源|來源網址|来源网址|官方來源|官方来源|Official Sources|Source(?: URL| Platform)?:)/i.test(value || "")
+  || /<a\b[^>]*href=["']https?:\/\//i.test(value || "");
+
+const dedupeUrlsByHost = (urls) => {
+  const byHost = new Map();
+  for (const url of urls) {
+    try {
+      const host = new URL(url).hostname.replace(/^www\./, "");
+      if (!byHost.has(host)) byHost.set(host, url);
+    } catch {
+      // Ignore malformed source URLs from CMS copy.
+    }
+  }
+  return [...byHost.entries()].map(([host, url]) => ({ host, url }));
+};
+
+const addSingleSourceNoteWhenMissing = (article) => {
+  if (article.category !== "education_research") return article;
+  const urls = getExternalUrls(CONTENT_FIELDS.map((field) => article[field] || "").join(" "));
+  const authoritativeSource = AUTHORITATIVE_SOURCE_BY_SLUG.get(normalizeSlug(article.slug));
+  if (authoritativeSource) urls.push(authoritativeSource);
+  const sources = dedupeUrlsByHost(urls);
+  if (sources.length === 0) return article;
+
+  const enriched = { ...article };
+  for (const field of CONTENT_FIELDS) {
+    if (!enriched[field] || hasSourceNote(enriched[field])) continue;
+    const links = sources
+      .map(({ host, url }) => `<a href="${url}" target="_blank" rel="noopener noreferrer">${host}</a>`)
+      .join(", ");
+    enriched[field] += `<p>${SOURCE_LABELS[field]}: ${links}</p>`;
+  }
+  return enriched;
+};
+
 const isIndexable = (article, language) =>
   stripHtml(getLocalizedValue(article, "title", language)).length > 0
   && stripHtml(getLocalizedValue(article, "content", language)).length >= 80;
@@ -86,16 +144,23 @@ ${alternateLinks}
 };
 
 async function generateSitemap() {
-  const { data: articles, error } = await supabase
+  const { data: remoteArticles, error } = await supabase
     .from("articles")
     .select("*")
     .eq("published", true)
     .order("published_at", { ascending: false, nullsFirst: false });
 
+  let cmsArticles = remoteArticles || [];
   if (error) {
-    console.error(`Failed to fetch articles: ${error.message}`);
-    process.exit(1);
+    if (!existsSync(SNAPSHOT_PATH)) {
+      console.error(`Failed to fetch articles and no local snapshot is available: ${error.message}`);
+      process.exit(1);
+    }
+    console.warn(`Supabase fetch failed; using the committed article snapshot: ${error.message}`);
+    cmsArticles = JSON.parse(readFileSync(SNAPSHOT_PATH, "utf8")).filter((article) => !article.static_content);
   }
+
+  const articles = cmsArticles.map(addSingleSourceNoteWhenMissing);
 
   const urls = [];
   for (const path of STATIC_PATHS) {
@@ -106,20 +171,21 @@ async function generateSitemap() {
     for (const alternate of alternates) {
       urls.push({
         loc: alternate.loc,
-        lastmod: STATIC_LAST_MODIFIED,
+        lastmod: STATIC_LAST_MODIFIED_BY_PATH.get(path) || STATIC_LAST_MODIFIED,
         alternates,
       });
     }
   }
 
   const routeManifest = [];
-  for (const article of articles || []) {
+  for (const article of articles) {
     const slug = normalizeSlug(article.slug);
+    const categoryPath = getCategoryPath(article.category);
     const availableLanguages = LANGUAGES.filter((language) => isIndexable(article, language));
     if (availableLanguages.length === 0) continue;
     const alternates = availableLanguages.map((language) => ({
       language,
-      loc: `/${language}/articles/${article.category}/${slug}`,
+      loc: `/${language}/articles/${categoryPath}/${slug}`,
     }));
     const lastmod = (article.updated_at || article.published_at || article.created_at).split("T")[0];
     for (const alternate of alternates) {
@@ -145,7 +211,7 @@ ${urls.map(renderUrl).join("\n")}
   writeFileSync(resolve(publicPath, "sitemap.xml"), xml);
   writeFileSync(
     resolve(publicPath, "published-articles.json"),
-    `${JSON.stringify(articles || [])}\n`
+    `${JSON.stringify(articles)}\n`
   );
   writeFileSync(
     resolve(generatedPath, "article-routes.json"),
