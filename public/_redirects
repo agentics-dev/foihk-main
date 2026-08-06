@@ -271,4 +271,5 @@ https://foihk.org/*  https://www.foihk.org/:splat  301!
 /zh-hk/articles/news_events  /zh-hk/articles/news-events  301!
 /zh-cn/articles/news_events  /zh-cn/articles/news-events  301!
 /admin  /index.html  200
+/admin-login  /index.html  200
 /admin/*  /index.html  200

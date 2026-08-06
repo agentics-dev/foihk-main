@@ -1370,11 +1370,42 @@
       "destination": "/index.html"
     },
     {
+      "source": "/admin-login",
+      "destination": "/index.html"
+    },
+    {
       "source": "/admin/:path*",
       "destination": "/index.html"
     }
   ],
   "headers": [
+    {
+      "source": "/admin-login",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, max-age=0"
+        }
+      ]
+    },
+    {
+      "source": "/admin",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, max-age=0"
+        }
+      ]
+    },
+    {
+      "source": "/admin/:path*",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, max-age=0"
+        }
+      ]
+    },
     {
       "source": "/(.*)",
       "headers": [

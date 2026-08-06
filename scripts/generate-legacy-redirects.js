@@ -142,6 +142,7 @@ const securityHeaders = [
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "X-Frame-Options", value: "DENY" },
 ];
+const noStoreHeaders = [{ key: "Cache-Control", value: "no-store, max-age=0" }];
 
 const vercelConfig = {
   cleanUrls: true,
@@ -149,19 +150,23 @@ const vercelConfig = {
   redirects,
   rewrites: [
     { source: "/admin", destination: "/index.html" },
+    { source: "/admin-login", destination: "/index.html" },
     { source: "/admin/:path*", destination: "/index.html" },
   ],
   headers: [
+    { source: "/admin-login", headers: noStoreHeaders },
+    { source: "/admin", headers: noStoreHeaders },
+    { source: "/admin/:path*", headers: noStoreHeaders },
     { source: "/(.*)", headers: securityHeaders },
     { source: "/assets/:path*", headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }] },
   ],
 };
 
 writeFileSync(resolve("vercel.json"), `${JSON.stringify(vercelConfig, null, 2)}\n`);
-netlifyRedirects.push("/admin  /index.html  200", "/admin/*  /index.html  200");
+netlifyRedirects.push("/admin  /index.html  200", "/admin-login  /index.html  200", "/admin/*  /index.html  200");
 writeFileSync(resolve("public", "_redirects"), `${netlifyRedirects.join("\n")}\n`);
 writeFileSync(
   resolve("public", "_headers"),
-  `/*\n${securityHeaders.map(({ key, value }) => `  ${key}: ${value}`).join("\n")}\n\n/assets/*\n  Cache-Control: public, max-age=31536000, immutable\n`
+  `/*\n${securityHeaders.map(({ key, value }) => `  ${key}: ${value}`).join("\n")}\n\n/admin-login\n  Cache-Control: no-store, max-age=0\n\n/admin\n  Cache-Control: no-store, max-age=0\n\n/admin/*\n  Cache-Control: no-store, max-age=0\n\n/assets/*\n  Cache-Control: public, max-age=31536000, immutable\n`
 );
 console.log(`Generated ${redirects.length} permanent redirects`);
