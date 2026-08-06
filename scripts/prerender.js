@@ -25,6 +25,7 @@ const sitemapRoutes = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)]
   .map((match) => new URL(match[1]).pathname);
 const routeFilter = process.env.PRERENDER_ROUTE;
 const routes = routeFilter ? sitemapRoutes.filter((route) => route === routeFilter) : sitemapRoutes;
+const adminSpaRoutes = ["/admin", "/admin-login", "/admin/dashboard"];
 
 const server = createServer((request, response) => {
   const pathname = decodeURIComponent(new URL(request.url || "/", "http://localhost").pathname);
@@ -148,6 +149,15 @@ server.close();
 if (failures.length > 0) {
   console.error(`\nPrerender failed for ${failures.length} route(s):\n${failures.join("\n")}`);
   process.exit(1);
+}
+
+if (!routeFilter) {
+  const appShell = readFileSync(join(DIST, "index.html"), "utf8");
+  adminSpaRoutes.forEach((route) => {
+    const outputDir = join(DIST, route.replace(/^\/+/, ""));
+    mkdirSync(outputDir, { recursive: true });
+    writeFileSync(join(outputDir, "index.html"), appShell);
+  });
 }
 
 console.log(`\nPrerendered ${routes.length} routes from ${BASE_URL}/sitemap.xml`);
