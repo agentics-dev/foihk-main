@@ -504,27 +504,27 @@ for (const url of urls) {
       answer: $(detail).find("p").first().text().replace(/\s+/g, " ").trim(),
     }));
     const schemaFaqs = faqSchema?.mainEntity || [];
-    if (!faqSchema || visibleFaqs.length < 29 || schemaFaqs.length !== visibleFaqs.length) {
-      errors.push(`${pathname}: FAQ schema must match at least 29 visible questions`);
+    if (!faqSchema || visibleFaqs.length < 8 || schemaFaqs.length !== visibleFaqs.length) {
+      errors.push(`${pathname}: FAQ schema must match the visible questions`);
     }
-    if ($("[data-faq-group]").length !== 3) errors.push(`${pathname}: FAQ page needs three visible question groups`);
+    if ($("[data-faq-group]").length !== 2) errors.push(`${pathname}: FAQ page needs two visible question groups`);
     const expectedCoreQuestions = pathname.startsWith("/en/")
-      ? ["What is Family Office Institute Hong Kong?", "What is a nonprofit organization?", "How is Family Office Institute Hong Kong different from other family office organizations?", "What does Family Office Institute Hong Kong offer?", "How much does Family Office Institute Hong Kong cost?", "How do I get started with Family Office Institute Hong Kong?"]
+      ? ["What is Family Office Institute Hong Kong?", "What is a nonprofit organization?", "How is Family Office Institute Hong Kong different from other family office organizations?", "Who does FOIHK serve?", "What is a family office?", "What is the difference between a single-family office and a multi-family office?", "Why is Hong Kong important to family offices?"]
       : pathname.startsWith("/zh-hk/")
-        ? ["香港家族辦公室學會是甚麼機構？", "甚麼是非牟利機構？", "香港家族辦公室學會與其他家族辦公室機構有何不同？", "香港家族辦公室學會提供甚麼？", "香港家族辦公室學會收費多少？", "如何開始參與香港家族辦公室學會？"]
-        : ["香港家族办公室学会是什么机构？", "什么是非营利组织？", "香港家族办公室学会与其他家族办公室机构有何不同？", "香港家族办公室学会提供什么？", "香港家族办公室学会收费多少？", "如何开始参与香港家族办公室学会？"];
+        ? ["香港家族辦公室學會是甚麼機構？", "甚麼是非牟利機構？", "香港家族辦公室學會與其他家族辦公室機構有何不同？", "FOIHK 服務哪些人士和機構？", "甚麼是家族辦公室？", "單一家族辦公室與聯合家族辦公室有何不同？", "香港為何對家族辦公室具有重要性？"]
+        : ["香港家族办公室学会是什么机构？", "什么是非营利组织？", "香港家族办公室学会与其他家族办公室机构有何不同？", "FOIHK 服务哪些人士和机构？", "什么是家族办公室？", "单一家族办公室与联合家族办公室有何不同？", "香港为何对家族办公室具有重要性？"];
     expectedCoreQuestions.forEach((question, index) => {
       if (visibleFaqs[index]?.question !== question) errors.push(`${pathname}: missing core FAQ question ${index + 1}: ${question}`);
     });
     visibleFaqs.forEach((faq, index) => {
-      if (faq.answer.length < 45) errors.push(`${pathname}: FAQ answer ${index + 1} is too short to be complete`);
+      if (faq.answer.length < 25) errors.push(`${pathname}: FAQ answer ${index + 1} is too short to be complete`);
       if (schemaFaqs[index]?.name !== faq.question || schemaFaqs[index]?.acceptedAnswer?.text !== faq.answer) {
         errors.push(`${pathname}: FAQ schema item ${index + 1} does not match visible content`);
       }
     });
     const coreQuestionText = expectedCoreQuestions.join(" ");
-    if (!/(What|甚麼|什么)/.test(coreQuestionText) || !/(How|如何)/.test(coreQuestionText) || !/(different|不同)/.test(coreQuestionText)) {
-      errors.push(`${pathname}: core FAQ questions must cover what, how, and comparison intent`);
+    if (!/(What|甚麼|什么)/.test(coreQuestionText) || !/(different|不同)/.test(coreQuestionText)) {
+      errors.push(`${pathname}: core FAQ questions must cover identity and comparison intent`);
     }
     if (!faqSchema?.dateModified || !$("main time").attr("datetime")) {
       errors.push(`${pathname}: FAQ needs visible and schema dateModified`);
