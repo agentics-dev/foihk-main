@@ -140,8 +140,44 @@ All colors MUST be HSL.
     line-height: 1.7;
   }
 
+  .foihk-size-12 {
+    font-size: 0.75rem;
+  }
+
+  .foihk-size-14 {
+    font-size: 0.875rem;
+  }
+
+  .foihk-size-16 {
+    font-size: 1rem;
+  }
+
+  .foihk-size-18 {
+    font-size: 1.125rem;
+  }
+
+  .foihk-size-20 {
+    font-size: 1.25rem;
+  }
+
+  .foihk-size-24 {
+    font-size: 1.5rem;
+  }
+
+  .foihk-size-28 {
+    font-size: 1.75rem;
+  }
+
+  .foihk-size-32 {
+    font-size: 2rem;
+  }
+
   .foihk-font-sans {
     font-family: Arial, Helvetica, sans-serif;
+  }
+
+  .foihk-font-song {
+    font-family: "Songti SC", "Songti TC", "SimSun", "PMingLiU", "MingLiU", serif;
   }
 
   .foihk-font-serif {
@@ -162,6 +198,22 @@ All colors MUST be HSL.
 
   .foihk-align-right {
     text-align: right;
+  }
+
+  .foihk-leading-tight {
+    line-height: 1.45;
+  }
+
+  .foihk-leading-normal {
+    line-height: 1.75;
+  }
+
+  .foihk-leading-loose {
+    line-height: 2.05;
+  }
+
+  .foihk-paragraph-note {
+    @apply rounded-md border-l-4 border-accent bg-secondary/30 px-4 py-3 text-sm text-muted-foreground;
   }
 
   .foihk-admin-editor {

@@ -14,6 +14,7 @@ import {
   AlignLeft,
   AlignRight,
   Bold,
+  Eraser,
   Italic,
   Link as LinkIcon,
   List,
@@ -44,6 +45,14 @@ interface RichTextEditorProps {
 }
 
 const FONT_SIZE_CLASS_BY_SIZE = {
+  "12": "foihk-size-12",
+  "14": "foihk-size-14",
+  "16": "foihk-size-16",
+  "18": "foihk-size-18",
+  "20": "foihk-size-20",
+  "24": "foihk-size-24",
+  "28": "foihk-size-28",
+  "32": "foihk-size-32",
   sm: "foihk-text-sm",
   lg: "foihk-text-lg",
   xl: "foihk-text-xl",
@@ -51,8 +60,15 @@ const FONT_SIZE_CLASS_BY_SIZE = {
 
 const FONT_FAMILY_CLASS_BY_FAMILY = {
   sans: "foihk-font-sans",
+  song: "foihk-font-song",
   serif: "foihk-font-serif",
   mono: "foihk-font-mono",
+} as const;
+
+const LEADING_CLASS_BY_LEADING = {
+  tight: "foihk-leading-tight",
+  normal: "foihk-leading-normal",
+  loose: "foihk-leading-loose",
 } as const;
 
 const ALIGN_CLASS_BY_ALIGN = {
@@ -61,10 +77,15 @@ const ALIGN_CLASS_BY_ALIGN = {
   right: "foihk-align-right",
 } as const;
 
+const PARAGRAPH_CLASS_BY_VARIANT = {
+  note: "foihk-paragraph-note",
+} as const;
+
 type FontSizeValue = keyof typeof FONT_SIZE_CLASS_BY_SIZE;
 type FontFamilyValue = keyof typeof FONT_FAMILY_CLASS_BY_FAMILY;
+type LineHeightValue = keyof typeof LEADING_CLASS_BY_LEADING;
 type TextAlignValue = keyof typeof ALIGN_CLASS_BY_ALIGN;
-type ParagraphStyleValue = "paragraph" | "heading2" | "heading3";
+type ParagraphStyleValue = "paragraph" | "heading2" | "heading3" | "quote" | "note";
 
 const FontSize = Mark.create({
   name: "fontSize",
@@ -74,9 +95,9 @@ const FontSize = Mark.create({
       size: {
         default: null,
         parseHTML: (element) => {
-          if (element.classList.contains(FONT_SIZE_CLASS_BY_SIZE.sm)) return "sm";
-          if (element.classList.contains(FONT_SIZE_CLASS_BY_SIZE.lg)) return "lg";
-          if (element.classList.contains(FONT_SIZE_CLASS_BY_SIZE.xl)) return "xl";
+          for (const [size, className] of Object.entries(FONT_SIZE_CLASS_BY_SIZE)) {
+            if (element.classList.contains(className)) return size;
+          }
           return null;
         },
         renderHTML: (attributes) => {
@@ -89,11 +110,7 @@ const FontSize = Mark.create({
   },
 
   parseHTML() {
-    return [
-      { tag: `span.${FONT_SIZE_CLASS_BY_SIZE.sm}` },
-      { tag: `span.${FONT_SIZE_CLASS_BY_SIZE.lg}` },
-      { tag: `span.${FONT_SIZE_CLASS_BY_SIZE.xl}` },
-    ];
+    return Object.values(FONT_SIZE_CLASS_BY_SIZE).map((className) => ({ tag: `span.${className}` }));
   },
 
   renderHTML({ HTMLAttributes }) {
@@ -110,6 +127,7 @@ const FontFamily = Mark.create({
         default: null,
         parseHTML: (element) => {
           if (element.classList.contains(FONT_FAMILY_CLASS_BY_FAMILY.sans)) return "sans";
+          if (element.classList.contains(FONT_FAMILY_CLASS_BY_FAMILY.song)) return "song";
           if (element.classList.contains(FONT_FAMILY_CLASS_BY_FAMILY.serif)) return "serif";
           if (element.classList.contains(FONT_FAMILY_CLASS_BY_FAMILY.mono)) return "mono";
           return null;
@@ -124,11 +142,7 @@ const FontFamily = Mark.create({
   },
 
   parseHTML() {
-    return [
-      { tag: `span.${FONT_FAMILY_CLASS_BY_FAMILY.sans}` },
-      { tag: `span.${FONT_FAMILY_CLASS_BY_FAMILY.serif}` },
-      { tag: `span.${FONT_FAMILY_CLASS_BY_FAMILY.mono}` },
-    ];
+    return Object.values(FONT_FAMILY_CLASS_BY_FAMILY).map((className) => ({ tag: `span.${className}` }));
   },
 
   renderHTML({ HTMLAttributes }) {
@@ -164,6 +178,56 @@ const TextAlignment = Extension.create({
   },
 });
 
+const LineHeight = Extension.create({
+  name: "lineHeight",
+
+  addGlobalAttributes() {
+    return [
+      {
+        types: ["paragraph", "heading", "blockquote", "listItem"],
+        attributes: {
+          leading: {
+            default: null,
+            parseHTML: (element) => {
+              if (element.classList.contains(LEADING_CLASS_BY_LEADING.tight)) return "tight";
+              if (element.classList.contains(LEADING_CLASS_BY_LEADING.normal)) return "normal";
+              if (element.classList.contains(LEADING_CLASS_BY_LEADING.loose)) return "loose";
+              return null;
+            },
+            renderHTML: (attributes) => {
+              const leading = attributes.leading as LineHeightValue | null;
+              if (!leading || !LEADING_CLASS_BY_LEADING[leading]) return {};
+              return { class: LEADING_CLASS_BY_LEADING[leading] };
+            },
+          },
+        },
+      },
+    ];
+  },
+});
+
+const ParagraphVariant = Extension.create({
+  name: "paragraphVariant",
+
+  addGlobalAttributes() {
+    return [
+      {
+        types: ["paragraph"],
+        attributes: {
+          variant: {
+            default: null,
+            parseHTML: (element) => (element.classList.contains(PARAGRAPH_CLASS_BY_VARIANT.note) ? "note" : null),
+            renderHTML: (attributes) => {
+              if (attributes.variant !== "note") return {};
+              return { class: PARAGRAPH_CLASS_BY_VARIANT.note };
+            },
+          },
+        },
+      },
+    ];
+  },
+});
+
 export const RichTextEditor = ({ id, value, onChange, placeholder, required }: RichTextEditorProps) => {
   const editor = useEditor({
     extensions: [
@@ -172,6 +236,8 @@ export const RichTextEditor = ({ id, value, onChange, placeholder, required }: R
       FontSize,
       FontFamily,
       TextAlignment,
+      LineHeight,
+      ParagraphVariant,
       Link.configure({
         autolink: false,
         openOnClick: false,
@@ -228,9 +294,18 @@ export const RichTextEditor = ({ id, value, onChange, placeholder, required }: R
     ? "heading2"
     : editor?.isActive("heading", { level: 3 })
       ? "heading3"
-      : "paragraph";
+      : editor?.isActive("blockquote")
+        ? "quote"
+        : editor?.getAttributes("paragraph").variant === "note"
+          ? "note"
+          : "paragraph";
   const fontFamily = (editor?.getAttributes("fontFamily").family as FontFamilyValue | undefined) || "default";
-  const fontSize = (editor?.getAttributes("fontSize").size as FontSizeValue | undefined) || "default";
+  const fontSize = (editor?.getAttributes("fontSize").size as FontSizeValue | undefined) || "16";
+  const lineHeight = (editor?.getAttributes("paragraph").leading as LineHeightValue | undefined)
+    || (editor?.getAttributes("heading").leading as LineHeightValue | undefined)
+    || (editor?.getAttributes("blockquote").leading as LineHeightValue | undefined)
+    || (editor?.getAttributes("listItem").leading as LineHeightValue | undefined)
+    || "normal";
   const textAlign = (editor?.getAttributes("heading").align as TextAlignValue | undefined)
     || (editor?.getAttributes("paragraph").align as TextAlignValue | undefined)
     || "left";
@@ -238,14 +313,24 @@ export const RichTextEditor = ({ id, value, onChange, placeholder, required }: R
   const setParagraphStyle = (style: ParagraphStyleValue) => {
     if (!editor) return;
     if (style === "heading2") {
-      editor.chain().focus().toggleHeading({ level: 2 }).run();
+      editor.chain().focus().toggleHeading({ level: 2 }).updateAttributes("paragraph", { variant: null }).run();
       return;
     }
     if (style === "heading3") {
-      editor.chain().focus().toggleHeading({ level: 3 }).run();
+      editor.chain().focus().toggleHeading({ level: 3 }).updateAttributes("paragraph", { variant: null }).run();
       return;
     }
-    editor.chain().focus().setParagraph().run();
+    if (style === "quote") {
+      editor.chain().focus().setParagraph().updateAttributes("paragraph", { variant: null }).toggleBlockquote().run();
+      return;
+    }
+    if (style === "note") {
+      if (editor.isActive("blockquote")) editor.chain().focus().toggleBlockquote().run();
+      editor.chain().focus().setParagraph().updateAttributes("paragraph", { variant: "note" }).run();
+      return;
+    }
+    if (editor.isActive("blockquote")) editor.chain().focus().toggleBlockquote().run();
+    editor.chain().focus().setParagraph().updateAttributes("paragraph", { variant: null }).run();
   };
 
   const setFontFamily = (family: FontFamilyValue | "default") => {
@@ -266,9 +351,35 @@ export const RichTextEditor = ({ id, value, onChange, placeholder, required }: R
     editor.chain().focus().setMark("fontSize", { size }).run();
   };
 
+  const setLineHeight = (leading: LineHeightValue) => {
+    if (!editor) return;
+    editor
+      .chain()
+      .focus()
+      .updateAttributes("paragraph", { leading })
+      .updateAttributes("heading", { leading })
+      .updateAttributes("blockquote", { leading })
+      .updateAttributes("listItem", { leading })
+      .run();
+  };
+
   const setTextAlign = (align: TextAlignValue) => {
     if (!editor) return;
     editor.chain().focus().updateAttributes("paragraph", { align }).updateAttributes("heading", { align }).run();
+  };
+
+  const clearAllFormatting = () => {
+    if (!editor) return;
+    editor
+      .chain()
+      .focus()
+      .clearNodes()
+      .unsetAllMarks()
+      .updateAttributes("paragraph", { align: null, leading: null, variant: null })
+      .updateAttributes("heading", { align: null, leading: null })
+      .updateAttributes("blockquote", { leading: null })
+      .updateAttributes("listItem", { leading: null })
+      .run();
   };
 
   return (
@@ -281,8 +392,10 @@ export const RichTextEditor = ({ id, value, onChange, placeholder, required }: R
             onValueChange={(nextValue) => setParagraphStyle(nextValue as ParagraphStyleValue)}
             items={[
               { value: "paragraph", label: "正文" },
-              { value: "heading2", label: "标题 2" },
-              { value: "heading3", label: "标题 3" },
+              { value: "heading2", label: "小标题 H2" },
+              { value: "heading3", label: "小标题 H3" },
+              { value: "quote", label: "引言" },
+              { value: "note", label: "注释" },
             ]}
           />
           <ToolbarSelect
@@ -290,10 +403,11 @@ export const RichTextEditor = ({ id, value, onChange, placeholder, required }: R
             value={fontFamily}
             onValueChange={(nextValue) => setFontFamily(nextValue as FontFamilyValue | "default")}
             items={[
-              { value: "default", label: "默认字体" },
-              { value: "sans", label: "无衬线" },
-              { value: "serif", label: "衬线" },
-              { value: "mono", label: "等宽" },
+              { value: "default", label: "默认品牌字体" },
+              { value: "sans", label: "现代无衬线" },
+              { value: "song", label: "中文宋体 / 明体" },
+              { value: "serif", label: "英文衬线" },
+              { value: "mono", label: "等宽字体" },
             ]}
           />
           <ToolbarSelect
@@ -301,30 +415,44 @@ export const RichTextEditor = ({ id, value, onChange, placeholder, required }: R
             value={fontSize}
             onValueChange={(nextValue) => setFontSize(nextValue as FontSizeValue | "default")}
             items={[
-              { value: "sm", label: "小" },
-              { value: "default", label: "正文" },
-              { value: "lg", label: "大" },
-              { value: "xl", label: "特大" },
+              { value: "12", label: "12" },
+              { value: "14", label: "14" },
+              { value: "16", label: "16 正文" },
+              { value: "18", label: "18" },
+              { value: "20", label: "20" },
+              { value: "24", label: "24" },
+              { value: "28", label: "28" },
+              { value: "32", label: "32" },
+            ]}
+          />
+          <ToolbarSelect
+            label="行高"
+            value={lineHeight}
+            onValueChange={(nextValue) => setLineHeight(nextValue as LineHeightValue)}
+            items={[
+              { value: "tight", label: "紧凑" },
+              { value: "normal", label: "标准" },
+              { value: "loose", label: "宽松" },
             ]}
           />
           <Divider />
-          <ToolbarButton label="Bold" active={editor?.isActive("bold")} onClick={() => editor?.chain().focus().toggleBold().run()}>
+          <ToolbarButton label="粗体" active={editor?.isActive("bold")} onClick={() => editor?.chain().focus().toggleBold().run()}>
             <Bold className="h-4 w-4" />
           </ToolbarButton>
-          <ToolbarButton label="Italic" active={editor?.isActive("italic")} onClick={() => editor?.chain().focus().toggleItalic().run()}>
+          <ToolbarButton label="斜体" active={editor?.isActive("italic")} onClick={() => editor?.chain().focus().toggleItalic().run()}>
             <Italic className="h-4 w-4" />
           </ToolbarButton>
-          <ToolbarButton label="Underline" active={editor?.isActive("underline")} onClick={() => editor?.chain().focus().toggleUnderline().run()}>
+          <ToolbarButton label="下划线" active={editor?.isActive("underline")} onClick={() => editor?.chain().focus().toggleUnderline().run()}>
             <UnderlineIcon className="h-4 w-4" />
           </ToolbarButton>
           <Divider />
-          <ToolbarButton label="Bullet list" active={editor?.isActive("bulletList")} onClick={() => editor?.chain().focus().toggleBulletList().run()}>
+          <ToolbarButton label="项目列表" active={editor?.isActive("bulletList")} onClick={() => editor?.chain().focus().toggleBulletList().run()}>
             <List className="h-4 w-4" />
           </ToolbarButton>
-          <ToolbarButton label="Numbered list" active={editor?.isActive("orderedList")} onClick={() => editor?.chain().focus().toggleOrderedList().run()}>
+          <ToolbarButton label="编号列表" active={editor?.isActive("orderedList")} onClick={() => editor?.chain().focus().toggleOrderedList().run()}>
             <ListOrdered className="h-4 w-4" />
           </ToolbarButton>
-          <ToolbarButton label="Quote" active={editor?.isActive("blockquote")} onClick={() => editor?.chain().focus().toggleBlockquote().run()}>
+          <ToolbarButton label="引言" active={editor?.isActive("blockquote")} onClick={() => editor?.chain().focus().toggleBlockquote().run()}>
             <Quote className="h-4 w-4" />
           </ToolbarButton>
           <Divider />
@@ -338,13 +466,19 @@ export const RichTextEditor = ({ id, value, onChange, placeholder, required }: R
             <AlignRight className="h-4 w-4" />
           </ToolbarButton>
           <Divider />
-          <ToolbarButton label="Set link" active={editor?.isActive("link")} onClick={setLink}>
+          <ToolbarButton label="设置链接" active={editor?.isActive("link")} onClick={setLink}>
             <LinkIcon className="h-4 w-4" />
           </ToolbarButton>
-          <ToolbarButton label="Remove link" onClick={() => editor?.chain().focus().unsetLink().run()}>
+          <ToolbarButton label="移除链接" onClick={() => editor?.chain().focus().unsetLink().run()}>
             <Unlink className="h-4 w-4" />
           </ToolbarButton>
-          <ToolbarButton label="Clear formatting" onClick={() => editor?.chain().focus().clearNodes().unsetAllMarks().run()}>
+          <ToolbarButton label="清除字体" onClick={() => editor?.chain().focus().unsetMark("fontFamily").run()}>
+            <Eraser className="h-4 w-4" />
+          </ToolbarButton>
+          <ToolbarButton label="清除字号" onClick={() => editor?.chain().focus().unsetMark("fontSize").run()}>
+            <span className="text-xs font-semibold">16</span>
+          </ToolbarButton>
+          <ToolbarButton label="清除全部格式" onClick={clearAllFormatting}>
             <RemoveFormatting className="h-4 w-4" />
           </ToolbarButton>
         </div>
@@ -378,7 +512,7 @@ const ToolbarSelect = ({
   <div className="flex items-center gap-1">
     <span className="text-xs font-medium text-muted-foreground">{label}</span>
     <Select value={value} onValueChange={onValueChange}>
-      <SelectTrigger className="h-8 w-[112px] px-2 text-xs" aria-label={label} title={label}>
+      <SelectTrigger className="h-8 w-[154px] px-2 text-xs" aria-label={label} title={label}>
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
