@@ -1,6 +1,16 @@
 import DOMPurify from "dompurify";
 
-const ALLOWED_FONT_CLASSES = new Set(["foihk-text-sm", "foihk-text-lg"]);
+const ALLOWED_FORMAT_CLASSES = new Set([
+  "foihk-align-center",
+  "foihk-align-left",
+  "foihk-align-right",
+  "foihk-font-mono",
+  "foihk-font-sans",
+  "foihk-font-serif",
+  "foihk-text-lg",
+  "foihk-text-sm",
+  "foihk-text-xl",
+]);
 
 export const sanitizeArticleHtml = (content: string, imageAlt = "Article image") => {
   const sanitized = DOMPurify.sanitize(content, {
@@ -47,7 +57,7 @@ export const sanitizeArticleHtml = (content: string, imageAlt = "Article image")
   let previousHeadingLevel = 1;
 
   documentFragment.querySelectorAll("[class]").forEach((element) => {
-    const safeClasses = Array.from(element.classList).filter((className) => ALLOWED_FONT_CLASSES.has(className));
+    const safeClasses = Array.from(element.classList).filter((className) => ALLOWED_FORMAT_CLASSES.has(className));
     if (safeClasses.length > 0) {
       element.setAttribute("class", safeClasses.join(" "));
     } else {

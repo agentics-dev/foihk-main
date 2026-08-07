@@ -135,6 +135,35 @@ All colors MUST be HSL.
     line-height: 1.75;
   }
 
+  .foihk-text-xl {
+    font-size: 1.32em;
+    line-height: 1.7;
+  }
+
+  .foihk-font-sans {
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
+  .foihk-font-serif {
+    font-family: Georgia, "Times New Roman", serif;
+  }
+
+  .foihk-font-mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  }
+
+  .foihk-align-left {
+    text-align: left;
+  }
+
+  .foihk-align-center {
+    text-align: center;
+  }
+
+  .foihk-align-right {
+    text-align: right;
+  }
+
   .foihk-admin-editor {
     @apply text-base leading-7 text-foreground;
   }

@@ -57,7 +57,10 @@ for (const path of ["public/_headers", "vercel.json"]) {
 }
 
 requireIncludes("src/lib/articleHtml.ts", "isAllowedUrl", "articleHtml.ts: article links and images need URL protocol allowlist");
-requireIncludes("src/lib/articleHtml.ts", "ALLOWED_FONT_CLASSES", "articleHtml.ts: rich text class allowlist missing");
+requireIncludes("src/lib/articleHtml.ts", "ALLOWED_FORMAT_CLASSES", "articleHtml.ts: rich text class allowlist missing");
+for (const className of ["foihk-font-sans", "foihk-font-serif", "foihk-font-mono", "foihk-text-xl", "foihk-align-center"]) {
+  requireIncludes("src/lib/articleHtml.ts", className, `articleHtml.ts: rich text class allowlist missing ${className}`);
+}
 requireIncludes("src/components/ui/chart.tsx", "CSS_COLOR_PATTERN", "chart.tsx: chart CSS injection allowlist missing");
 
 if (errors.length) {
