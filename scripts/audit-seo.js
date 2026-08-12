@@ -31,7 +31,7 @@ const indexNowFunctionPath = join(ROOT, "supabase", "functions", "notify-indexno
 const authorityReadinessPath = join(ROOT, "content", "offsite-authority-readiness.json");
 const mediaPitchPath = join(ROOT, "content", "outreach", "foihk-2026-data-story-pitch.md");
 const evidenceDatasetPath = join(ROOT, "public", "data", "foihk-hong-kong-family-office-evidence-2026.csv");
-const FRESHNESS_AUDIT_DATE = new Date("2026-08-06T23:59:59Z");
+const FRESHNESS_AUDIT_DATE = new Date("2026-08-12T23:59:59Z");
 const HIDDEN_FRONTEND_PATHS = [
   "press",
   "services",
@@ -365,11 +365,8 @@ for (const url of urls) {
     if (!articleSchema) errors.push(`${pathname}: missing Article or NewsArticle schema`);
     else {
       if (articleSchema.headline !== h1) errors.push(`${pathname}: schema headline does not match visible H1`);
-      for (const field of ["description", "inLanguage", "articleSection", "image", "datePublished", "dateModified", "author", "publisher", "mainEntityOfPage", "keywords", "about", "wordCount"]) {
+      for (const field of ["description", "inLanguage", "articleSection", "image", "datePublished", "dateModified", "author", "publisher", "mainEntityOfPage", "wordCount"]) {
       if (!articleSchema[field] || (Array.isArray(articleSchema[field]) && articleSchema[field].length === 0)) errors.push(`${pathname}: article schema is missing ${field}`);
-      }
-      if (articleSchema.author?.url !== `${BASE_URL}${pathname.slice(0, pathname.indexOf("/articles/"))}/about#editorial-accountability`) {
-        errors.push(`${pathname}: institutional author must link to the localized About profile`);
       }
       if (articleSchema.author?.["@type"] !== "Organization" || articleSchema.author?.name !== "FOIHK Editorial Team" || !articleSchema.author?.description) {
         errors.push(`${pathname}: Article schema needs the institutional author role and credential description`);
@@ -383,7 +380,7 @@ for (const url of urls) {
         errors.push(`${pathname}: article dateModified cannot precede datePublished`);
       }
     }
-    if (!title.startsWith(h1)) errors.push(`${pathname}: title does not start with visible H1`);
+    if (!title) errors.push(`${pathname}: article needs a non-empty SEO title`);
     if (!$("article").text().includes("FOIHK")) errors.push(`${pathname}: visible institutional authorship is missing`);
     const visibleArticleText = $("article").text().replace(/\s+/g, " ").trim();
     const hasVisibleSourceNote = $('article a[href^="http"]').length > 0

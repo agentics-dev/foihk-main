@@ -110,6 +110,22 @@ for (let index = 0; index < routes.length; index += 1) {
         { timeout: 15_000 },
         `${BASE_URL}${route}`
       );
+      if (/\/articles\/(?:education-research|news-events|philanthropy)\/.+/.test(route)) {
+        await page.waitForFunction(
+          () => {
+            if (document.title.startsWith("Loading...")) return false;
+            return [...document.querySelectorAll('script[type="application/ld+json"]')].some((script) => {
+              try {
+                const value = JSON.parse(script.textContent || "{}");
+                return value["@type"] === "Article" || value["@type"] === "NewsArticle";
+              } catch {
+                return false;
+              }
+            });
+          },
+          { timeout: 30_000 }
+        );
+      }
       if (/\/articles\/(?:education-research|news-events|philanthropy)$/.test(route)) {
         await page.waitForSelector('main[data-content-ready="true"]', { timeout: 30_000 });
       }

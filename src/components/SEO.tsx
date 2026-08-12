@@ -20,6 +20,7 @@ const SITE_NAME = "Family Office Institute Hong Kong";
 const BASE_URL = "https://www.foihk.org";
 const DEFAULT_OG_IMAGE = `${BASE_URL}/og-image.png`;
 const LANGUAGES: Language[] = ["en", "zh-hk", "zh-cn"];
+const serializeStructuredData = (value: StructuredData) => JSON.stringify(value).replace(/</g, "\\u003c");
 
 export const SEO = ({
   title,
@@ -120,8 +121,8 @@ export const SEO = ({
       <meta name="twitter:image" content={ogImage} />
 
       {structuredDataItems.map((item, index) => (
-        <script key={`structured-data-${index}-${JSON.stringify(item)}`} type="application/ld+json">
-          {JSON.stringify(item)}
+        <script key={`structured-data-${index}-${item["@id"] || item["@type"] || index}`} type="application/ld+json">
+          {serializeStructuredData(item)}
         </script>
       ))}
 

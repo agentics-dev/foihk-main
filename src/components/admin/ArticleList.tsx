@@ -83,11 +83,13 @@ export const ArticleList = ({ category, onEdit }: ArticleListProps) => {
   };
 
   const togglePublished = async (article: ArticleRow) => {
+    const publishedAt = !article.published ? new Date().toISOString() : null;
     const { error } = await supabase
       .from("articles")
       .update({ 
         published: !article.published,
-        published_at: !article.published ? new Date().toISOString() : null
+        published_at: publishedAt,
+        public_updated_at: !article.published ? article.public_updated_at || publishedAt : article.public_updated_at,
       })
       .eq("id", article.id);
 

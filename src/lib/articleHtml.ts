@@ -23,6 +23,9 @@ const ALLOWED_FORMAT_CLASSES = new Set([
   "foihk-text-lg",
   "foihk-text-sm",
   "foihk-text-xl",
+  "foihk-spacer-1",
+  "foihk-spacer-2",
+  "foihk-spacer-section",
 ]);
 
 export const sanitizeArticleHtml = (content: string, imageAlt = "Article image") => {
@@ -34,6 +37,7 @@ export const sanitizeArticleHtml = (content: string, imageAlt = "Article image")
       "em",
       "u",
       "span",
+      "div",
       "h2",
       "h3",
       "h4",
@@ -76,6 +80,16 @@ export const sanitizeArticleHtml = (content: string, imageAlt = "Article image")
     } else {
       element.removeAttribute("class");
     }
+  });
+
+  documentFragment.querySelectorAll("div").forEach((element) => {
+    const hasSpacerClass = ["foihk-spacer-1", "foihk-spacer-2", "foihk-spacer-section"]
+      .some((className) => element.classList.contains(className));
+    if (hasSpacerClass) {
+      element.textContent = "";
+      return;
+    }
+    element.replaceWith(...Array.from(element.childNodes));
   });
 
   documentFragment.querySelectorAll("h2, h3, h4, h5, h6").forEach((heading) => {

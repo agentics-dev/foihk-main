@@ -8,9 +8,18 @@ export type PublishedArticle = Tables<"articles"> & { static_content?: boolean }
 export const getPublishedDate = (article: Pick<PublishedArticle, "published_at" | "created_at">) =>
   article.published_at || article.created_at;
 
-export const getModifiedDate = (article: Pick<PublishedArticle, "published_at" | "updated_at" | "created_at">) => {
+export const getPublicUpdatedCandidate = (
+  article: Pick<PublishedArticle, "published_at" | "public_updated_at" | "updated_at" | "created_at">,
+) => {
+  if (Object.prototype.hasOwnProperty.call(article, "public_updated_at")) {
+    return article.public_updated_at;
+  }
+  return article.updated_at;
+};
+
+export const getModifiedDate = (article: Pick<PublishedArticle, "published_at" | "public_updated_at" | "updated_at" | "created_at">) => {
   const published = getPublishedDate(article);
-  const updated = article.updated_at || published;
+  const updated = getPublicUpdatedCandidate(article) || published;
   return new Date(updated).getTime() >= new Date(published).getTime() ? updated : published;
 };
 

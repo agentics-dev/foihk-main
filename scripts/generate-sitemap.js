@@ -78,6 +78,10 @@ const AUTHORITATIVE_SOURCE_BY_SLUG = new Map([
     "over-200-family-offices-hong-kong",
     "https://www.familyofficehk.gov.hk/en/news/fstb-and-investhk-jointly-attract-over-200-family-offices-to-hong-kong-and-achieve-early-completion-of-kpi/index.html",
   ],
+  [
+    "new-individual-income-tax-rules-for-offshore-trusts-take-effect-tax-transparency-and-mandatory-compliance-become-the-trend",
+    "https://kpmg.com/cn/en/insights/2026/07/china-tax-alert-05.html",
+  ],
 ]);
 
 const getExternalUrls = (value) => [...new Set(
@@ -122,6 +126,54 @@ const addSingleSourceNoteWhenMissing = (article) => {
   return enriched;
 };
 
+const normalizePublicUpdatedAt = (article) => ({
+  ...article,
+  public_updated_at: Object.prototype.hasOwnProperty.call(article, "public_updated_at")
+    ? article.public_updated_at
+    : article.updated_at || article.published_at || article.created_at,
+});
+
+const fetchOptionalRows = async (table, query) => {
+  const { data, error } = await query(supabase.from(table).select("*"));
+  if (!error) return data || [];
+  if (error.code === "42P01" || error.code === "PGRST205") {
+    console.warn(`${table} is not available yet; continuing without its generated data`);
+    return [];
+  }
+  throw new Error(`Failed to fetch ${table}: ${error.message}`);
+};
+
+const attachSeoRelations = (articles, faqRows, slugHistoryRows) => {
+  const faqByArticle = new Map();
+  for (const item of faqRows) {
+    const current = faqByArticle.get(item.article_id) || [];
+    current.push(item);
+    faqByArticle.set(item.article_id, current);
+  }
+  const historyByArticle = new Map();
+  for (const item of slugHistoryRows) {
+    const current = historyByArticle.get(item.article_id) || [];
+    current.push({ slug: item.old_slug, category: item.category });
+    historyByArticle.set(item.article_id, current);
+  }
+
+  return articles.map((article) => {
+    const items = faqByArticle.get(article.id) || [];
+    const getFaq = (questionField, answerField) => items.flatMap((item) => {
+      const question = item[questionField]?.trim();
+      const answer = item[answerField]?.trim();
+      return question && answer ? [{ question, answer }] : [];
+    });
+    return {
+      ...article,
+      faq: getFaq("question", "answer"),
+      faq_zhtw: getFaq("question_zhtw", "answer_zhtw"),
+      faq_zhcn: getFaq("question_zhcn", "answer_zhcn"),
+      previous_slugs: historyByArticle.get(article.id) || [],
+    };
+  });
+};
+
 const isIndexable = (article, language) =>
   stripHtml(getLocalizedValue(article, "title", language)).length > 0
   && stripHtml(getLocalizedValue(article, "content", language)).length >= 80;
@@ -160,7 +212,18 @@ async function generateSitemap() {
     cmsArticles = JSON.parse(readFileSync(SNAPSHOT_PATH, "utf8")).filter((article) => !article.static_content);
   }
 
-  const articles = cmsArticles.map(addSingleSourceNoteWhenMissing);
+  let articles;
+  if (error) {
+    articles = cmsArticles.map(normalizePublicUpdatedAt).map(addSingleSourceNoteWhenMissing);
+  } else {
+    const [faqRows, slugHistoryRows] = await Promise.all([
+      fetchOptionalRows("article_faq_items", (query) => query.eq("enabled", true).order("position", { ascending: true })),
+      fetchOptionalRows("article_slug_history", (query) => query.order("created_at", { ascending: true })),
+    ]);
+    articles = attachSeoRelations(cmsArticles, faqRows, slugHistoryRows)
+      .map(normalizePublicUpdatedAt)
+      .map(addSingleSourceNoteWhenMissing);
+  }
 
   const urls = [];
   for (const path of STATIC_PATHS) {
@@ -187,7 +250,7 @@ async function generateSitemap() {
       language,
       loc: `/${language}/articles/${categoryPath}/${slug}`,
     }));
-    const lastmod = (article.updated_at || article.published_at || article.created_at).split("T")[0];
+    const lastmod = (article.public_updated_at || article.published_at || article.created_at).split("T")[0];
     for (const alternate of alternates) {
       urls.push({ loc: alternate.loc, lastmod, alternates });
     }

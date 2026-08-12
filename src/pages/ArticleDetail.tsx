@@ -33,18 +33,23 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import Autoplay from "embla-carousel-autoplay";
 import {
-  ORGANIZATION_ALTERNATE_NAMES,
-  ORGANIZATION_CONTACT_POINT,
-  ORGANIZATION_EMAIL,
-  ORGANIZATION_ENGLISH_NAME,
-  ORGANIZATION_LEGAL_NAME,
-  ORGANIZATION_LOGO,
-  ORGANIZATION_SAME_AS,
-  ORGANIZATION_URL,
-} from "@/lib/schema";
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import Autoplay from "embla-carousel-autoplay";
+import { ORGANIZATION_URL } from "@/lib/schema";
 import { sanitizeArticleHtml } from "@/lib/articleHtml";
+import { getModifiedDate, getPublishedDate } from "@/lib/articles";
+import {
+  buildArticleStructuredData,
+  getArticleImageAlt,
+  getArticleMetaDescription,
+  getArticleSeoTitle,
+  type LocalizedFaqItem,
+} from "@/lib/articleSeo";
 
 const META_DESCRIPTION_MAX_LENGTH = 160;
 const DEFAULT_ARTICLE_IMAGE = `${ORGANIZATION_URL}/og-image.png`;
@@ -128,8 +133,6 @@ const EXPERIENCE_LABELS: Record<Language, {
   },
 };
 
-const KEYWORDS_BY_SLUG: Record<string, Record<Language, string[]>> = {};
-
 const prepareArticleHtml = (content: string, imageAlt: string) => {
   return sanitizeArticleHtml(content, imageAlt);
 };
@@ -201,6 +204,7 @@ const ArticleDetail = () => {
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [zoomLevel, setZoomLevel] = useState(1);
+  const [faqItems, setFaqItems] = useState<Tables<"article_faq_items">[] | null>(null);
 
   useEffect(() => {
     const fetchArticle = async () => {
@@ -211,6 +215,7 @@ const ArticleDetail = () => {
       }
 
       setLoading(true);
+      setFaqItems(null);
       const lookupColumn = UUID_PATTERN.test(articleKey) ? "id" : "slug";
       let data: ArticleRow | null = null;
       let fetchError: Error | null = null;
@@ -249,6 +254,19 @@ const ArticleDetail = () => {
         setArticle(null);
       } else {
         setArticle(data);
+        if (data) {
+          const faqResult = await supabase
+            .from("article_faq_items")
+            .select("*")
+            .eq("article_id", data.id)
+            .eq("enabled", true)
+            .order("position", { ascending: true });
+          if (!faqResult.error) {
+            setFaqItems(faqResult.data || []);
+          } else if (faqResult.error.code !== "42P01" && faqResult.error.code !== "PGRST205") {
+            console.error("Error fetching article FAQ:", faqResult.error);
+          }
+        }
         if (data && UUID_PATTERN.test(articleKey) && data.slug) {
           navigate(`/${language}/articles/${getArticleCategoryPath(data.category)}/${normalizeArticleSlug(data.slug)}`, { replace: true });
         }
@@ -351,13 +369,13 @@ const ArticleDetail = () => {
   const canonicalSlug = normalizeArticleSlug(article.slug);
   const categoryPath = getArticleCategoryPath(article.category);
   const articleUrl = `${ORGANIZATION_URL}/${language}/articles/${categoryPath}/${canonicalSlug}`;
-  const publishedDate = article.published_at || article.created_at;
-  const updatedCandidate = article.updated_at || publishedDate;
-  const updatedDate = new Date(updatedCandidate).getTime() >= new Date(publishedDate).getTime()
-    ? updatedCandidate
-    : publishedDate;
+  const publishedDate = getPublishedDate(article);
+  const updatedDate = getModifiedDate(article);
   const isResearchBatchArticle = article.category === "education_research" && publishedDate.startsWith(RESEARCH_BATCH_DATE);
-  const description = buildArticleMetaDescription(localizedTitle, localizedExcerpt, article.category, language);
+  const configuredDescription = getArticleMetaDescription(article, language);
+  const description = configuredDescription
+    || buildArticleMetaDescription(localizedTitle, localizedExcerpt, article.category, language);
+  const seoTitle = getArticleSeoTitle(article, language) || localizedTitle;
   const primaryImage = article.image_urls?.[0]
     ? new URL(optimizeArticleImageUrl(article.image_urls[0], 1600), ORGANIZATION_URL).href
     : DEFAULT_ARTICLE_IMAGE;
@@ -365,100 +383,48 @@ const ArticleDetail = () => {
     ...getCitationUrls(renderedContent),
     ...(hasExperienceOpening ? [experienceSourceUrl] : []),
   ])];
-  const localizedFaq = language === "zh-hk"
+  const tableFaq = (faqItems || []).flatMap<LocalizedFaqItem>((item) => {
+    const question = language === "zh-hk" ? item.question_zhtw : language === "zh-cn" ? item.question_zhcn : item.question;
+    const answer = language === "zh-hk" ? item.answer_zhtw : language === "zh-cn" ? item.answer_zhcn : item.answer;
+    return question.trim() && answer.trim()
+      ? [{ question: question.trim(), answer: sanitizeArticleHtml(answer, question) }]
+      : [];
+  });
+  const legacyFaq = language === "zh-hk"
     ? article.faq_zhtw || []
     : language === "zh-cn"
       ? article.faq_zhcn || []
       : article.faq || [];
-  const keywords = KEYWORDS_BY_SLUG[canonicalSlug]?.[language] || (language === "en"
-    ? ["Hong Kong family office", "family office governance", getCategoryTitle(article.category)]
-    : language === "zh-hk"
-      ? ["香港家族辦公室", "家族治理", getCategoryTitle(article.category)]
-      : ["香港家族办公室", "家族治理", getCategoryTitle(article.category)]);
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@type": article.category === "news_events" ? "NewsArticle" : "Article",
-    "headline": localizedTitle,
-    "description": description,
-    "inLanguage": language === "en" ? "en" : language === "zh-hk" ? "zh-Hant" : "zh-Hans",
-    "articleSection": getCategoryTitle(article.category),
-    "image": [primaryImage],
-    "datePublished": publishedDate,
-    "dateModified": updatedDate,
-    "isAccessibleForFree": true,
-    "wordCount": language === "en" ? plainContent.split(/\s+/).filter(Boolean).length : plainContent.length,
-    "keywords": keywords.join(", "),
-    "about": [
-      { "@type": "Thing", "name": language === "en" ? "Family office" : language === "zh-hk" ? "家族辦公室" : "家族办公室" },
-      { "@type": "Place", "name": "Hong Kong" },
-    ],
-    "citation": citationUrls.length > 0 ? citationUrls : undefined,
-    "hasPart": localizedFaq.length > 0
-      ? localizedFaq.map((item) => ({
-          "@type": "Question",
-          "name": item.question,
-          "acceptedAnswer": { "@type": "Answer", "text": item.answer },
-        }))
-      : undefined,
-    "mainEntityOfPage": {
-      "@type": "WebPage",
-      "@id": articleUrl,
-    },
-    "author": {
-      "@type": "Organization",
-      "@id": `${ORGANIZATION_URL}/#editorial-team`,
-      "name": "FOIHK Editorial Team",
-      "url": `${ORGANIZATION_URL}/${language}/about#editorial-accountability`,
-      "description": "The institutional editorial unit of Family Office Institute Hong Kong Limited.",
-      "email": ORGANIZATION_EMAIL,
-      "parentOrganization": { "@id": `${ORGANIZATION_URL}/#organization` },
-    },
-    "publisher": {
-      "@type": "Organization",
-      "@id": `${ORGANIZATION_URL}/#organization`,
-      "name": ORGANIZATION_ENGLISH_NAME,
-      "legalName": ORGANIZATION_LEGAL_NAME,
-      "alternateName": ORGANIZATION_ALTERNATE_NAMES,
-      "url": ORGANIZATION_URL,
-      "contactPoint": ORGANIZATION_CONTACT_POINT,
-      "sameAs": ORGANIZATION_SAME_AS,
-      "logo": {
-        "@type": "ImageObject",
-        "url": ORGANIZATION_LOGO,
-      },
-    },
-  };
-  const faqStructuredData = localizedFaq.length > 0
-    ? {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "@id": `${articleUrl}#faq`,
-        "url": articleUrl,
-        "inLanguage": language === "en" ? "en" : language === "zh-hk" ? "zh-Hant" : "zh-Hans",
-        "mainEntity": localizedFaq.map((item) => ({
-          "@type": "Question",
-          "name": item.question,
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": item.answer,
-          },
-        })),
-      }
-    : null;
+  const localizedFaq = faqItems !== null
+    ? tableFaq
+    : legacyFaq
+      .filter((item) => item.question?.trim() && item.answer?.trim())
+      .map((item) => ({ question: item.question.trim(), answer: sanitizeArticleHtml(item.answer, item.question) }));
+  const { articleSchema, faqSchema } = buildArticleStructuredData({
+    article,
+    language,
+    headline: localizedTitle,
+    description,
+    articleSection: getCategoryTitle(article.category),
+    image: primaryImage,
+    plainContent,
+    citations: citationUrls,
+    faq: localizedFaq,
+  });
   const homeLabel = language === "en" ? "Home" : language === "zh-hk" ? "首頁" : "首页";
   const metaLabels = ARTICLE_META_LABELS[language];
 
   return (
     <div className="min-h-screen bg-background">
       <SEO
-        title={localizedTitle}
+        title={seoTitle}
         description={description}
         canonicalUrl={articleUrl}
         ogType="article"
         ogImage={primaryImage}
         noindex={noindex}
         alternateLanguages={indexableLanguages}
-        structuredData={faqStructuredData ? [structuredData, faqStructuredData] : structuredData}
+        structuredData={faqSchema ? [articleSchema, faqSchema] : articleSchema}
       />
       <Navigation />
       
@@ -514,9 +480,7 @@ const ArticleDetail = () => {
           <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
             <span className="inline-flex items-center gap-2">
               <Building2 className="h-4 w-4" />
-              <Link to="/about#editorial-accountability" rel="author" className="underline-offset-4 hover:text-foreground hover:underline">
-                {metaLabels.author}
-              </Link>
+              <span>{metaLabels.author}</span>
             </span>
             <span className="inline-flex items-center gap-2">
               <History className="h-4 w-4" />
@@ -574,7 +538,7 @@ const ArticleDetail = () => {
                   <div className="rounded-lg overflow-hidden cursor-pointer hover:opacity-90 transition-opacity" onClick={() => setSelectedImage(article.image_urls[0])}>
                     <img
                       src={primaryImage}
-                      alt={localizedTitle}
+                      alt={getArticleImageAlt(article, article.image_urls[0], language, localizedTitle)}
                       width="1600"
                       height="900"
                       decoding="async"
@@ -614,7 +578,7 @@ const ArticleDetail = () => {
                   <ScrollArea className="h-[90vh] w-full">
                     <img
                       src={optimizeArticleImageUrl(article.image_urls[0], 2000)}
-                      alt={localizedTitle}
+                      alt={getArticleImageAlt(article, article.image_urls[0], language, localizedTitle)}
                       width="2000"
                       height="1125"
                       decoding="async"
@@ -647,7 +611,7 @@ const ArticleDetail = () => {
                           <div className="rounded-lg overflow-hidden cursor-pointer hover:opacity-90 transition-opacity" onClick={() => setSelectedImage(url)}>
                             <img
                               src={optimizeArticleImageUrl(url, 1600)}
-                              alt={`${localizedTitle} - ${index + 1}`}
+                              alt={getArticleImageAlt(article, url, language, `${localizedTitle} - ${index + 1}`)}
                               width="1600"
                               height="900"
                               loading={index === 0 ? "eager" : "lazy"}
@@ -687,7 +651,7 @@ const ArticleDetail = () => {
                           <ScrollArea className="h-[90vh] w-full">
                             <img
                               src={optimizeArticleImageUrl(url, 2000)}
-                              alt={`${localizedTitle} - ${index + 1}`}
+                              alt={getArticleImageAlt(article, url, language, `${localizedTitle} - ${index + 1}`)}
                               width="2000"
                               height="1125"
                               decoding="async"
@@ -730,14 +694,19 @@ const ArticleDetail = () => {
             <h2 id="article-questions" className="mb-6 text-2xl font-bold">
               {language === "en" ? "Questions about this guide" : language === "zh-hk" ? "本指南相關問題" : "本指南相关问题"}
             </h2>
-            <div className="space-y-6">
-              {localizedFaq.map((item) => (
-                <div key={item.question}>
-                  <h3 className="mb-2 text-lg font-semibold">{item.question}</h3>
-                  <p className="leading-7 text-muted-foreground">{item.answer}</p>
-                </div>
+            <Accordion type="multiple" className="border-y border-border">
+              {localizedFaq.map((item, index) => (
+                <AccordionItem key={`${item.question}-${index}`} value={`faq-${index}`}>
+                  <AccordionTrigger className="text-left text-lg">{item.question}</AccordionTrigger>
+                  <AccordionContent>
+                    <div
+                      className="prose max-w-none text-muted-foreground"
+                      dangerouslySetInnerHTML={{ __html: item.answer }}
+                    />
+                  </AccordionContent>
+                </AccordionItem>
               ))}
-            </div>
+            </Accordion>
           </section>
         )}
 

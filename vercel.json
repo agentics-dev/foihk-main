@@ -19,6 +19,11 @@
       "permanent": true
     },
     {
+      "source": "/lander",
+      "destination": "/en",
+      "permanent": true
+    },
+    {
       "source": "/about",
       "destination": "/en/about",
       "permanent": true
@@ -494,6 +499,76 @@
       "permanent": true
     },
     {
+      "source": "/articles/education_research/004d4541-24ef-4048-a162-2a95bebe1357",
+      "destination": "/en/articles/education-research/cies-asset-holding-period-reduced-jan-2025",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/education_research/004d4541-24ef-4048-a162-2a95bebe1357",
+      "destination": "/en/articles/education-research/cies-asset-holding-period-reduced-jan-2025",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/education_research/cies-asset-holding-period-reduced-jan-2025",
+      "destination": "/en/articles/education-research/cies-asset-holding-period-reduced-jan-2025",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/education_research/004d4541-24ef-4048-a162-2a95bebe1357",
+      "destination": "/zh-hk/articles/education-research/cies-asset-holding-period-reduced-jan-2025",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/education_research/cies-asset-holding-period-reduced-jan-2025",
+      "destination": "/zh-hk/articles/education-research/cies-asset-holding-period-reduced-jan-2025",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/education_research/004d4541-24ef-4048-a162-2a95bebe1357",
+      "destination": "/zh-cn/articles/education-research/cies-asset-holding-period-reduced-jan-2025",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/education_research/cies-asset-holding-period-reduced-jan-2025",
+      "destination": "/zh-cn/articles/education-research/cies-asset-holding-period-reduced-jan-2025",
+      "permanent": true
+    },
+    {
+      "source": "/articles/education_research/3347cfe2-9888-4500-ab3a-16317d0b3ad9",
+      "destination": "/en/articles/education-research/new-individual-income-tax-rules-for-offshore-trusts-take-effect-tax-transparency-and-mandatory-compliance-become-the-trend",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/education_research/3347cfe2-9888-4500-ab3a-16317d0b3ad9",
+      "destination": "/en/articles/education-research/new-individual-income-tax-rules-for-offshore-trusts-take-effect-tax-transparency-and-mandatory-compliance-become-the-trend",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/education_research/new-individual-income-tax-rules-for-offshore-trusts-take-effect-tax-transparency-and-mandatory-compliance-become-the-trend",
+      "destination": "/en/articles/education-research/new-individual-income-tax-rules-for-offshore-trusts-take-effect-tax-transparency-and-mandatory-compliance-become-the-trend",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/education_research/3347cfe2-9888-4500-ab3a-16317d0b3ad9",
+      "destination": "/zh-hk/articles/education-research/new-individual-income-tax-rules-for-offshore-trusts-take-effect-tax-transparency-and-mandatory-compliance-become-the-trend",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/education_research/new-individual-income-tax-rules-for-offshore-trusts-take-effect-tax-transparency-and-mandatory-compliance-become-the-trend",
+      "destination": "/zh-hk/articles/education-research/new-individual-income-tax-rules-for-offshore-trusts-take-effect-tax-transparency-and-mandatory-compliance-become-the-trend",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/education_research/3347cfe2-9888-4500-ab3a-16317d0b3ad9",
+      "destination": "/zh-cn/articles/education-research/new-individual-income-tax-rules-for-offshore-trusts-take-effect-tax-transparency-and-mandatory-compliance-become-the-trend",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/education_research/new-individual-income-tax-rules-for-offshore-trusts-take-effect-tax-transparency-and-mandatory-compliance-become-the-trend",
+      "destination": "/zh-cn/articles/education-research/new-individual-income-tax-rules-for-offshore-trusts-take-effect-tax-transparency-and-mandatory-compliance-become-the-trend",
+      "permanent": true
+    },
+    {
       "source": "/articles/education_research/88a3feb4-8793-4cd6-8680-a06e9b9061e4",
       "destination": "/en/articles/education-research/chinese-mainland-clarifies-individual-income-tax-rules-for-offshore-trusts-scope-of-application-taxation-stages-and-filing-arrangements",
       "permanent": true
@@ -934,48 +1009,13 @@
       "permanent": true
     },
     {
-      "source": "/articles/education_research/004d4541-24ef-4048-a162-2a95bebe1357",
-      "destination": "/en/articles/education-research/cies-asset-holding-period-reduced-jan-2025",
-      "permanent": true
-    },
-    {
-      "source": "/en/articles/education_research/004d4541-24ef-4048-a162-2a95bebe1357",
-      "destination": "/en/articles/education-research/cies-asset-holding-period-reduced-jan-2025",
-      "permanent": true
-    },
-    {
-      "source": "/en/articles/education_research/cies-asset-holding-period-reduced-jan-2025",
-      "destination": "/en/articles/education-research/cies-asset-holding-period-reduced-jan-2025",
-      "permanent": true
-    },
-    {
-      "source": "/zh-hk/articles/education_research/004d4541-24ef-4048-a162-2a95bebe1357",
-      "destination": "/zh-hk/articles/education-research/cies-asset-holding-period-reduced-jan-2025",
-      "permanent": true
-    },
-    {
-      "source": "/zh-hk/articles/education_research/cies-asset-holding-period-reduced-jan-2025",
-      "destination": "/zh-hk/articles/education-research/cies-asset-holding-period-reduced-jan-2025",
-      "permanent": true
-    },
-    {
-      "source": "/zh-cn/articles/education_research/004d4541-24ef-4048-a162-2a95bebe1357",
-      "destination": "/zh-cn/articles/education-research/cies-asset-holding-period-reduced-jan-2025",
-      "permanent": true
-    },
-    {
-      "source": "/zh-cn/articles/education_research/cies-asset-holding-period-reduced-jan-2025",
-      "destination": "/zh-cn/articles/education-research/cies-asset-holding-period-reduced-jan-2025",
-      "permanent": true
-    },
-    {
       "source": "/articles/news_events/89e5e9cb-658f-4356-8cc5-1405dffcfd05",
-      "destination": "/en/articles/news-events/foihk-holds-exchange-meeting-with-tsinghua-university-alumni-association",
+      "destination": "/en/articles/news-events",
       "permanent": true
     },
     {
       "source": "/en/articles/news_events/89e5e9cb-658f-4356-8cc5-1405dffcfd05",
-      "destination": "/en/articles/news-events/foihk-holds-exchange-meeting-with-tsinghua-university-alumni-association",
+      "destination": "/en/articles/news-events",
       "permanent": true
     },
     {
@@ -985,7 +1025,7 @@
     },
     {
       "source": "/zh-hk/articles/news_events/89e5e9cb-658f-4356-8cc5-1405dffcfd05",
-      "destination": "/zh-hk/articles/news-events/foihk-holds-exchange-meeting-with-tsinghua-university-alumni-association",
+      "destination": "/zh-hk/articles/news-events",
       "permanent": true
     },
     {
@@ -995,7 +1035,7 @@
     },
     {
       "source": "/zh-cn/articles/news_events/89e5e9cb-658f-4356-8cc5-1405dffcfd05",
-      "destination": "/zh-cn/articles/news-events/foihk-holds-exchange-meeting-with-tsinghua-university-alumni-association",
+      "destination": "/zh-cn/articles/news-events",
       "permanent": true
     },
     {

@@ -1,5 +1,5 @@
 import { useEffect, type ReactNode } from "react";
-import { Extension, Mark, mergeAttributes } from "@tiptap/core";
+import { Extension, Mark, Node, mergeAttributes } from "@tiptap/core";
 import Image from "@tiptap/extension-image";
 import Link from "@tiptap/extension-link";
 import { Table } from "@tiptap/extension-table";
@@ -15,6 +15,7 @@ import {
   AlignRight,
   Bold,
   Eraser,
+  CornerDownLeft,
   Italic,
   Link as LinkIcon,
   List,
@@ -81,11 +82,18 @@ const PARAGRAPH_CLASS_BY_VARIANT = {
   note: "foihk-paragraph-note",
 } as const;
 
+const SPACER_CLASS_BY_SIZE = {
+  one: "foihk-spacer-1",
+  two: "foihk-spacer-2",
+  section: "foihk-spacer-section",
+} as const;
+
 type FontSizeValue = keyof typeof FONT_SIZE_CLASS_BY_SIZE;
 type FontFamilyValue = keyof typeof FONT_FAMILY_CLASS_BY_FAMILY;
 type LineHeightValue = keyof typeof LEADING_CLASS_BY_LEADING;
 type TextAlignValue = keyof typeof ALIGN_CLASS_BY_ALIGN;
 type ParagraphStyleValue = "paragraph" | "heading2" | "heading3" | "quote" | "note";
+type SpacerSizeValue = keyof typeof SPACER_CLASS_BY_SIZE;
 
 const FontSize = Mark.create({
   name: "fontSize",
@@ -228,6 +236,35 @@ const ParagraphVariant = Extension.create({
   },
 });
 
+const Spacer = Node.create({
+  name: "spacer",
+
+  group: "block",
+  atom: true,
+
+  parseHTML() {
+    return Object.entries(SPACER_CLASS_BY_SIZE).map(([size, className]) => ({
+      tag: `div.${className}`,
+      getAttrs: () => ({ size }),
+    }));
+  },
+
+  renderHTML({ node, HTMLAttributes }) {
+    const size = node.attrs.size as SpacerSizeValue;
+    const className = SPACER_CLASS_BY_SIZE[size] || SPACER_CLASS_BY_SIZE.one;
+    return ["div", mergeAttributes(HTMLAttributes, { class: className, "aria-hidden": "true" })];
+  },
+
+  addAttributes() {
+    return {
+      size: {
+        default: "one",
+      },
+    };
+  },
+
+});
+
 export const RichTextEditor = ({ id, value, onChange, placeholder, required }: RichTextEditorProps) => {
   const editor = useEditor({
     extensions: [
@@ -238,6 +275,7 @@ export const RichTextEditor = ({ id, value, onChange, placeholder, required }: R
       TextAlignment,
       LineHeight,
       ParagraphVariant,
+      Spacer,
       Link.configure({
         autolink: false,
         openOnClick: false,
@@ -368,6 +406,12 @@ export const RichTextEditor = ({ id, value, onChange, placeholder, required }: R
     editor.chain().focus().updateAttributes("paragraph", { align }).updateAttributes("heading", { align }).run();
   };
 
+  const insertSpacer = (size: SpacerSizeValue) => {
+    if (!editor) return;
+    if (!SPACER_CLASS_BY_SIZE[size]) return;
+    editor.chain().focus().insertContent({ type: "spacer", attrs: { size } }).run();
+  };
+
   const clearAllFormatting = () => {
     if (!editor) return;
     editor
@@ -465,6 +509,21 @@ export const RichTextEditor = ({ id, value, onChange, placeholder, required }: R
           <ToolbarButton label="右对齐" active={textAlign === "right"} onClick={() => setTextAlign("right")}>
             <AlignRight className="h-4 w-4" />
           </ToolbarButton>
+          <Divider />
+          <ToolbarButton label="换行" onClick={() => editor?.chain().focus().setHardBreak().run()}>
+            <CornerDownLeft className="h-4 w-4" />
+          </ToolbarButton>
+          <ToolbarSelect
+            label="插入空行"
+            value="placeholder"
+            onValueChange={(nextValue) => insertSpacer(nextValue as SpacerSizeValue)}
+            items={[
+              { value: "placeholder", label: "选择" },
+              { value: "one", label: "1 行" },
+              { value: "two", label: "2 行" },
+              { value: "section", label: "分节空隙" },
+            ]}
+          />
           <Divider />
           <ToolbarButton label="设置链接" active={editor?.isActive("link")} onClick={setLink}>
             <LinkIcon className="h-4 w-4" />

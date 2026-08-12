@@ -4,6 +4,7 @@ import { Navigation } from "@/components/Navigation";
 import { SEO } from "@/components/SEO";
 import { useLanguage, type Language } from "@/contexts/LanguageContext";
 import {
+  ORGANIZATION_ALTERNATE_NAMES,
   ORGANIZATION_ENGLISH_NAME,
   ORGANIZATION_LEGAL_NAME,
   ORGANIZATION_URL,
@@ -183,6 +184,7 @@ const FAQ = () => {
       "@id": `${ORGANIZATION_URL}/#organization`,
       "name": ORGANIZATION_ENGLISH_NAME,
       "legalName": ORGANIZATION_LEGAL_NAME,
+      "alternateName": ORGANIZATION_ALTERNATE_NAMES,
       "url": ORGANIZATION_URL,
     },
     "mainEntity": visibleItems.map((item) => ({

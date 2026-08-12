@@ -12,7 +12,7 @@ interface ArticlePreviewDialogProps {
   title: string;
   excerpt: string;
   content: string;
-  createdDate: Date;
+  displayDate: Date;
   imageUrl: string | null;
   imageMetadata?: ImageCropData;
 }
@@ -23,7 +23,7 @@ export const ArticlePreviewDialog = ({
   title,
   excerpt,
   content,
-  createdDate,
+  displayDate,
   imageUrl,
   imageMetadata,
 }: ArticlePreviewDialogProps) => {
@@ -49,8 +49,8 @@ export const ArticlePreviewDialog = ({
         <CardHeader className="flex-1 flex flex-col">
           <div className="flex items-center gap-2 text-sm text-muted-foreground flex-shrink-0">
             <Calendar className="h-4 w-4" />
-            <time dateTime={createdDate.toISOString()}>
-              {createdDate.toLocaleDateString(language, { year: 'numeric', month: 'short', day: 'numeric' })}
+            <time dateTime={displayDate.toISOString()}>
+              {displayDate.toLocaleDateString(language, { year: 'numeric', month: 'short', day: 'numeric' })}
             </time>
           </div>
           <h2 className="text-xl font-bold line-clamp-2 hover:text-primary transition-colors mt-2 h-14 flex-shrink-0">

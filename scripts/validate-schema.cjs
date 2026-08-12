@@ -4,22 +4,22 @@ const path = require("path");
 const ROOT = process.cwd();
 const EXPECTED_ENGLISH_NAME = "Family Office Institute Hong Kong";
 const EXPECTED_TRADITIONAL_NAME = "香港家族辦公室學會";
-const LEGACY_SIMPLIFIED_NAME = "香港家族办公室学会";
 const EXPECTED_STREET_ADDRESS = "32/F, The Center, 99 Queen's Road Central";
 const EXPECTED_EMAIL = "info@foihk.org";
 
-const filesToCheck = [
-  "dist/en/index.html",
-  "dist/en/about/index.html",
-  "dist/en/contact/index.html",
-  "dist/en/philanthropy/index.html",
-  "dist/en/press/index.html",
-  "dist/zh-hk/index.html",
-  "dist/zh-hk/about/index.html",
-  "dist/zh-hk/contact/index.html",
-  "dist/zh-hk/philanthropy/index.html",
-  "dist/zh-hk/press/index.html",
-];
+const languages = ["en", "zh-hk", "zh-cn"];
+const routeManifest = JSON.parse(readFile("scripts/generated/article-routes.json"));
+const filesToCheck = languages.flatMap((language) => [
+  `dist/${language}/index.html`,
+  `dist/${language}/contact/index.html`,
+  `dist/${language}/faq/index.html`,
+]);
+const articleFiles = languages.map((language) => {
+  const article = routeManifest.find((item) => item.languages.includes(language));
+  if (!article) throw new Error(`No indexable ${language} article route in manifest`);
+  return `dist/${language}/articles/${article.category.replaceAll("_", "-")}/${article.slug}/index.html`;
+});
+filesToCheck.push(...articleFiles);
 
 function readFile(relativePath) {
   const absolutePath = path.join(ROOT, relativePath);
@@ -134,15 +134,35 @@ function main() {
       continue;
     }
 
-    if (html.includes(LEGACY_SIMPLIFIED_NAME)) {
-      failures.push(`${relativePath}: legacy simplified institution name still present in schema output`);
-    }
-
-    if (!hasExpectedNamePairing(jsonLdObjects)) {
+    const rootTypes = jsonLdObjects.map((object) => object && object["@type"]);
+    const hasOrganization = rootTypes.includes("Organization")
+      || jsonLdObjects.some((object) => object?.publisher?.["@type"] === "Organization");
+    if (hasOrganization && !hasExpectedNamePairing(jsonLdObjects)) {
       failures.push(`${relativePath}: missing expected English/Traditional Chinese institution name pairing`);
     }
 
-    if (relativePath.includes("/index.html") && (relativePath.endsWith("/en/index.html") || relativePath.endsWith("/zh-hk/index.html") || relativePath.includes("/contact/index.html"))) {
+    const isArticle = relativePath.includes("/articles/");
+    if (isArticle) {
+      if (!rootTypes.some((type) => type === "Article" || type === "NewsArticle")) {
+        failures.push(`${relativePath}: missing Article or NewsArticle schema`);
+      }
+      if (!rootTypes.includes("BreadcrumbList")) {
+        failures.push(`${relativePath}: missing BreadcrumbList schema`);
+      }
+      for (const schema of jsonLdObjects.filter((object) => object && object["@type"] === "FAQPage")) {
+        for (const item of schema.mainEntity || []) {
+          if (!item.name || !html.includes(item.name)) {
+            failures.push(`${relativePath}: FAQ Schema question is not visible in the page HTML`);
+          }
+        }
+      }
+    }
+
+    if (relativePath.includes("/faq/index.html") && !rootTypes.includes("FAQPage")) {
+      failures.push(`${relativePath}: missing FAQPage schema`);
+    }
+
+    if (languages.some((language) => relativePath.endsWith(`/${language}/index.html`)) || relativePath.includes("/contact/index.html")) {
       if (!hasExpectedNapFields(jsonLdObjects)) {
         failures.push(`${relativePath}: missing expected NAP-compatible name/address/contact structure`);
       }

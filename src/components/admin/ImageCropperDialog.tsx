@@ -10,6 +10,9 @@ export interface ImageCropData {
   zoom: number;
   croppedAreaPercentages: { x: number; y: number; width: number; height: number } | null;
   focus: { x: number; y: number };
+  alt?: string;
+  alt_zhtw?: string;
+  alt_zhcn?: string;
 }
 
 interface ImageCropperDialogProps {
@@ -44,7 +47,10 @@ export const ImageCropperDialog = ({
       crop,
       zoom,
       croppedAreaPercentages,
-      focus: { x: focusX, y: focusY }
+      focus: { x: focusX, y: focusY },
+      alt: initialData?.alt,
+      alt_zhtw: initialData?.alt_zhtw,
+      alt_zhcn: initialData?.alt_zhcn,
     });
     onOpenChange(false);
   };

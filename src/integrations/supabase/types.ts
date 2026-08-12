@@ -27,12 +27,22 @@ export type Database = {
           id: string
           image_metadata: Json | null
           image_urls: string[] | null
+          meta_description: string | null
+          meta_description_zhcn: string | null
+          meta_description_zhtw: string | null
           published: boolean
           published_at: string | null
+          public_updated_at: string | null
           slug: string
+          seo_title: string | null
+          seo_title_zhcn: string | null
+          seo_title_zhtw: string | null
           title: string
           title_zhcn: string | null
           title_zhtw: string | null
+          topic_terms: string[]
+          topic_terms_zhcn: string[]
+          topic_terms_zhtw: string[]
           updated_at: string
         }
         Insert: {
@@ -47,12 +57,22 @@ export type Database = {
           id?: string
           image_metadata?: Json | null
           image_urls?: string[] | null
+          meta_description?: string | null
+          meta_description_zhcn?: string | null
+          meta_description_zhtw?: string | null
           published?: boolean
           published_at?: string | null
+          public_updated_at?: string | null
           slug: string
+          seo_title?: string | null
+          seo_title_zhcn?: string | null
+          seo_title_zhtw?: string | null
           title: string
           title_zhcn?: string | null
           title_zhtw?: string | null
+          topic_terms?: string[]
+          topic_terms_zhcn?: string[]
+          topic_terms_zhtw?: string[]
           updated_at?: string
         }
         Update: {
@@ -67,15 +87,110 @@ export type Database = {
           id?: string
           image_metadata?: Json | null
           image_urls?: string[] | null
+          meta_description?: string | null
+          meta_description_zhcn?: string | null
+          meta_description_zhtw?: string | null
           published?: boolean
           published_at?: string | null
+          public_updated_at?: string | null
           slug?: string
+          seo_title?: string | null
+          seo_title_zhcn?: string | null
+          seo_title_zhtw?: string | null
           title?: string
           title_zhcn?: string | null
           title_zhtw?: string | null
+          topic_terms?: string[]
+          topic_terms_zhcn?: string[]
+          topic_terms_zhtw?: string[]
           updated_at?: string
         }
         Relationships: []
+      }
+      article_faq_items: {
+        Row: {
+          answer: string
+          answer_zhcn: string | null
+          answer_zhtw: string | null
+          article_id: string
+          created_at: string
+          enabled: boolean
+          id: string
+          position: number
+          question: string
+          question_zhcn: string | null
+          question_zhtw: string | null
+          updated_at: string
+        }
+        Insert: {
+          answer?: string
+          answer_zhcn?: string | null
+          answer_zhtw?: string | null
+          article_id: string
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          position?: number
+          question?: string
+          question_zhcn?: string | null
+          question_zhtw?: string | null
+          updated_at?: string
+        }
+        Update: {
+          answer?: string
+          answer_zhcn?: string | null
+          answer_zhtw?: string | null
+          article_id?: string
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          position?: number
+          question?: string
+          question_zhcn?: string | null
+          question_zhtw?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "article_faq_items_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      article_slug_history: {
+        Row: {
+          article_id: string
+          category: Database["public"]["Enums"]["article_category"]
+          created_at: string
+          id: number
+          old_slug: string
+        }
+        Insert: {
+          article_id: string
+          category: Database["public"]["Enums"]["article_category"]
+          created_at?: string
+          id?: never
+          old_slug: string
+        }
+        Update: {
+          article_id?: string
+          category?: Database["public"]["Enums"]["article_category"]
+          created_at?: string
+          id?: never
+          old_slug?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "article_slug_history_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {

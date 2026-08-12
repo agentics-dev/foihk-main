@@ -39,6 +39,16 @@ const REMOVED_STATIC_EDUCATION_SLUGS = [
   "hong-kong-non-profit-organization",
   "hong-kong-family-office-institute-organisation-association-comparison",
 ];
+const ARTICLE_REDIRECT_DESTINATION_OVERRIDES = new Map([
+  [
+    "89e5e9cb-658f-4356-8cc5-1405dffcfd05",
+    {
+      en: "/en/articles/news-events",
+      "zh-hk": "/zh-hk/articles/news-events",
+      "zh-cn": "/zh-cn/articles/news-events",
+    },
+  ],
+]);
 
 const redirects = [
   {
@@ -49,6 +59,11 @@ const redirects = [
   },
   {
     source: "/",
+    destination: "/en",
+    permanent: true,
+  },
+  {
+    source: "/lander",
     destination: "/en",
     permanent: true,
   },
@@ -63,6 +78,7 @@ const netlifyRedirects = [
   "# Generated legacy redirects. Regenerate with npm run generate:redirects.",
   "https://foihk.org/*  https://www.foihk.org/:splat  301!",
   "/  /en  301!",
+  "/lander  /en  301!",
   ...STATIC_PATHS.map((path) => `/${path}  /en/${path}  301!`),
 ];
 
@@ -91,25 +107,28 @@ for (const slug of REMOVED_STATIC_EDUCATION_SLUGS) {
 for (const article of articles) {
   const slug = normalizeSlug(article.slug);
   const categoryPath = getCategoryPath(article.category);
+  const redirectOverride = ARTICLE_REDIRECT_DESTINATION_OVERRIDES.get(article.id);
   if (UUID_PATTERN.test(article.id)) {
+    const destination = redirectOverride?.en ?? `/en/articles/${categoryPath}/${slug}`;
     redirects.push({
       source: `/articles/${article.category}/${article.id}`,
-      destination: `/en/articles/${categoryPath}/${slug}`,
+      destination,
       permanent: true,
     });
     netlifyRedirects.push(
-      `/articles/${article.category}/${article.id}  /en/articles/${categoryPath}/${slug}  301!`
+      `/articles/${article.category}/${article.id}  ${destination}  301!`
     );
   }
   for (const language of LANGUAGES) {
     if (UUID_PATTERN.test(article.id)) {
+      const destination = redirectOverride?.[language] ?? `/${language}/articles/${categoryPath}/${slug}`;
       redirects.push({
         source: `/${language}/articles/${article.category}/${article.id}`,
-        destination: `/${language}/articles/${categoryPath}/${slug}`,
+        destination,
         permanent: true,
       });
       netlifyRedirects.push(
-        `/${language}/articles/${article.category}/${article.id}  /${language}/articles/${categoryPath}/${slug}  301!`
+        `/${language}/articles/${article.category}/${article.id}  ${destination}  301!`
       );
     }
     if (categoryPath !== article.category) {
@@ -121,6 +140,26 @@ for (const article of articles) {
       netlifyRedirects.push(
         `/${language}/articles/${article.category}/${slug}  /${language}/articles/${categoryPath}/${slug}  301!`
       );
+    }
+  }
+
+  for (const previous of article.previous_slugs || []) {
+    const previousSlug = normalizeSlug(previous.slug || "");
+    const previousCategory = previous.category || article.category;
+    const previousCategoryPath = getCategoryPath(previousCategory);
+    if (!previousSlug || (previousSlug === slug && previousCategoryPath === categoryPath)) continue;
+    for (const language of LANGUAGES) {
+      const destination = `/${language}/articles/${categoryPath}/${slug}`;
+      for (const legacyPath of new Set([previousCategory, previousCategoryPath])) {
+        redirects.push({
+          source: `/${language}/articles/${legacyPath}/${previousSlug}`,
+          destination,
+          permanent: true,
+        });
+        netlifyRedirects.push(
+          `/${language}/articles/${legacyPath}/${previousSlug}  ${destination}  301!`
+        );
+      }
     }
   }
 }
