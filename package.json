@@ -6,11 +6,12 @@
   "scripts": {
     "dev": "vite",
     "prebuild": "node --env-file-if-exists=.env scripts/generate-sitemap.js && node scripts/generate-legacy-redirects.js",
-    "build": "vite build",
+    "build": "vite build && npm run generate:routes",
     "build:dev": "vite build --mode development",
     "build:seo": "npm run build && npm run prerender && npm run audit:seo",
     "backup": "npx tsx scripts/backup.ts",
     "generate:redirects": "node --env-file-if-exists=.env scripts/generate-legacy-redirects.js",
+    "generate:routes": "node scripts/generate-route-files.js",
     "validate:schema": "node scripts/validate-schema.cjs",
     "lint": "eslint .",
     "prerender": "node scripts/prerender.js",
