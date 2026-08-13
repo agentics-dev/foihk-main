@@ -67,9 +67,28 @@ const FONT_FAMILY_CLASS_BY_FAMILY = {
 } as const;
 
 const LEADING_CLASS_BY_LEADING = {
+  "120": "foihk-leading-120",
+  "135": "foihk-leading-135",
+  "150": "foihk-leading-150",
+  "175": "foihk-leading-175",
+  "200": "foihk-leading-200",
+  "225": "foihk-leading-225",
+  "250": "foihk-leading-250",
+} as const;
+
+const LEGACY_LEADING_CLASS_BY_LEADING = {
   tight: "foihk-leading-tight",
   normal: "foihk-leading-normal",
   loose: "foihk-leading-loose",
+} as const;
+
+const BLOCK_GAP_CLASS_BY_GAP = {
+  "8": "foihk-block-gap-8",
+  "12": "foihk-block-gap-12",
+  "16": "foihk-block-gap-16",
+  "24": "foihk-block-gap-24",
+  "32": "foihk-block-gap-32",
+  "48": "foihk-block-gap-48",
 } as const;
 
 const ALIGN_CLASS_BY_ALIGN = {
@@ -91,6 +110,7 @@ const SPACER_CLASS_BY_SIZE = {
 type FontSizeValue = keyof typeof FONT_SIZE_CLASS_BY_SIZE;
 type FontFamilyValue = keyof typeof FONT_FAMILY_CLASS_BY_FAMILY;
 type LineHeightValue = keyof typeof LEADING_CLASS_BY_LEADING;
+type BlockGapValue = keyof typeof BLOCK_GAP_CLASS_BY_GAP;
 type TextAlignValue = keyof typeof ALIGN_CLASS_BY_ALIGN;
 type ParagraphStyleValue = "paragraph" | "heading2" | "heading3" | "quote" | "note";
 type SpacerSizeValue = keyof typeof SPACER_CLASS_BY_SIZE;
@@ -197,9 +217,12 @@ const LineHeight = Extension.create({
           leading: {
             default: null,
             parseHTML: (element) => {
-              if (element.classList.contains(LEADING_CLASS_BY_LEADING.tight)) return "tight";
-              if (element.classList.contains(LEADING_CLASS_BY_LEADING.normal)) return "normal";
-              if (element.classList.contains(LEADING_CLASS_BY_LEADING.loose)) return "loose";
+              for (const [leading, className] of Object.entries(LEADING_CLASS_BY_LEADING)) {
+                if (element.classList.contains(className)) return leading;
+              }
+              if (element.classList.contains(LEGACY_LEADING_CLASS_BY_LEADING.tight)) return "150";
+              if (element.classList.contains(LEGACY_LEADING_CLASS_BY_LEADING.normal)) return "175";
+              if (element.classList.contains(LEGACY_LEADING_CLASS_BY_LEADING.loose)) return "200";
               return null;
             },
             renderHTML: (attributes) => {
@@ -211,6 +234,65 @@ const LineHeight = Extension.create({
         },
       },
     ];
+  },
+});
+
+const BlockGap = Extension.create({
+  name: "blockGap",
+
+  addGlobalAttributes() {
+    return [
+      {
+        types: ["paragraph", "heading", "blockquote", "bulletList", "orderedList"],
+        attributes: {
+          blockGap: {
+            default: null,
+            parseHTML: (element) => {
+              for (const [gap, className] of Object.entries(BLOCK_GAP_CLASS_BY_GAP)) {
+                if (element.classList.contains(className)) return gap;
+              }
+              return null;
+            },
+            renderHTML: (attributes) => {
+              const blockGap = attributes.blockGap as BlockGapValue | null;
+              if (!blockGap || !BLOCK_GAP_CLASS_BY_GAP[blockGap]) return {};
+              return { class: BLOCK_GAP_CLASS_BY_GAP[blockGap] };
+            },
+          },
+        },
+      },
+    ];
+  },
+});
+
+const EmptyParagraphSpacer = Extension.create({
+  name: "emptyParagraphSpacer",
+
+  addKeyboardShortcuts() {
+    return {
+      Enter: () => {
+        const { editor } = this;
+        const { selection } = editor.state;
+        const { $from, empty } = selection;
+        const parent = $from.parent;
+
+        if (!empty || parent.type.name !== "paragraph" || parent.content.size > 0) return false;
+        if ($from.parentOffset !== 0 || $from.depth === 0) return false;
+        if (["listItem", "tableCell", "tableHeader"].includes($from.node($from.depth - 1).type.name)) return false;
+
+        const from = $from.before($from.depth);
+        const to = $from.after($from.depth);
+
+        return editor.commands.insertContentAt(
+          { from, to },
+          [
+            { type: "spacer", attrs: { size: "one" } },
+            { type: "paragraph" },
+          ],
+          { updateSelection: true },
+        );
+      },
+    };
   },
 });
 
@@ -274,6 +356,8 @@ export const RichTextEditor = ({ id, value, onChange, placeholder, required }: R
       FontFamily,
       TextAlignment,
       LineHeight,
+      BlockGap,
+      EmptyParagraphSpacer,
       ParagraphVariant,
       Spacer,
       Link.configure({
@@ -343,7 +427,13 @@ export const RichTextEditor = ({ id, value, onChange, placeholder, required }: R
     || (editor?.getAttributes("heading").leading as LineHeightValue | undefined)
     || (editor?.getAttributes("blockquote").leading as LineHeightValue | undefined)
     || (editor?.getAttributes("listItem").leading as LineHeightValue | undefined)
-    || "normal";
+    || "default";
+  const blockGap = (editor?.getAttributes("paragraph").blockGap as BlockGapValue | undefined)
+    || (editor?.getAttributes("heading").blockGap as BlockGapValue | undefined)
+    || (editor?.getAttributes("blockquote").blockGap as BlockGapValue | undefined)
+    || (editor?.getAttributes("bulletList").blockGap as BlockGapValue | undefined)
+    || (editor?.getAttributes("orderedList").blockGap as BlockGapValue | undefined)
+    || "default";
   const textAlign = (editor?.getAttributes("heading").align as TextAlignValue | undefined)
     || (editor?.getAttributes("paragraph").align as TextAlignValue | undefined)
     || "left";
@@ -389,15 +479,30 @@ export const RichTextEditor = ({ id, value, onChange, placeholder, required }: R
     editor.chain().focus().setMark("fontSize", { size }).run();
   };
 
-  const setLineHeight = (leading: LineHeightValue) => {
+  const setLineHeight = (leading: LineHeightValue | "default") => {
     if (!editor) return;
+    const nextLeading = leading === "default" ? null : leading;
     editor
       .chain()
       .focus()
-      .updateAttributes("paragraph", { leading })
-      .updateAttributes("heading", { leading })
-      .updateAttributes("blockquote", { leading })
-      .updateAttributes("listItem", { leading })
+      .updateAttributes("paragraph", { leading: nextLeading })
+      .updateAttributes("heading", { leading: nextLeading })
+      .updateAttributes("blockquote", { leading: nextLeading })
+      .updateAttributes("listItem", { leading: nextLeading })
+      .run();
+  };
+
+  const setBlockGap = (blockGap: BlockGapValue | "default") => {
+    if (!editor) return;
+    const nextBlockGap = blockGap === "default" ? null : blockGap;
+    editor
+      .chain()
+      .focus()
+      .updateAttributes("paragraph", { blockGap: nextBlockGap })
+      .updateAttributes("heading", { blockGap: nextBlockGap })
+      .updateAttributes("blockquote", { blockGap: nextBlockGap })
+      .updateAttributes("bulletList", { blockGap: nextBlockGap })
+      .updateAttributes("orderedList", { blockGap: nextBlockGap })
       .run();
   };
 
@@ -419,10 +524,12 @@ export const RichTextEditor = ({ id, value, onChange, placeholder, required }: R
       .focus()
       .clearNodes()
       .unsetAllMarks()
-      .updateAttributes("paragraph", { align: null, leading: null, variant: null })
-      .updateAttributes("heading", { align: null, leading: null })
-      .updateAttributes("blockquote", { leading: null })
+      .updateAttributes("paragraph", { align: null, blockGap: null, leading: null, variant: null })
+      .updateAttributes("heading", { align: null, blockGap: null, leading: null })
+      .updateAttributes("blockquote", { blockGap: null, leading: null })
       .updateAttributes("listItem", { leading: null })
+      .updateAttributes("bulletList", { blockGap: null })
+      .updateAttributes("orderedList", { blockGap: null })
       .run();
   };
 
@@ -470,13 +577,32 @@ export const RichTextEditor = ({ id, value, onChange, placeholder, required }: R
             ]}
           />
           <ToolbarSelect
-            label="行高"
+            label="行间距"
             value={lineHeight}
-            onValueChange={(nextValue) => setLineHeight(nextValue as LineHeightValue)}
+            onValueChange={(nextValue) => setLineHeight(nextValue as LineHeightValue | "default")}
             items={[
-              { value: "tight", label: "紧凑" },
-              { value: "normal", label: "标准" },
-              { value: "loose", label: "宽松" },
+              { value: "default", label: "默认" },
+              { value: "120", label: "1.2" },
+              { value: "135", label: "1.35" },
+              { value: "150", label: "1.5" },
+              { value: "175", label: "1.75" },
+              { value: "200", label: "2.0" },
+              { value: "225", label: "2.25" },
+              { value: "250", label: "2.5" },
+            ]}
+          />
+          <ToolbarSelect
+            label="段落距离"
+            value={blockGap}
+            onValueChange={(nextValue) => setBlockGap(nextValue as BlockGapValue | "default")}
+            items={[
+              { value: "default", label: "默认" },
+              { value: "8", label: "8px" },
+              { value: "12", label: "12px" },
+              { value: "16", label: "16px" },
+              { value: "24", label: "24px" },
+              { value: "32", label: "32px" },
+              { value: "48", label: "48px" },
             ]}
           />
           <Divider />
@@ -514,7 +640,7 @@ export const RichTextEditor = ({ id, value, onChange, placeholder, required }: R
             <CornerDownLeft className="h-4 w-4" />
           </ToolbarButton>
           <ToolbarSelect
-            label="插入空行"
+            label="插入真实空行"
             value="placeholder"
             onValueChange={(nextValue) => insertSpacer(nextValue as SpacerSizeValue)}
             items={[
@@ -536,6 +662,12 @@ export const RichTextEditor = ({ id, value, onChange, placeholder, required }: R
           </ToolbarButton>
           <ToolbarButton label="清除字号" onClick={() => editor?.chain().focus().unsetMark("fontSize").run()}>
             <span className="text-xs font-semibold">16</span>
+          </ToolbarButton>
+          <ToolbarButton label="清除行间距" onClick={() => setLineHeight("default")}>
+            <span className="text-xs font-semibold">1.0</span>
+          </ToolbarButton>
+          <ToolbarButton label="清除段落距离" onClick={() => setBlockGap("default")}>
+            <span className="text-xs font-semibold">0</span>
           </ToolbarButton>
           <ToolbarButton label="清除全部格式" onClick={clearAllFormatting}>
             <RemoveFormatting className="h-4 w-4" />

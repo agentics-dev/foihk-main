@@ -200,16 +200,74 @@ All colors MUST be HSL.
     text-align: right;
   }
 
+  .foihk-leading-120 {
+    line-height: 1.2 !important;
+  }
+
+  .foihk-leading-135 {
+    line-height: 1.35 !important;
+  }
+
+  .foihk-leading-150 {
+    line-height: 1.5 !important;
+  }
+
+  .foihk-leading-175 {
+    line-height: 1.75 !important;
+  }
+
+  .foihk-leading-200 {
+    line-height: 2 !important;
+  }
+
+  .foihk-leading-225 {
+    line-height: 2.25 !important;
+  }
+
+  .foihk-leading-250 {
+    line-height: 2.5 !important;
+  }
+
   .foihk-leading-tight {
-    line-height: 1.45;
+    line-height: 1.45 !important;
   }
 
   .foihk-leading-normal {
-    line-height: 1.75;
+    line-height: 1.75 !important;
   }
 
   .foihk-leading-loose {
-    line-height: 2.05;
+    line-height: 2.05 !important;
+  }
+
+  .foihk-block-gap-8 {
+    margin-bottom: 8px !important;
+    margin-top: 8px !important;
+  }
+
+  .foihk-block-gap-12 {
+    margin-bottom: 12px !important;
+    margin-top: 12px !important;
+  }
+
+  .foihk-block-gap-16 {
+    margin-bottom: 16px !important;
+    margin-top: 16px !important;
+  }
+
+  .foihk-block-gap-24 {
+    margin-bottom: 24px !important;
+    margin-top: 24px !important;
+  }
+
+  .foihk-block-gap-32 {
+    margin-bottom: 32px !important;
+    margin-top: 32px !important;
+  }
+
+  .foihk-block-gap-48 {
+    margin-bottom: 48px !important;
+    margin-top: 48px !important;
   }
 
   .foihk-paragraph-note {
@@ -217,18 +275,21 @@ All colors MUST be HSL.
   }
 
   .foihk-spacer-1 {
-    display: block;
-    height: 1rem;
+    display: block !important;
+    height: 1rem !important;
+    margin: 0 !important;
   }
 
   .foihk-spacer-2 {
-    display: block;
-    height: 2rem;
+    display: block !important;
+    height: 2rem !important;
+    margin: 0 !important;
   }
 
   .foihk-spacer-section {
-    display: block;
-    height: 3.5rem;
+    display: block !important;
+    height: 3.5rem !important;
+    margin: 0 !important;
   }
 
   .foihk-admin-editor {
@@ -236,7 +297,21 @@ All colors MUST be HSL.
   }
 
   .foihk-admin-editor p {
-    @apply my-4;
+    @apply my-3;
+  }
+
+  .foihk-admin-editor .foihk-spacer-1,
+  .foihk-admin-editor .foihk-spacer-2,
+  .foihk-admin-editor .foihk-spacer-section {
+    @apply relative rounded-sm bg-accent/10;
+    border: 1px dashed hsl(var(--accent) / 0.35);
+  }
+
+  .foihk-admin-editor .foihk-spacer-1::after,
+  .foihk-admin-editor .foihk-spacer-2::after,
+  .foihk-admin-editor .foihk-spacer-section::after {
+    content: "真实空行";
+    @apply pointer-events-none absolute left-2 top-1/2 -translate-y-1/2 text-[10px] font-medium text-muted-foreground;
   }
 
   .foihk-admin-editor h2 {

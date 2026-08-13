@@ -8,6 +8,19 @@ const ALLOWED_FORMAT_CLASSES = new Set([
   "foihk-font-sans",
   "foihk-font-serif",
   "foihk-font-song",
+  "foihk-block-gap-8",
+  "foihk-block-gap-12",
+  "foihk-block-gap-16",
+  "foihk-block-gap-24",
+  "foihk-block-gap-32",
+  "foihk-block-gap-48",
+  "foihk-leading-120",
+  "foihk-leading-135",
+  "foihk-leading-150",
+  "foihk-leading-175",
+  "foihk-leading-200",
+  "foihk-leading-225",
+  "foihk-leading-250",
   "foihk-leading-loose",
   "foihk-leading-normal",
   "foihk-leading-tight",
@@ -30,12 +43,20 @@ const ALLOWED_FORMAT_CLASSES = new Set([
 
 const SPACER_CLASSES = ["foihk-spacer-1", "foihk-spacer-2", "foihk-spacer-section"] as const;
 
+const normalizeWhitespace = (value: string) =>
+  ["\u00a0", "\u200b", "\u200c", "\u200d", "\ufeff"].reduce(
+    (normalizedValue, character) => normalizedValue.replaceAll(character, " "),
+    value,
+  )
+    .replace(/\s+/g, " ")
+    .trim();
+
 const isEmptyParagraph = (element: Element) => {
   if (element.tagName !== "P" || element.querySelector("img, table, video, audio, iframe")) return false;
 
   const clone = element.cloneNode(true) as Element;
   clone.querySelectorAll("br").forEach((breakElement) => breakElement.remove());
-  return (clone.textContent || "").replace(/\u00a0/g, " ").trim().length === 0;
+  return normalizeWhitespace(clone.textContent || "").length === 0;
 };
 
 const normalizeEmptyParagraphs = (documentFragment: Document) => {
