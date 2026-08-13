@@ -28,6 +28,52 @@ const ALLOWED_FORMAT_CLASSES = new Set([
   "foihk-spacer-section",
 ]);
 
+const SPACER_CLASSES = ["foihk-spacer-1", "foihk-spacer-2", "foihk-spacer-section"] as const;
+
+const isEmptyParagraph = (element: Element) => {
+  if (element.tagName !== "P" || element.querySelector("img, table, video, audio, iframe")) return false;
+
+  const clone = element.cloneNode(true) as Element;
+  clone.querySelectorAll("br").forEach((breakElement) => breakElement.remove());
+  return (clone.textContent || "").replace(/\u00a0/g, " ").trim().length === 0;
+};
+
+const normalizeEmptyParagraphs = (documentFragment: Document) => {
+  const emptyParagraphs = Array.from(documentFragment.querySelectorAll("p")).filter(isEmptyParagraph);
+
+  for (const firstParagraph of emptyParagraphs) {
+    if (!firstParagraph.isConnected) continue;
+    if (firstParagraph.closest("li, td, th")) continue;
+
+    const run = [firstParagraph];
+    let nextElement = firstParagraph.nextElementSibling;
+    while (nextElement && isEmptyParagraph(nextElement)) {
+      run.push(nextElement);
+      nextElement = nextElement.nextElementSibling;
+    }
+
+    const previousElement = firstParagraph.previousElementSibling;
+    const touchesExistingSpacer = [previousElement, nextElement].some((element) =>
+      element ? SPACER_CLASSES.some((className) => element.classList.contains(className)) : false,
+    );
+
+    if (touchesExistingSpacer) {
+      run.forEach((paragraph) => paragraph.remove());
+      continue;
+    }
+
+    const spacer = documentFragment.createElement("div");
+    spacer.className = run.length === 1
+      ? "foihk-spacer-1"
+      : run.length === 2
+        ? "foihk-spacer-2"
+        : "foihk-spacer-section";
+    spacer.setAttribute("aria-hidden", "true");
+    firstParagraph.replaceWith(spacer);
+    run.slice(1).forEach((paragraph) => paragraph.remove());
+  }
+};
+
 export const sanitizeArticleHtml = (content: string, imageAlt = "Article image") => {
   const sanitized = DOMPurify.sanitize(content, {
     ALLOWED_TAGS: [
@@ -82,11 +128,14 @@ export const sanitizeArticleHtml = (content: string, imageAlt = "Article image")
     }
   });
 
+  normalizeEmptyParagraphs(documentFragment);
+
   documentFragment.querySelectorAll("div").forEach((element) => {
-    const hasSpacerClass = ["foihk-spacer-1", "foihk-spacer-2", "foihk-spacer-section"]
+    const hasSpacerClass = SPACER_CLASSES
       .some((className) => element.classList.contains(className));
     if (hasSpacerClass) {
       element.textContent = "";
+      element.setAttribute("aria-hidden", "true");
       return;
     }
     element.replaceWith(...Array.from(element.childNodes));
