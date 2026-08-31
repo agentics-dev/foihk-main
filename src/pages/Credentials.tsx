@@ -95,7 +95,7 @@ const COPY: Record<Language, CredentialCopy> = {
     leadersIntro: "Roles are shown only where FOIHK identifies the person and role. Matching names found elsewhere are not used to infer degrees, licences, employers, or professional qualifications.",
     leaders: [
       { name: "Lai King Man, Leo", alternateName: "賴敬文", role: "Founding Chairman", evidence: "Lai King Man, Leo serves as FOIHK's Founding Chairman, helping convene family-office practitioners and support education, philanthropy, cultural exchange, and professional dialogue." },
-      { name: "Chan Man Ching", alternateName: "陳文清", role: "Founding Secretary General", evidence: "Chan Man Ching serves as FOIHK's Founding Secretary General, supporting governance, member communication, programme coordination, and day-to-day institutional development." },
+      { name: "Chan Man Ching", alternateName: "陳文清", role: "Founding Secretary", evidence: "Chan Man Ching serves as FOIHK's Founding Secretary, supporting governance, member communication, programme coordination, and day-to-day institutional development." },
     ],
     notCredentialHeading: "What does not prove a credential",
     notCredentialIntro: "A credential claim needs more than association with an organization. The following signals can provide context but do not, by themselves, prove competence, authorization, or certification.",
