@@ -7,7 +7,7 @@ import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Building2, Calendar, ExternalLink, History, RotateCcw, ZoomIn, ZoomOut } from "lucide-react";
+import { ArrowLeft, Calendar, Clock3, ExternalLink, MapPin, RotateCcw, UserRound, Video, ZoomIn, ZoomOut } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useLanguage, type Language } from "@/contexts/LanguageContext";
 import {
@@ -45,41 +45,35 @@ import { sanitizeArticleHtml } from "@/lib/articleHtml";
 import { getModifiedDate, getPublishedDate } from "@/lib/articles";
 import {
   buildArticleStructuredData,
+  getArticleAuthor,
+  getArticleEventDetails,
   getArticleImageAlt,
   getArticleMetaDescription,
   getArticleSeoTitle,
   type LocalizedFaqItem,
 } from "@/lib/articleSeo";
+import { meaningfulSchemaValue } from "@/lib/schemaBuilders";
 
 const META_DESCRIPTION_MAX_LENGTH = 160;
 const DEFAULT_ARTICLE_IMAGE = `${ORGANIZATION_URL}/og-image.png`;
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const RESEARCH_BATCH_DATE = "2026-08-03";
-interface ArticleFAQ {
-  question: string;
-  answer: string;
-}
-
 const ARTICLE_META_LABELS: Record<Language, {
-  author: string;
   published: string;
   updated: string;
   editorialPolicy: string;
 }> = {
   en: {
-    author: "By the FOIHK Editorial Team",
     published: "Published",
     updated: "Updated",
     editorialPolicy: "Editorial policy",
   },
   "zh-hk": {
-    author: "機構署名：FOIHK 編輯團隊",
     published: "發布",
     updated: "更新",
     editorialPolicy: "編輯政策",
   },
   "zh-cn": {
-    author: "机构署名：FOIHK 编辑团队",
     published: "发布",
     updated: "更新",
     editorialPolicy: "编辑政策",
@@ -87,9 +81,6 @@ const ARTICLE_META_LABELS: Record<Language, {
 };
 
 type ArticleRow = Tables<"articles"> & {
-  faq?: ArticleFAQ[];
-  faq_zhtw?: ArticleFAQ[];
-  faq_zhcn?: ArticleFAQ[];
   static_content?: boolean;
   experience_date?: string;
   experience_location?: string;
@@ -105,6 +96,58 @@ type ArticleRow = Tables<"articles"> & {
   experience_source_label?: string;
   experience_source_label_zhtw?: string;
   experience_source_label_zhcn?: string;
+};
+
+const ARTICLE_AUTHOR_LABELS: Record<Language, { by: string; credentials: string }> = {
+  en: { by: "By", credentials: "Credentials" },
+  "zh-hk": { by: "作者", credentials: "資歷" },
+  "zh-cn": { by: "作者", credentials: "资历" },
+};
+
+const EVENT_LABELS: Record<Language, {
+  title: string;
+  when: string;
+  previousDate: string;
+  where: string;
+  online: string;
+  organizer: string;
+  timezone: string;
+  modes: Record<"offline" | "online" | "mixed", string>;
+  statuses: Record<"scheduled" | "cancelled" | "postponed" | "rescheduled", string>;
+}> = {
+  en: {
+    title: "Event details",
+    when: "Date and time",
+    previousDate: "Previous date",
+    where: "Venue",
+    online: "Join online",
+    organizer: "Organizer",
+    timezone: "Time zone",
+    modes: { offline: "In person", online: "Online", mixed: "Hybrid" },
+    statuses: { scheduled: "Scheduled", cancelled: "Cancelled", postponed: "Postponed", rescheduled: "Rescheduled" },
+  },
+  "zh-hk": {
+    title: "活動詳情",
+    when: "日期及時間",
+    previousDate: "原定日期",
+    where: "場地",
+    online: "網上參加",
+    organizer: "主辦方",
+    timezone: "時區",
+    modes: { offline: "線下", online: "線上", mixed: "混合" },
+    statuses: { scheduled: "如期舉行", cancelled: "已取消", postponed: "已延期", rescheduled: "已改期" },
+  },
+  "zh-cn": {
+    title: "活动详情",
+    when: "日期及时间",
+    previousDate: "原定日期",
+    where: "场地",
+    online: "在线参加",
+    organizer: "主办方",
+    timezone: "时区",
+    modes: { offline: "线下", online: "线上", mixed: "混合" },
+    statuses: { scheduled: "如期举行", cancelled: "已取消", postponed: "已延期", rescheduled: "已改期" },
+  },
 };
 
 const EXPERIENCE_LABELS: Record<Language, {
@@ -135,6 +178,32 @@ const EXPERIENCE_LABELS: Record<Language, {
 
 const prepareArticleHtml = (content: string, imageAlt: string) => {
   return sanitizeArticleHtml(content, imageAlt);
+};
+
+const getSafeHttpUrl = (value: string) => {
+  try {
+    const url = new URL(value);
+    return url.protocol === "http:" || url.protocol === "https:" ? url.href : "";
+  } catch {
+    return "";
+  }
+};
+
+const formatEventDisplayDate = (date: string | null, time: string | null, language: Language) => {
+  const normalizedDate = meaningfulSchemaValue(date);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(normalizedDate)) return "";
+  const parsedDate = new Date(`${normalizedDate}T00:00:00Z`);
+  if (Number.isNaN(parsedDate.getTime())) return "";
+  const dateLabel = parsedDate.toLocaleDateString(language, {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    timeZone: "UTC",
+  });
+  const normalizedTime = meaningfulSchemaValue(time);
+  return /^\d{2}:\d{2}(?::\d{2})?$/.test(normalizedTime)
+    ? `${dateLabel} · ${normalizedTime.slice(0, 5)}`
+    : dateLabel;
 };
 
 const getCitationUrls = (content: string) => {
@@ -390,17 +459,33 @@ const ArticleDetail = () => {
       ? [{ question: question.trim(), answer: sanitizeArticleHtml(answer, question) }]
       : [];
   });
-  const legacyFaq = language === "zh-hk"
-    ? article.faq_zhtw || []
-    : language === "zh-cn"
-      ? article.faq_zhcn || []
-      : article.faq || [];
-  const localizedFaq = faqItems !== null
-    ? tableFaq
-    : legacyFaq
-      .filter((item) => item.question?.trim() && item.answer?.trim())
-      .map((item) => ({ question: item.question.trim(), answer: sanitizeArticleHtml(item.answer, item.question) }));
-  const { articleSchema, faqSchema } = buildArticleStructuredData({
+  const localizedFaq = faqItems === null ? [] : tableFaq;
+  const showArticleFaq = article.faq_show_on_page !== false;
+  const visibleFaq = showArticleFaq ? localizedFaq : [];
+  const author = getArticleAuthor(article, language);
+  const eventDetails = getArticleEventDetails(article, language);
+  const eventLabels = EVENT_LABELS[language];
+  const eventStartLabel = formatEventDisplayDate(eventDetails.startDate, eventDetails.startTime, language);
+  const eventEndLabel = formatEventDisplayDate(eventDetails.endDate, eventDetails.endTime, language);
+  const previousStartLabel = eventDetails.status === "rescheduled"
+    ? formatEventDisplayDate(eventDetails.previousStartDate, eventDetails.previousStartTime, language)
+    : "";
+  const eventOnlineUrl = getSafeHttpUrl(meaningfulSchemaValue(eventDetails.onlineUrl));
+  const eventOrganizerUrl = getSafeHttpUrl(meaningfulSchemaValue(eventDetails.organizerUrl));
+  const eventVenueName = meaningfulSchemaValue(eventDetails.venueName);
+  const eventAddress = meaningfulSchemaValue(eventDetails.address);
+  const eventOrganizerName = meaningfulSchemaValue(eventDetails.organizerName);
+  const showEventDetails = eventDetails.enabled && Boolean(
+    eventStartLabel
+    || eventEndLabel
+    || eventVenueName
+    || eventAddress
+    || eventOnlineUrl
+    || eventOrganizerName
+    || eventDetails.attendanceMode
+    || eventDetails.status
+  );
+  const { articleSchema, personSchema, faqSchema, eventSchema } = buildArticleStructuredData({
     article,
     language,
     headline: localizedTitle,
@@ -409,8 +494,10 @@ const ArticleDetail = () => {
     image: primaryImage,
     plainContent,
     citations: citationUrls,
-    faq: localizedFaq,
+    faq: visibleFaq,
   });
+  const structuredData = [articleSchema, personSchema, faqSchema, eventSchema]
+    .filter(Boolean) as Record<string, unknown>[];
   const homeLabel = language === "en" ? "Home" : language === "zh-hk" ? "首頁" : "首页";
   const metaLabels = ARTICLE_META_LABELS[language];
 
@@ -424,7 +511,7 @@ const ArticleDetail = () => {
         ogImage={primaryImage}
         noindex={noindex}
         alternateLanguages={indexableLanguages}
-        structuredData={faqSchema ? [articleSchema, faqSchema] : articleSchema}
+        structuredData={structuredData}
       />
       <Navigation />
       
@@ -477,24 +564,81 @@ const ArticleDetail = () => {
               {localizedExcerpt}
             </p>
           )}
-          <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
-            <span className="inline-flex items-center gap-2">
-              <Building2 className="h-4 w-4" />
-              <span>{metaLabels.author}</span>
-            </span>
-            <span className="inline-flex items-center gap-2">
-              <History className="h-4 w-4" />
-              {metaLabels.updated}{" "}
-              <time dateTime={updatedDate}>
-                {new Date(updatedDate).toLocaleDateString(language, {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
-              </time>
-            </span>
+
+          <div className="mt-6 flex flex-wrap gap-x-6 gap-y-3 text-sm text-muted-foreground">
+            {author ? (
+              <div data-article-author className="flex items-start gap-2">
+                <UserRound className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+                <div>
+                  <p><span>{ARTICLE_AUTHOR_LABELS[language].by}</span> <strong className="font-semibold text-foreground">{author.name}</strong>{author.title ? ` · ${author.title}` : ""}</p>
+                  {author.credential && <p className="mt-1">{ARTICLE_AUTHOR_LABELS[language].credentials}: {author.credential}</p>}
+                </div>
+              </div>
+            ) : null}
           </div>
         </header>
+
+        {showEventDetails && (
+          <section data-event-details aria-labelledby="article-event-details" className="mb-10 rounded-xl border border-border bg-secondary/20 p-5 sm:p-6">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <h2 id="article-event-details" className="text-2xl font-bold text-foreground">{eventLabels.title}</h2>
+              <div className="flex flex-wrap gap-2">
+                {eventDetails.attendanceMode && <Badge variant="secondary">{eventLabels.modes[eventDetails.attendanceMode]}</Badge>}
+                {eventDetails.status && <Badge variant={eventDetails.status === "cancelled" ? "destructive" : "outline"}>{eventLabels.statuses[eventDetails.status]}</Badge>}
+              </div>
+            </div>
+
+            <dl className="mt-5 grid min-w-0 gap-5 sm:grid-cols-2">
+              {(eventStartLabel || eventEndLabel) && (
+                <div className="flex min-w-0 gap-3">
+                  <Clock3 className="mt-0.5 h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
+                  <div className="min-w-0">
+                    <dt className="font-semibold text-foreground">{eventLabels.when}</dt>
+                    <dd className="mt-1 break-words text-muted-foreground">
+                      {eventStartLabel}{eventEndLabel ? ` — ${eventEndLabel}` : ""}
+                    </dd>
+                    {meaningfulSchemaValue(eventDetails.timezone) && <dd className="mt-1 text-xs text-muted-foreground">{eventLabels.timezone}: {eventDetails.timezone}</dd>}
+                    {previousStartLabel && <dd className="mt-1 text-xs text-muted-foreground">{eventLabels.previousDate}: {previousStartLabel}</dd>}
+                  </div>
+                </div>
+              )}
+
+              {(eventVenueName || eventAddress) && (
+                <div className="flex min-w-0 gap-3">
+                  <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
+                  <div className="min-w-0">
+                    <dt className="font-semibold text-foreground">{eventLabels.where}</dt>
+                    <dd className="mt-1 break-words text-muted-foreground">{eventVenueName}{eventVenueName && eventAddress ? ", " : ""}{eventAddress}</dd>
+                  </div>
+                </div>
+              )}
+
+              {eventOnlineUrl && (
+                <div className="flex min-w-0 gap-3">
+                  <Video className="mt-0.5 h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
+                  <div className="min-w-0">
+                    <dt className="font-semibold text-foreground">{eventLabels.online}</dt>
+                    <dd className="mt-1 break-all">
+                      <a href={eventOnlineUrl} target="_blank" rel="noopener noreferrer" className="text-primary underline-offset-4 hover:underline">{eventOnlineUrl}</a>
+                    </dd>
+                  </div>
+                </div>
+              )}
+
+              {(eventOrganizerName || eventOrganizerUrl) && (
+                <div className="flex min-w-0 gap-3">
+                  <UserRound className="mt-0.5 h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
+                  <div className="min-w-0">
+                    <dt className="font-semibold text-foreground">{eventLabels.organizer}</dt>
+                    <dd className="mt-1 break-words text-muted-foreground">
+                      {eventOrganizerUrl ? <a href={eventOrganizerUrl} target="_blank" rel="noopener noreferrer" className="text-primary underline-offset-4 hover:underline">{eventOrganizerName || eventOrganizerUrl}</a> : eventOrganizerName}
+                    </dd>
+                  </div>
+                </div>
+              )}
+            </dl>
+          </section>
+        )}
 
         {hasExperienceOpening && (
           <blockquote
@@ -542,7 +686,7 @@ const ArticleDetail = () => {
                       width="1600"
                       height="900"
                       decoding="async"
-                      fetchpriority="high"
+                      fetchPriority="high"
                       onError={(event) => { event.currentTarget.src = "/og-image.png"; }}
                       className="w-full max-h-[600px] object-contain bg-muted rounded-lg"
                     />
@@ -673,9 +817,10 @@ const ArticleDetail = () => {
         )}
 
         {/* Article Content */}
-        <div className={`prose max-w-none ${isResearchBatchArticle ? "prose-lg prose-headings:scroll-mt-24 prose-h2:mt-14 prose-h2:mb-5 prose-h2:border-t prose-h2:border-border prose-h2:pt-10 prose-h3:mt-9 prose-p:my-6 prose-p:leading-8 prose-li:my-2 prose-table:my-8" : "prose-lg"}`}>
-          <div className="text-foreground leading-relaxed overflow-x-auto" dangerouslySetInnerHTML={{ __html: renderedContent }} />
-        </div>
+        <div
+          className={`foihk-article-content overflow-x-auto ${isResearchBatchArticle ? "foihk-article-content-research" : ""}`}
+          dangerouslySetInnerHTML={{ __html: renderedContent }}
+        />
 
         {article.category === "education_research" && (
 	          <aside aria-labelledby="related-guides" className="mt-12 border-t border-border pt-8">
@@ -689,20 +834,17 @@ const ArticleDetail = () => {
 	          </aside>
         )}
 
-        {localizedFaq.length > 0 && (
+        {visibleFaq.length > 0 && (
           <section aria-labelledby="article-questions" className="mt-12 border-t border-border pt-8">
             <h2 id="article-questions" className="mb-6 text-2xl font-bold">
               {language === "en" ? "Questions about this guide" : language === "zh-hk" ? "本指南相關問題" : "本指南相关问题"}
             </h2>
             <Accordion type="multiple" className="border-y border-border">
-              {localizedFaq.map((item, index) => (
+              {visibleFaq.map((item, index) => (
                 <AccordionItem key={`${item.question}-${index}`} value={`faq-${index}`}>
                   <AccordionTrigger className="text-left text-lg">{item.question}</AccordionTrigger>
                   <AccordionContent>
-                    <div
-                      className="prose max-w-none text-muted-foreground"
-                      dangerouslySetInnerHTML={{ __html: item.answer }}
-                    />
+                    <div className="foihk-article-content text-muted-foreground" dangerouslySetInnerHTML={{ __html: item.answer }} />
                   </AccordionContent>
                 </AccordionItem>
               ))}

@@ -15,8 +15,11 @@
     "validate:schema": "node scripts/validate-schema.cjs",
     "lint": "eslint .",
     "prerender": "node scripts/prerender.js",
+    "audit:article-html": "node scripts/audit-article-html.cjs",
     "audit:security": "node scripts/audit-security.js",
     "audit:seo": "node scripts/audit-seo.js",
+    "test:site-deploy": "node --experimental-strip-types --test tests/site-deploy.test.ts",
+    "test:seo-schema": "node --experimental-strip-types --test tests/seo-schema.test.ts",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -82,7 +85,7 @@
     "react-helmet-async": "^3.0.0",
     "react-hook-form": "^7.61.1",
     "react-resizable-panels": "^2.1.9",
-    "react-router-dom": "6.30.4",
+    "react-router-dom": "^7.18.2",
     "recharts": "^2.15.4",
     "sonner": "^1.7.4",
     "tailwind-merge": "^2.6.0",

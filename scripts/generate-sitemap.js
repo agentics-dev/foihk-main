@@ -23,6 +23,7 @@ const STATIC_LAST_MODIFIED_BY_PATH = new Map([
   ["", "2026-08-04"],
 ]);
 const SNAPSHOT_PATH = resolve(ROOT, "public", "published-articles.json");
+const MAX_SNAPSHOT_ATTEMPTS = 3;
 
 if (!SUPABASE_URL || !SUPABASE_KEY) {
   console.error("Missing VITE_SUPABASE_URL or VITE_SUPABASE_PUBLISHABLE_KEY");
@@ -195,7 +196,25 @@ ${alternateLinks}
   </url>`;
 };
 
-async function generateSitemap() {
+const fetchContentRevision = async () => {
+  const { data, error } = await supabase
+    .from("site_content_revision")
+    .select("revision")
+    .eq("id", true)
+    .maybeSingle();
+  if (!error) {
+    return {
+      available: Boolean(data && Number.isSafeInteger(Number(data.revision))),
+      revision: data ? Number(data.revision) : 0,
+    };
+  }
+  if (error.code === "42P01" || error.code === "PGRST205") {
+    return { available: false, revision: 0 };
+  }
+  throw new Error(`Failed to fetch content revision: ${error.message}`);
+};
+
+const fetchContentSnapshot = async () => {
   const { data: remoteArticles, error } = await supabase
     .from("articles")
     .select("*")
@@ -204,25 +223,50 @@ async function generateSitemap() {
 
   let cmsArticles = remoteArticles || [];
   if (error) {
-    if (!existsSync(SNAPSHOT_PATH)) {
-      console.error(`Failed to fetch articles and no local snapshot is available: ${error.message}`);
-      process.exit(1);
+    if (process.env.ALLOW_SNAPSHOT_FALLBACK !== "1" || !existsSync(SNAPSHOT_PATH)) {
+      throw new Error(`Failed to fetch published articles: ${error.message}`);
     }
-    console.warn(`Supabase fetch failed; using the committed article snapshot: ${error.message}`);
+    console.warn(`Supabase fetch failed; using the explicitly allowed local snapshot: ${error.message}`);
     cmsArticles = JSON.parse(readFileSync(SNAPSHOT_PATH, "utf8")).filter((article) => !article.static_content);
   }
 
-  let articles;
   if (error) {
-    articles = cmsArticles.map(normalizePublicUpdatedAt).map(addSingleSourceNoteWhenMissing);
-  } else {
-    const [faqRows, slugHistoryRows] = await Promise.all([
-      fetchOptionalRows("article_faq_items", (query) => query.eq("enabled", true).order("position", { ascending: true })),
-      fetchOptionalRows("article_slug_history", (query) => query.order("created_at", { ascending: true })),
-    ]);
-    articles = attachSeoRelations(cmsArticles, faqRows, slugHistoryRows)
-      .map(normalizePublicUpdatedAt)
-      .map(addSingleSourceNoteWhenMissing);
+    return cmsArticles.map(normalizePublicUpdatedAt).map(addSingleSourceNoteWhenMissing);
+  }
+
+  const [faqRows, slugHistoryRows] = await Promise.all([
+    fetchOptionalRows("article_faq_items", (query) => query.eq("enabled", true).order("position", { ascending: true })),
+    fetchOptionalRows("article_slug_history", (query) => query.order("created_at", { ascending: true })),
+  ]);
+  return attachSeoRelations(cmsArticles, faqRows, slugHistoryRows)
+    .map(normalizePublicUpdatedAt)
+    .map(addSingleSourceNoteWhenMissing);
+};
+
+async function generateSitemap() {
+  let articles = [];
+  let contentRevision = 0;
+  let stableSnapshot = false;
+  for (let attempt = 1; attempt <= MAX_SNAPSHOT_ATTEMPTS; attempt += 1) {
+    const before = await fetchContentRevision();
+    articles = await fetchContentSnapshot();
+    const after = await fetchContentRevision();
+
+    if (!before.available || !after.available) {
+      contentRevision = 0;
+      stableSnapshot = true;
+      console.warn("Content revision table is not available; emitting bootstrap revision 0");
+      break;
+    }
+    if (before.revision === after.revision) {
+      contentRevision = after.revision;
+      stableSnapshot = true;
+      break;
+    }
+    console.warn(`Content changed during build snapshot attempt ${attempt}; retrying`);
+  }
+  if (!stableSnapshot) {
+    throw new Error(`Unable to capture a stable content snapshot after ${MAX_SNAPSHOT_ATTEMPTS} attempts`);
   }
 
   const urls = [];
@@ -280,7 +324,18 @@ ${urls.map(renderUrl).join("\n")}
     resolve(generatedPath, "article-routes.json"),
     `${JSON.stringify(routeManifest, null, 2)}\n`
   );
-  console.log(`Generated sitemap with ${urls.length} indexable URLs and ${routeManifest.length} article records`);
+  writeFileSync(
+    resolve(publicPath, "content-build.json"),
+    `${JSON.stringify({
+      revision: contentRevision,
+      generatedAt: new Date().toISOString(),
+      urls: [...new Set(urls.map(({ loc }) => `${BASE_URL}${loc}`))].sort(),
+    }, null, 2)}\n`
+  );
+  console.log(`Generated revision ${contentRevision} sitemap with ${urls.length} indexable URLs and ${routeManifest.length} article records`);
 }
 
-generateSitemap();
+generateSitemap().catch((error) => {
+  console.error(error instanceof Error ? error.message : error);
+  process.exit(1);
+});

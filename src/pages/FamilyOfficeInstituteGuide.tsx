@@ -400,7 +400,6 @@ const FamilyOfficeInstituteGuide = () => {
                 <p className="max-w-4xl text-lg leading-8 text-white/90">{copy.directAnswer}</p>
                 <div className="mt-7 flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/75">
                   <span>{copy.publishedLabel}: <time dateTime={DATE_ISO}>{copy.date}</time></span>
-                  <span>{copy.updatedLabel}: <time dateTime={DATE_ISO}>{copy.date}</time></span>
                   <Link to="/about#editorial-accountability" rel="author" className="underline underline-offset-4 hover:text-white">{copy.author}</Link>
                 </div>
               </div>

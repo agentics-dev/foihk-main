@@ -1,8 +1,8 @@
-create schema private;
+create schema if not exists private;
 
 revoke all on schema private from public, anon, authenticated;
 
-create function private.current_user_has_role(_role public.app_role)
+create or replace function private.current_user_has_role(_role public.app_role)
 returns boolean
 language sql
 stable

@@ -5,8 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Edit, Trash2, Eye, EyeOff, Calendar } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { notifyIndexNow } from "@/lib/indexNow";
 import type { Tables } from "@/integrations/supabase/types";
+import type { SiteDeployStatus } from "@/lib/siteDeploy";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,11 +22,13 @@ import {
 interface ArticleListProps {
   category: "education_research" | "news_events" | "philanthropy";
   onEdit: (article: ArticleRow) => void;
+  deployStatus: SiteDeployStatus | null;
+  onContentChanged: () => void | Promise<void>;
 }
 
 type ArticleRow = Tables<"articles">;
 
-export const ArticleList = ({ category, onEdit }: ArticleListProps) => {
+export const ArticleList = ({ category, onEdit, deployStatus, onContentChanged }: ArticleListProps) => {
   const [articles, setArticles] = useState<ArticleRow[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
@@ -65,20 +67,14 @@ export const ArticleList = ({ category, onEdit }: ArticleListProps) => {
         variant: "destructive",
       });
     } else {
-      let indexNowWarning = false;
-      try {
-        await notifyIndexNow(article.category, article.slug);
-      } catch {
-        indexNowWarning = true;
-      }
       toast({
-        title: indexNowWarning ? "Article deleted; indexing notification pending" : "Success",
-        description: indexNowWarning
-          ? "The article was deleted, but IndexNow could not be notified. Retry from the publishing workflow."
-          : "Article deleted successfully",
-        variant: indexNowWarning ? "destructive" : "default",
+        title: "Article deleted",
+        description: article.published
+          ? "Production removal has been queued and will be verified before IndexNow is notified."
+          : "The draft was deleted.",
       });
-      fetchArticles();
+      await fetchArticles();
+      void onContentChanged();
     }
   };
 
@@ -100,20 +96,12 @@ export const ArticleList = ({ category, onEdit }: ArticleListProps) => {
         variant: "destructive",
       });
     } else {
-      let indexNowWarning = false;
-      try {
-        await notifyIndexNow(article.category, article.slug);
-      } catch {
-        indexNowWarning = true;
-      }
       toast({
-        title: indexNowWarning ? "Article updated; indexing notification pending" : "Success",
-        description: indexNowWarning
-          ? "The publishing state changed, but IndexNow could not be notified. Retry this action."
-          : `Article ${!article.published ? "published" : "unpublished"} successfully`,
-        variant: indexNowWarning ? "destructive" : "default",
+        title: `Article ${!article.published ? "published" : "unpublished"}`,
+        description: "Production publishing has been queued. Live status appears after raw HTML verification.",
       });
-      fetchArticles();
+      await fetchArticles();
+      void onContentChanged();
     }
   };
 
@@ -133,7 +121,15 @@ export const ArticleList = ({ category, onEdit }: ArticleListProps) => {
 
   return (
     <div className="grid gap-6">
-      {articles.map((article) => (
+      {articles.map((article) => {
+        const pending = deployStatus?.pendingArticleIds.includes(article.id) ?? false;
+        const deliveryFailed = pending && deployStatus?.status === "failed";
+        const deliveryLabel = deliveryFailed
+          ? "Failed"
+          : pending
+            ? (article.published ? "Publishing" : "Unpublishing")
+            : article.published ? "Live" : "Draft";
+        return (
         <Card key={article.id}>
           <CardHeader>
             <div className="flex justify-between items-start gap-4">
@@ -163,8 +159,8 @@ export const ArticleList = ({ category, onEdit }: ArticleListProps) => {
                   })}</span>
                 </div>
               </div>
-              <Badge variant={article.published ? "default" : "secondary"} className="flex-shrink-0">
-                {article.published ? "Published" : "Draft"}
+              <Badge variant={deliveryFailed ? "destructive" : article.published && !pending ? "default" : "secondary"} className="flex-shrink-0">
+                {deliveryLabel}
               </Badge>
             </div>
           </CardHeader>
@@ -216,7 +212,8 @@ export const ArticleList = ({ category, onEdit }: ArticleListProps) => {
             </div>
           </CardContent>
         </Card>
-      ))}
+        );
+      })}
     </div>
   );
 };

@@ -14,7 +14,7 @@ Site-wide content review completed: 2026-08-03. Every public HTML page displays 
 - Website: https://www.foihk.org
 - Email: info@foihk.org
 - Address: 32/F, The Center, 99 Queen's Road Central, Central, Hong Kong, HK
-- LinkedIn: https://www.linkedin.com/company/foihk
+- LinkedIn: https://www.linkedin.com/company/family-office-institute-hong-kong/
 
 FOIHK publishes educational, research, news, event, and philanthropy information for the Hong Kong family office ecosystem. Website content is general information, not investment, legal, tax, accounting, or other regulated professional advice.
 

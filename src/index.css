@@ -292,8 +292,122 @@ All colors MUST be HSL.
     margin: 0 !important;
   }
 
+  .foihk-article-content {
+    @apply text-lg leading-8 text-foreground;
+    overflow-wrap: anywhere;
+  }
+
+  .foihk-article-content > *:first-child {
+    margin-top: 0 !important;
+  }
+
+  .foihk-article-content > *:last-child {
+    margin-bottom: 0 !important;
+  }
+
+  .foihk-article-content p {
+    @apply my-6;
+  }
+
+  .foihk-article-content h2 {
+    @apply mb-5 mt-12 scroll-mt-24 font-serif text-3xl font-bold leading-tight text-foreground;
+  }
+
+  .foihk-article-content h3 {
+    @apply mb-4 mt-9 scroll-mt-24 font-serif text-2xl font-bold leading-tight text-foreground;
+  }
+
+  .foihk-article-content h4,
+  .foihk-article-content h5,
+  .foihk-article-content h6 {
+    @apply mb-3 mt-7 scroll-mt-24 font-serif text-xl font-bold leading-tight text-foreground;
+  }
+
+  .foihk-article-content ul,
+  .foihk-article-content ol {
+    @apply my-6 pl-7;
+  }
+
+  .foihk-article-content ul {
+    list-style-type: disc !important;
+  }
+
+  .foihk-article-content ol {
+    list-style-type: decimal !important;
+  }
+
+  .foihk-article-content ul ul,
+  .foihk-article-content ol ul {
+    list-style-type: circle !important;
+  }
+
+  .foihk-article-content ol ol,
+  .foihk-article-content ul ol {
+    list-style-type: lower-alpha !important;
+  }
+
+  .foihk-article-content li {
+    @apply my-2 pl-1;
+  }
+
+  .foihk-article-content li > p {
+    @apply my-2;
+  }
+
+  .foihk-article-content li > ul,
+  .foihk-article-content li > ol {
+    @apply my-2;
+  }
+
+  .foihk-article-content blockquote {
+    @apply my-7 border-l-4 border-primary bg-secondary/30 py-4 pl-5 pr-4 text-foreground;
+  }
+
+  .foihk-article-content a {
+    @apply font-semibold text-primary underline underline-offset-4;
+  }
+
+  .foihk-article-content table {
+    @apply my-8 w-full border-collapse text-base;
+  }
+
+  .foihk-article-content th,
+  .foihk-article-content td {
+    @apply border border-border px-4 py-3 align-top;
+  }
+
+  .foihk-article-content th {
+    @apply bg-secondary/50 font-semibold;
+  }
+
+  .foihk-article-content img {
+    @apply my-8 max-w-full rounded-md object-contain;
+  }
+
+  .foihk-article-content pre {
+    @apply my-6 overflow-x-auto rounded-md bg-secondary/50 p-4 text-sm;
+  }
+
+  .foihk-article-content code {
+    @apply rounded bg-secondary px-1 py-0.5 text-sm;
+  }
+
+  .foihk-article-content pre code {
+    @apply bg-transparent p-0;
+  }
+
+  .foihk-article-content br {
+    display: block;
+    content: "";
+    margin-top: 0.5rem;
+  }
+
+  .foihk-article-content-research h2 {
+    @apply border-t border-border pt-10;
+  }
+
   .foihk-admin-editor {
-    @apply text-base leading-7 text-foreground;
+    @apply text-base leading-7;
   }
 
   .foihk-admin-editor p {
@@ -312,39 +426,6 @@ All colors MUST be HSL.
   .foihk-admin-editor .foihk-spacer-section::after {
     content: "真实空行";
     @apply pointer-events-none absolute left-2 top-1/2 -translate-y-1/2 text-[10px] font-medium text-muted-foreground;
-  }
-
-  .foihk-admin-editor h2 {
-    @apply mb-4 mt-8 font-serif text-2xl font-bold text-foreground;
-  }
-
-  .foihk-admin-editor h3 {
-    @apply mb-3 mt-6 font-serif text-xl font-bold text-foreground;
-  }
-
-  .foihk-admin-editor ul {
-    @apply my-4 list-disc pl-6;
-  }
-
-  .foihk-admin-editor ol {
-    @apply my-4 list-decimal pl-6;
-  }
-
-  .foihk-admin-editor blockquote {
-    @apply my-5 border-l-4 border-primary bg-secondary/30 py-3 pl-4;
-  }
-
-  .foihk-admin-editor a {
-    @apply text-primary underline underline-offset-4;
-  }
-
-  .foihk-admin-editor table {
-    @apply my-6 w-full border-collapse text-sm;
-  }
-
-  .foihk-admin-editor th,
-  .foihk-admin-editor td {
-    @apply border border-border px-3 py-2 align-top;
   }
 
   .foihk-admin-editor img {

@@ -3,6 +3,13 @@ import type { Tables } from "@/integrations/supabase/types";
 import { getModifiedDate, getPublishedDate } from "@/lib/articles";
 import { getArticleCategoryPath, getStrictLocalizedField, normalizeArticleSlug } from "@/lib/utils";
 import {
+  buildEventSchema,
+  buildFaqPageSchema,
+  getLocalizedSchemaValue,
+  type EventAttendanceMode,
+  type EventStatus,
+} from "@/lib/schemaBuilders";
+import {
   ORGANIZATION_ALTERNATE_NAMES,
   ORGANIZATION_CONTACT_POINT,
   ORGANIZATION_EMAIL,
@@ -54,6 +61,47 @@ export const getArticleImageAlt = (
   return typeof record[key] === "string" && record[key].trim() ? record[key].trim() : fallback;
 };
 
+export const getArticleAuthor = (article: ArticleSeoRow, language: Language) => {
+  const record = article as unknown as Record<string, unknown>;
+  const name = getLocalizedSchemaValue(record, "author_name", language);
+  if (!name) return null;
+  return {
+    name,
+    title: getLocalizedSchemaValue(record, "author_title", language),
+    credential: getLocalizedSchemaValue(record, "author_credential", language),
+  };
+};
+
+const EVENT_ATTENDANCE_MODES = new Set<EventAttendanceMode>(["offline", "online", "mixed"]);
+const EVENT_STATUSES = new Set<EventStatus>(["scheduled", "cancelled", "postponed", "rescheduled"]);
+
+export const getArticleEventDetails = (article: ArticleSeoRow, language: Language) => {
+  const record = article as unknown as Record<string, unknown>;
+  const attendanceMode = EVENT_ATTENDANCE_MODES.has(article.event_attendance_mode as EventAttendanceMode)
+    ? article.event_attendance_mode as EventAttendanceMode
+    : null;
+  const status = EVENT_STATUSES.has(article.event_status as EventStatus)
+    ? article.event_status as EventStatus
+    : null;
+  return {
+    enabled: article.category === "news_events" && article.event_schema_enabled === true,
+    attendanceMode,
+    status,
+    startDate: article.event_start_date,
+    startTime: article.event_start_time,
+    endDate: article.event_end_date,
+    endTime: article.event_end_time,
+    timezone: article.event_timezone || "Asia/Hong_Kong",
+    previousStartDate: article.event_previous_start_date,
+    previousStartTime: article.event_previous_start_time,
+    venueName: getLocalizedSchemaValue(record, "event_venue_name", language),
+    address: getLocalizedSchemaValue(record, "event_address", language),
+    onlineUrl: article.event_online_url?.trim() || "",
+    organizerName: getLocalizedSchemaValue(record, "event_organizer_name", language),
+    organizerUrl: article.event_organizer_url?.trim() || "",
+  };
+};
+
 export const buildArticleStructuredData = ({
   article,
   language,
@@ -82,6 +130,20 @@ export const buildArticleStructuredData = ({
   const updatedDate = getModifiedDate(article);
   const terms = getArticleTopicTerms(article, language);
   const schemaLanguage = language === "en" ? "en" : language === "zh-hk" ? "zh-Hant" : "zh-Hans";
+  const author = getArticleAuthor(article, language);
+
+  const personSchema = author
+    ? {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "@id": `${url}#author`,
+        "name": author.name,
+        "inLanguage": schemaLanguage,
+        "jobTitle": author.title || undefined,
+        "description": author.credential || undefined,
+        "worksFor": { "@id": `${ORGANIZATION_URL}/#organization` },
+      }
+    : null;
 
   const articleSchema = {
     "@context": "https://schema.org",
@@ -100,14 +162,16 @@ export const buildArticleStructuredData = ({
     "about": terms.length > 0 ? terms.map((name) => ({ "@type": "Thing", "name": name })) : undefined,
     "citation": citations.length > 0 ? citations : undefined,
     "mainEntityOfPage": { "@type": "WebPage", "@id": url },
-    "author": {
-      "@type": "Organization",
-      "@id": `${ORGANIZATION_URL}/#editorial-team`,
-      "name": "FOIHK Editorial Team",
-      "description": "The institutional editorial unit of Family Office Institute Hong Kong Limited.",
-      "email": ORGANIZATION_EMAIL,
-      "parentOrganization": { "@id": `${ORGANIZATION_URL}/#organization` },
-    },
+    "author": personSchema
+      ? { "@id": personSchema["@id"] }
+      : {
+          "@type": "Organization",
+          "@id": `${ORGANIZATION_URL}/#editorial-team`,
+          "name": "FOIHK Editorial Team",
+          "description": "The institutional editorial unit of Family Office Institute Hong Kong Limited.",
+          "email": ORGANIZATION_EMAIL,
+          "parentOrganization": { "@id": `${ORGANIZATION_URL}/#organization` },
+        },
     "publisher": {
       "@type": "Organization",
       "@id": `${ORGANIZATION_URL}/#organization`,
@@ -121,18 +185,48 @@ export const buildArticleStructuredData = ({
     },
   };
 
-  const faqSchema = faq.length > 0 ? {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "@id": `${url}#faq`,
-    "url": url,
-    "inLanguage": schemaLanguage,
-    "mainEntity": faq.map((item) => ({
-      "@type": "Question",
-      "name": item.question,
-      "acceptedAnswer": { "@type": "Answer", "text": item.answer },
-    })),
-  } : null;
+  const faqSchema = buildFaqPageSchema({
+    url,
+    language,
+    enabled: article.faq_show_on_page !== false && article.faq_include_schema !== false,
+    items: faq.map((item) => ({ ...item, enabled: true })),
+  });
 
-  return { articleSchema, faqSchema, url, publishedDate, updatedDate };
+  const event = getArticleEventDetails(article, language);
+  const eventName = getLocalizedSchemaValue(article as unknown as Record<string, unknown>, "title", language);
+  const eventResult = buildEventSchema({
+    enabled: event.enabled,
+    category: article.category,
+    language,
+    url,
+    name: eventName,
+    description,
+    image,
+    attendanceMode: event.attendanceMode,
+    startDate: event.startDate,
+    startTime: event.startTime,
+    endDate: event.endDate,
+    endTime: event.endTime,
+    timezone: event.timezone,
+    venueName: event.venueName,
+    address: event.address,
+    onlineUrl: event.onlineUrl,
+    organizerName: event.organizerName,
+    organizerUrl: event.organizerUrl,
+    status: event.status,
+    previousStartDate: event.previousStartDate,
+    previousStartTime: event.previousStartTime,
+  });
+
+  return {
+    articleSchema,
+    personSchema,
+    faqSchema,
+    eventSchema: eventResult.schema,
+    eventMissingCore: eventResult.missingCore,
+    eventWarnings: eventResult.warnings,
+    url,
+    publishedDate,
+    updatedDate,
+  };
 };

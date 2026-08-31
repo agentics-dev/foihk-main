@@ -101,10 +101,10 @@ const Articles = () => {
     return new Date(modified).getTime() > new Date(latest).getTime() ? modified : latest;
   }, collectionBaselineDate);
   const dateCopy = language === "en"
-    ? { updated: "Page last updated", published: "Published", modified: "Updated" }
+    ? { published: "Published" }
     : language === "zh-hk"
-      ? { updated: "頁面最後更新", published: "發布", modified: "更新" }
-      : { updated: "页面最后更新", published: "发布", modified: "更新" };
+      ? { published: "發布" }
+      : { published: "发布" };
   const latestHeading = category === "news_events"
     ? language === "en" ? "Latest news and events" : language === "zh-hk" ? "最新新聞與活動" : "最新新闻与活动"
     : category === "education_research"
@@ -192,9 +192,6 @@ const Articles = () => {
           />
           <h1 className="text-4xl font-bold text-foreground mb-2">{title}</h1>
           <p className="text-lg text-muted-foreground">{description}</p>
-          <p className="mt-3 text-sm font-medium text-muted-foreground">
-            {dateCopy.updated}: <time dateTime={latestModified}>{formatDate(latestModified)}</time>
-          </p>
         </div>
       </div>
       
@@ -278,9 +275,6 @@ const Articles = () => {
                       <span className="inline-flex items-center gap-1.5">
                         <Calendar className="h-4 w-4" aria-hidden="true" />
                         {dateCopy.published}: <time data-published-date dateTime={getPublishedDate(article)}>{formatDate(getPublishedDate(article))}</time>
-                      </span>
-                      <span>
-                        {dateCopy.modified}: <time data-updated-date dateTime={getModifiedDate(article)}>{formatDate(getModifiedDate(article))}</time>
                       </span>
                     </div>
                     <h3 className={`${isResearchBatchArticle ? "mt-4 min-h-[4.5rem] text-2xl leading-tight line-clamp-3" : "mt-2 h-14 text-xl line-clamp-2"} font-bold transition-colors hover:text-primary flex-shrink-0`}>

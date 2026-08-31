@@ -380,7 +380,7 @@ const Contact = () => {
                     <Linkedin className="h-5 w-5 text-accent mt-1" />
                     <div>
                       <p className="font-medium">{detailsCopy.linkedin}</p>
-                      <a href={ORGANIZATION_LINKEDIN_URL} target="_blank" rel="noopener noreferrer" className="text-sm text-primary underline-offset-4 hover:underline">linkedin.com/company/foihk</a>
+                      <a href={ORGANIZATION_LINKEDIN_URL} target="_blank" rel="noopener noreferrer" className="text-sm text-primary underline-offset-4 hover:underline">linkedin.com/company/family-office-institute-hong-kong</a>
                     </div>
                   </div>
                 </CardContent>

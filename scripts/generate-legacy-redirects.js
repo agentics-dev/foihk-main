@@ -184,6 +184,7 @@ const securityHeaders = [
 const noStoreHeaders = [{ key: "Cache-Control", value: "no-store, max-age=0" }];
 
 const vercelConfig = {
+  buildCommand: "npm run build:seo",
   cleanUrls: true,
   trailingSlash: false,
   redirects,
@@ -196,6 +197,7 @@ const vercelConfig = {
     { source: "/admin-login", headers: noStoreHeaders },
     { source: "/admin", headers: noStoreHeaders },
     { source: "/admin/:path*", headers: noStoreHeaders },
+    { source: "/content-build.json", headers: [{ key: "Cache-Control", value: "public, max-age=0, must-revalidate" }] },
     { source: "/(.*)", headers: securityHeaders },
     { source: "/assets/:path*", headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }] },
   ],

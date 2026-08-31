@@ -3,5 +3,11 @@ project_id = "fadfhgdyoxecdddpcpdf"
 [functions.notify-indexnow]
 verify_jwt = true
 
+[functions.site-deploy-admin]
+verify_jwt = true
+
+[functions.site-deploy-worker]
+verify_jwt = false
+
 [functions.submit-contact]
 verify_jwt = false

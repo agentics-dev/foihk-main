@@ -1,4 +1,5 @@
 {
+  "buildCommand": "npm run build:seo",
   "cleanUrls": true,
   "trailingSlash": false,
   "redirects": [
@@ -496,6 +497,41 @@
     {
       "source": "/zh-cn/articles/education_research/hong-kong-family-office-institute-organisation-association-comparison",
       "destination": "/zh-cn/articles/education-research",
+      "permanent": true
+    },
+    {
+      "source": "/articles/education_research/c3c9ef26-334f-4486-9567-8e9acfd67309",
+      "destination": "/en/articles/education-research/industry-insights-what-is-a-family-office",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/education_research/c3c9ef26-334f-4486-9567-8e9acfd67309",
+      "destination": "/en/articles/education-research/industry-insights-what-is-a-family-office",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/education_research/industry-insights-what-is-a-family-office",
+      "destination": "/en/articles/education-research/industry-insights-what-is-a-family-office",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/education_research/c3c9ef26-334f-4486-9567-8e9acfd67309",
+      "destination": "/zh-hk/articles/education-research/industry-insights-what-is-a-family-office",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/education_research/industry-insights-what-is-a-family-office",
+      "destination": "/zh-hk/articles/education-research/industry-insights-what-is-a-family-office",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/education_research/c3c9ef26-334f-4486-9567-8e9acfd67309",
+      "destination": "/zh-cn/articles/education-research/industry-insights-what-is-a-family-office",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/education_research/industry-insights-what-is-a-family-office",
+      "destination": "/zh-cn/articles/education-research/industry-insights-what-is-a-family-office",
       "permanent": true
     },
     {
@@ -1443,6 +1479,15 @@
         {
           "key": "Cache-Control",
           "value": "no-store, max-age=0"
+        }
+      ]
+    },
+    {
+      "source": "/content-build.json",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
         }
       ]
     },

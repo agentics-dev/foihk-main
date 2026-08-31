@@ -4,7 +4,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   DndContext,
   KeyboardSensor,
@@ -38,6 +37,7 @@ export interface ArticleFaqDraft {
 interface ArticleFaqEditorProps {
   items: ArticleFaqDraft[];
   onChange: (items: ArticleFaqDraft[]) => void;
+  language: "en" | "zhtw" | "zhcn";
 }
 
 const newFaq = (): ArticleFaqDraft => ({
@@ -54,20 +54,24 @@ const newFaq = (): ArticleFaqDraft => ({
 const SortableFaq = ({
   item,
   index,
+  language,
   onUpdate,
   onRemove,
 }: {
   item: ArticleFaqDraft;
   index: number;
+  language: "en" | "zhtw" | "zhcn";
   onUpdate: (patch: Partial<ArticleFaqDraft>) => void;
   onRemove: () => void;
 }) => {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: item.clientId });
   const style = { transform: CSS.Transform.toString(transform), transition };
-  const missingTranslations = [
-    !item.question_zhtw.trim() || !item.answer_zhtw.trim() ? "繁體中文" : null,
-    !item.question_zhcn.trim() || !item.answer_zhcn.trim() ? "简体中文" : null,
-  ].filter(Boolean);
+  const fields = language === "zhtw"
+    ? { question: "question_zhtw" as const, answer: "answer_zhtw" as const, label: "繁體中文" }
+    : language === "zhcn"
+      ? { question: "question_zhcn" as const, answer: "answer_zhcn" as const, label: "简体中文" }
+      : { question: "question" as const, answer: "answer" as const, label: "English" };
+  const currentLanguageIncomplete = !item[fields.question].trim() || !item[fields.answer].trim();
 
   return (
     <section ref={setNodeRef} style={style} className="border border-border bg-background p-4">
@@ -85,50 +89,37 @@ const SortableFaq = ({
         </div>
       </div>
 
-      {missingTranslations.length > 0 && item.enabled && (
-        <p className="mb-3 text-sm text-amber-700">Missing translation: {missingTranslations.join(", ")}. Those languages will not output this FAQ.</p>
+      {currentLanguageIncomplete && item.enabled && (
+        <p className="mb-3 text-sm text-amber-700">The {fields.label} question and answer must both be complete before this FAQ appears in that language.</p>
       )}
 
-      <Tabs defaultValue="en">
-        <TabsList>
-          <TabsTrigger value="en">English</TabsTrigger>
-          <TabsTrigger value="zhtw">繁體中文</TabsTrigger>
-          <TabsTrigger value="zhcn">简体中文</TabsTrigger>
-        </TabsList>
-        {[
-          { value: "en", questionKey: "question", answerKey: "answer", label: "English" },
-          { value: "zhtw", questionKey: "question_zhtw", answerKey: "answer_zhtw", label: "繁體中文" },
-          { value: "zhcn", questionKey: "question_zhcn", answerKey: "answer_zhcn", label: "简体中文" },
-        ].map(({ value, questionKey, answerKey, label }) => (
-          <TabsContent key={value} value={value} className="space-y-4 pt-4">
-            <div className="space-y-2">
-              <Label htmlFor={`${item.clientId}-${questionKey}`}>Question ({label})</Label>
-              <Input
-                id={`${item.clientId}-${questionKey}`}
-                value={item[questionKey as keyof ArticleFaqDraft] as string}
-                maxLength={300}
-                onChange={(event) => onUpdate({ [questionKey]: event.target.value })}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor={`${item.clientId}-${answerKey}`}>Answer ({label})</Label>
-              <Textarea
-                id={`${item.clientId}-${answerKey}`}
-                value={item[answerKey as keyof ArticleFaqDraft] as string}
-                maxLength={5000}
-                rows={4}
-                onChange={(event) => onUpdate({ [answerKey]: event.target.value })}
-              />
-              <p className="text-xs text-muted-foreground">Use a concise, complete answer. This text will be visible in the article and included in FAQ Schema.</p>
-            </div>
-          </TabsContent>
-        ))}
-      </Tabs>
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor={`${item.clientId}-${fields.question}`}>Question ({fields.label})</Label>
+          <Input
+            id={`${item.clientId}-${fields.question}`}
+            value={item[fields.question]}
+            maxLength={300}
+            onChange={(event) => onUpdate({ [fields.question]: event.target.value })}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor={`${item.clientId}-${fields.answer}`}>Answer ({fields.label})</Label>
+          <Textarea
+            id={`${item.clientId}-${fields.answer}`}
+            value={item[fields.answer]}
+            maxLength={5000}
+            rows={4}
+            onChange={(event) => onUpdate({ [fields.answer]: event.target.value })}
+          />
+          <p className="text-xs text-muted-foreground">Use a concise, complete answer. This text will be visible in the article and included in FAQ Schema.</p>
+        </div>
+      </div>
     </section>
   );
 };
 
-export const ArticleFaqEditor = ({ items, onChange }: ArticleFaqEditorProps) => {
+export const ArticleFaqEditor = ({ items, onChange, language }: ArticleFaqEditorProps) => {
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
@@ -142,10 +133,10 @@ export const ArticleFaqEditor = ({ items, onChange }: ArticleFaqEditorProps) => 
 
   return (
     <div className="space-y-4">
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex flex-col items-start justify-between gap-4 sm:flex-row">
         <div>
           <h2 className="text-lg font-semibold">Article FAQ</h2>
-          <p className="text-sm text-muted-foreground">Only enabled, fully translated questions appear on that language page and in its FAQ Schema.</p>
+          <p className="text-sm text-muted-foreground">Each language is evaluated independently. Only enabled pairs with both a question and an answer appear on that language page and in its FAQ Schema.</p>
         </div>
         <Button type="button" variant="outline" onClick={() => onChange([...items, newFaq()])}>
           <Plus className="mr-2 h-4 w-4" /> Add FAQ
@@ -159,6 +150,7 @@ export const ArticleFaqEditor = ({ items, onChange }: ArticleFaqEditorProps) => 
                 key={item.clientId}
                 item={item}
                 index={index}
+                language={language}
                 onUpdate={(patch) => onChange(items.map((candidate) => candidate.clientId === item.clientId ? { ...candidate, ...patch } : candidate))}
                 onRemove={() => onChange(items.filter((candidate) => candidate.clientId !== item.clientId))}
               />

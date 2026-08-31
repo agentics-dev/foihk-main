@@ -32,14 +32,9 @@ const UPDATED_ISO = "2026-08-03";
 
 const TRUST_COPY: Record<Language, {
   definition: string;
-  updatedLabel: string;
-  updated: string;
   leadershipIntro: string;
-  verifiedRole: string;
   chairmanBio: string;
   secretaryBio: string;
-  profileLink: string;
-  credentialNote: string;
   detailsTitle: string;
   detailsIntro: string;
   legalName: string;
@@ -59,14 +54,9 @@ const TRUST_COPY: Record<Language, {
 }> = {
   en: {
     definition: "Family Office Institute Hong Kong (FOIHK) is a Hong Kong family office industry institution and professional community for education, research, events, philanthropy, and cross-sector exchange. It is not a family office, financial institution, regulator, or government agency.",
-    updatedLabel: "Last reviewed",
-    updated: "3 August 2026",
     leadershipIntro: "FOIHK's founding office holders help shape the institute's education, research, events, philanthropy, and cross-sector exchange agenda.",
-    verifiedRole: "Verified FOIHK role",
     chairmanBio: "Lai King Man, Leo serves as FOIHK's Founding Chairman. His work with the institute centres on convening family-office practitioners, supporting public education, and encouraging dialogue across wealth stewardship, legacy planning, philanthropy, culture, and professional services.",
     secretaryBio: "Chan Man Ching serves as FOIHK's Founding Secretary General. Her work supports the institute's governance, member communication, programme coordination, and day-to-day institutional development.",
-    profileLink: "Professional profile",
-    credentialNote: "This page introduces FOIHK roles and institutional responsibilities. Additional professional credentials can be added when the office holder provides approved profile details.",
     detailsTitle: "Verified organization details",
     detailsIntro: "Use these details to verify FOIHK and distinguish it from similarly named organizations.",
     legalName: "Legal name",
@@ -89,14 +79,9 @@ const TRUST_COPY: Record<Language, {
   },
   "zh-hk": {
     definition: "香港家族辦公室學會（FOIHK）是香港家族辦公室行業機構與專業社群，涵蓋教育、研究、活動、慈善及跨界交流。FOIHK 並非家族辦公室、金融機構、監管機構或政府部門。",
-    updatedLabel: "最後覆核",
-    updated: "2026 年 8 月 3 日",
     leadershipIntro: "FOIHK 的創會職務負責人參與推動學會的教育、研究、活動、慈善及跨界交流工作。",
-    verifiedRole: "已核實 FOIHK 職務",
     chairmanBio: "賴敬文擔任 FOIHK 創會主席，主要參與凝聚家族辦公室專業人士、推動公共教育，並促進財富傳承、慈善、文化及專業服務之間的交流。",
     secretaryBio: "陳文清擔任 FOIHK 創會秘書長，主要支援學會治理、會員溝通、項目協調及日常機構發展。",
-    profileLink: "專業資料頁",
-    credentialNote: "本頁介紹 FOIHK 職務及機構責任；如職務負責人提供並確認個人專業資料，可再補充其他資歷。",
     detailsTitle: "已核實機構資料",
     detailsIntro: "請使用以下資料核實 FOIHK，並與名稱相近的機構作出區分。",
     legalName: "法定名稱",
@@ -119,14 +104,9 @@ const TRUST_COPY: Record<Language, {
   },
   "zh-cn": {
     definition: "香港家族办公室学会（FOIHK）是香港家族办公室行业机构与专业社群，涵盖教育、研究、活动、慈善及跨界交流。FOIHK 并非家族办公室、金融机构、监管机构或政府部门。",
-    updatedLabel: "最后复核",
-    updated: "2026 年 8 月 3 日",
     leadershipIntro: "FOIHK 的创会职务负责人参与推动学会的教育、研究、活动、慈善及跨界交流工作。",
-    verifiedRole: "已核实 FOIHK 职务",
     chairmanBio: "赖敬文担任 FOIHK 创会主席，主要参与凝聚家族办公室专业人士、推动公共教育，并促进财富传承、慈善、文化及专业服务之间的交流。",
     secretaryBio: "陈文清担任 FOIHK 创会秘书长，主要支持学会治理、会员沟通、项目协调及日常机构发展。",
-    profileLink: "专业资料页",
-    credentialNote: "本页介绍 FOIHK 职务及机构责任；如职务负责人提供并确认个人专业资料，可再补充其他资历。",
     detailsTitle: "已核实机构资料",
     detailsIntro: "请使用以下资料核实 FOIHK，并与名称相近的机构作出区分。",
     legalName: "法定名称",
@@ -238,10 +218,6 @@ const About = () => {
           <p className="mb-12 max-w-3xl text-lg leading-8 text-muted-foreground">
             {trust.definition}
           </p>
-          <p className="-mt-8 mb-12 text-sm font-medium text-muted-foreground">
-            {trust.updatedLabel}: <time dateTime={UPDATED_ISO}>{trust.updated}</time>
-          </p>
-          
           <Card 
             ref={purposeAnim.elementRef}
             className={`mb-8 shadow-elegant overflow-hidden ${
@@ -341,14 +317,8 @@ const About = () => {
                   <img src={foundingChairman} alt="Lai King Man, Leo" width="256" height="320" loading="lazy" decoding="async" className="w-full h-full object-cover object-top" />
                 </div>
                 <h3 className="font-bold text-lg text-foreground mb-1 font-arial">{t("home.chairmanName")}</h3>
-                <p className="text-xs font-semibold uppercase tracking-normal text-primary">{trust.verifiedRole}</p>
                 <p className="mt-1 text-sm font-medium text-foreground font-arial">{t("home.foundingChairman")}</p>
                 <p className="mt-4 text-left text-sm leading-6 text-muted-foreground">{trust.chairmanBio}</p>
-                <div className="mt-4 flex flex-wrap justify-center gap-x-4 gap-y-2 text-sm">
-                  <a href={LEO_LINKEDIN_URL} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-primary underline-offset-4 hover:underline">
-                    {trust.profileLink}<Linkedin className="h-3.5 w-3.5" />
-                  </a>
-                </div>
               </CardContent>
             </Card>
 
@@ -365,15 +335,11 @@ const About = () => {
                   <img src={foundingSecretary} alt="Chan Man Ching" width="256" height="320" loading="lazy" decoding="async" className="w-full h-full object-cover object-top" />
                 </div>
                 <h3 className="font-bold text-lg text-foreground mb-1 font-arial">{t("home.secretaryName")}</h3>
-                <p className="text-xs font-semibold uppercase tracking-normal text-primary">{trust.verifiedRole}</p>
                 <p className="mt-1 text-sm font-medium text-foreground font-arial">{t("home.foundingSecretary")}</p>
                 <p className="mt-4 text-left text-sm leading-6 text-muted-foreground">{trust.secretaryBio}</p>
               </CardContent>
             </Card>
           </div>
-          <p className="mx-auto max-w-3xl text-center text-sm leading-6 text-muted-foreground">
-            {trust.credentialNote}
-          </p>
         </div>
       </section>
 
@@ -387,7 +353,7 @@ const About = () => {
             <div><dt className="flex items-center gap-2 text-sm font-medium text-muted-foreground"><Mail className="h-4 w-4" />{trust.email}</dt><dd className="mt-1"><a href={`mailto:${ORGANIZATION_EMAIL}`} className="font-semibold text-primary underline-offset-4 hover:underline">{ORGANIZATION_EMAIL}</a></dd></div>
             <div className="sm:col-span-2"><dt className="flex items-center gap-2 text-sm font-medium text-muted-foreground"><MapPin className="h-4 w-4" />{trust.address}</dt><dd className="mt-1 font-semibold not-italic text-foreground"><address className="not-italic">{t("contact.addressText")}</address></dd></div>
             <div><dt className="text-sm font-medium text-muted-foreground">{trust.website}</dt><dd className="mt-1"><a href={`${ORGANIZATION_URL}/${language}`} className="font-semibold text-primary underline-offset-4 hover:underline">foihk.org</a></dd></div>
-            <div><dt className="flex items-center gap-2 text-sm font-medium text-muted-foreground"><Linkedin className="h-4 w-4" />{trust.linkedin}</dt><dd className="mt-1"><a href={ORGANIZATION_LINKEDIN_URL} target="_blank" rel="noopener noreferrer" className="font-semibold text-primary underline-offset-4 hover:underline">linkedin.com/company/foihk</a></dd></div>
+            <div><dt className="flex items-center gap-2 text-sm font-medium text-muted-foreground"><Linkedin className="h-4 w-4" />{trust.linkedin}</dt><dd className="mt-1"><a href={ORGANIZATION_LINKEDIN_URL} target="_blank" rel="noopener noreferrer" className="font-semibold text-primary underline-offset-4 hover:underline">linkedin.com/company/family-office-institute-hong-kong</a></dd></div>
           </dl>
         </div>
       </section>

@@ -130,7 +130,7 @@ export const ArticlePreviewDialog = ({
             </p>
             <div className="mx-auto max-w-3xl rounded-lg border border-border bg-background p-6">
               <div
-                className="prose prose-lg max-w-none text-foreground"
+                className="foihk-article-content text-foreground"
                 dangerouslySetInnerHTML={{ __html: sanitizedContent || "<p>&nbsp;</p>" }}
               />
             </div>

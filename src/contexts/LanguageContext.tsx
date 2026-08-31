@@ -412,7 +412,7 @@ const translations: Record<Language, TranslationNode> = {
       }
     },
     footer: {
-      copyright: "© 2025 香港家族辦公室學會。保留所有權利。"
+      copyright: "© 2025 香港家族辦公室學會 保留所有權利"
     }
   },
   "zh-cn": {
@@ -569,7 +569,7 @@ const translations: Record<Language, TranslationNode> = {
       }
     },
     footer: {
-      copyright: "© 2025 香港家族办公室学会。保留所有权利。"
+      copyright: "© 2025 香港家族办公室学会 保留所有权利"
     }
   }
 };

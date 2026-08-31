@@ -271,7 +271,6 @@ const Credentials = () => {
             <div className="max-w-4xl py-8">
               <h1 className="mb-5 text-4xl font-bold text-white sm:text-5xl">{copy.title}</h1>
               <p className="max-w-3xl text-lg leading-8 text-white/90">{copy.intro}</p>
-              <p className="mt-5 text-sm text-white/75">{copy.updatedLabel}: <time dateTime={UPDATED_ISO}>{copy.updated}</time></p>
             </div>
           </div>
         </section>

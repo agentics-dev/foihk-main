@@ -1,4 +1,4 @@
-import { Download, ExternalLink, FileText, Mail } from "lucide-react";
+import { Download, ExternalLink, Mail } from "lucide-react";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Footer } from "@/components/Footer";
 import { LocalizedLink as Link } from "@/components/LocalizedLink";
@@ -256,7 +256,6 @@ const MediaKit = () => {
           <div className="container mx-auto max-w-5xl px-4">
             <Breadcrumbs items={[{ label: copy.home, to: "/" }, { label: copy.title }]} />
             <div className="max-w-4xl">
-              <div className="flex items-center gap-3 text-primary"><FileText className="h-6 w-6" /><span className="text-sm font-semibold">{copy.reviewed}: <time dateTime={UPDATED_ISO}>{copy.reviewedDate}</time></span></div>
               <h1 className="mt-5 text-4xl font-bold leading-tight text-foreground md:text-5xl">{copy.title}</h1>
               <p className="mt-6 text-lg leading-8 text-muted-foreground">{copy.definition}</p>
             </div>
@@ -271,7 +270,7 @@ const MediaKit = () => {
               {identityRows.map(([label, value]) => <div key={label} data-identity-record className="border-t border-border pt-4"><dt className="text-sm font-medium text-muted-foreground">{label}</dt><dd className="mt-1 font-semibold text-foreground">{value}</dd></div>)}
               <div data-identity-record className="border-t border-border pt-4"><dt className="text-sm font-medium text-muted-foreground">{copy.labels.email}</dt><dd className="mt-1"><a className="font-semibold text-primary hover:underline" href={`mailto:${ORGANIZATION_EMAIL}`}>{ORGANIZATION_EMAIL}</a></dd></div>
               <div data-identity-record className="border-t border-border pt-4"><dt className="text-sm font-medium text-muted-foreground">{copy.labels.website}</dt><dd className="mt-1"><a className="font-semibold text-primary hover:underline" href={`${ORGANIZATION_URL}/${language}`}>foihk.org</a></dd></div>
-              <div data-identity-record className="border-t border-border pt-4"><dt className="text-sm font-medium text-muted-foreground">{copy.labels.linkedin}</dt><dd className="mt-1"><a className="inline-flex items-center gap-2 font-semibold text-primary hover:underline" href={ORGANIZATION_LINKEDIN_URL} target="_blank" rel="noopener noreferrer">linkedin.com/company/foihk<ExternalLink className="h-4 w-4" /></a></dd></div>
+              <div data-identity-record className="border-t border-border pt-4"><dt className="text-sm font-medium text-muted-foreground">{copy.labels.linkedin}</dt><dd className="mt-1"><a className="inline-flex items-center gap-2 font-semibold text-primary hover:underline" href={ORGANIZATION_LINKEDIN_URL} target="_blank" rel="noopener noreferrer">linkedin.com/company/family-office-institute-hong-kong<ExternalLink className="h-4 w-4" /></a></dd></div>
             </dl>
           </div>
         </section>

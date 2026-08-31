@@ -184,7 +184,7 @@ const TextAlignment = Extension.create({
   addGlobalAttributes() {
     return [
       {
-        types: ["paragraph", "heading"],
+        types: ["paragraph", "heading", "blockquote", "listItem", "bulletList", "orderedList"],
         attributes: {
           align: {
             default: null,
@@ -382,7 +382,7 @@ export const RichTextEditor = ({ id, value, onChange, placeholder, required }: R
     editorProps: {
       attributes: {
         id,
-        class: "foihk-admin-editor min-h-[360px] rounded-md px-4 py-3 focus:outline-none",
+        class: "foihk-article-content foihk-admin-editor min-h-[360px] rounded-md px-4 py-3 focus:outline-none",
         "aria-required": required ? "true" : "false",
       },
     },
@@ -436,7 +436,36 @@ export const RichTextEditor = ({ id, value, onChange, placeholder, required }: R
     || "default";
   const textAlign = (editor?.getAttributes("heading").align as TextAlignValue | undefined)
     || (editor?.getAttributes("paragraph").align as TextAlignValue | undefined)
+    || (editor?.getAttributes("blockquote").align as TextAlignValue | undefined)
+    || (editor?.getAttributes("listItem").align as TextAlignValue | undefined)
+    || (editor?.getAttributes("bulletList").align as TextAlignValue | undefined)
+    || (editor?.getAttributes("orderedList").align as TextAlignValue | undefined)
     || "left";
+
+  const updateSelectedNodeAttributes = (types: string[], attrs: Record<string, unknown>) => {
+    if (!editor) return;
+    const { state, view } = editor;
+    const { from, to } = state.selection;
+    const tr = state.tr;
+    let updated = false;
+
+    state.doc.nodesBetween(from, to, (node, pos) => {
+      if (types.includes(node.type.name)) {
+        tr.setNodeMarkup(pos, undefined, { ...node.attrs, ...attrs });
+        updated = true;
+      }
+    });
+
+    if (!updated) {
+      const commands = editor.chain().focus();
+      types.forEach((type) => commands.updateAttributes(type, attrs));
+      commands.run();
+      return;
+    }
+
+    view.dispatch(tr);
+    view.focus();
+  };
 
   const setParagraphStyle = (style: ParagraphStyleValue) => {
     if (!editor) return;
@@ -482,33 +511,18 @@ export const RichTextEditor = ({ id, value, onChange, placeholder, required }: R
   const setLineHeight = (leading: LineHeightValue | "default") => {
     if (!editor) return;
     const nextLeading = leading === "default" ? null : leading;
-    editor
-      .chain()
-      .focus()
-      .updateAttributes("paragraph", { leading: nextLeading })
-      .updateAttributes("heading", { leading: nextLeading })
-      .updateAttributes("blockquote", { leading: nextLeading })
-      .updateAttributes("listItem", { leading: nextLeading })
-      .run();
+    updateSelectedNodeAttributes(["paragraph", "heading", "blockquote", "listItem"], { leading: nextLeading });
   };
 
   const setBlockGap = (blockGap: BlockGapValue | "default") => {
     if (!editor) return;
     const nextBlockGap = blockGap === "default" ? null : blockGap;
-    editor
-      .chain()
-      .focus()
-      .updateAttributes("paragraph", { blockGap: nextBlockGap })
-      .updateAttributes("heading", { blockGap: nextBlockGap })
-      .updateAttributes("blockquote", { blockGap: nextBlockGap })
-      .updateAttributes("bulletList", { blockGap: nextBlockGap })
-      .updateAttributes("orderedList", { blockGap: nextBlockGap })
-      .run();
+    updateSelectedNodeAttributes(["paragraph", "heading", "blockquote", "bulletList", "orderedList"], { blockGap: nextBlockGap });
   };
 
   const setTextAlign = (align: TextAlignValue) => {
     if (!editor) return;
-    editor.chain().focus().updateAttributes("paragraph", { align }).updateAttributes("heading", { align }).run();
+    updateSelectedNodeAttributes(["paragraph", "heading", "blockquote", "listItem", "bulletList", "orderedList"], { align });
   };
 
   const insertSpacer = (size: SpacerSizeValue) => {

@@ -19,7 +19,6 @@ interface FAQItem {
 interface FAQCopy {
   title: string;
   description: string;
-  intro: string;
   home: string;
   generalTitle: string;
   servicesTitle: string;
@@ -33,9 +32,8 @@ const UPDATED_ISO = "2026-08-03";
 
 const COPY: Record<Language, FAQCopy> = {
   en: {
-    title: "FOIHK FAQ: Identity and General Questions",
+    title: "FAQ",
     description: "Direct answers to common identity and family office sector questions about Family Office Institute Hong Kong.",
-    intro: "Direct answers to common questions about FOIHK's identity, role, and Hong Kong's family office sector.",
     home: "Home",
     generalTitle: "General questions",
     servicesTitle: "Services and pricing",
@@ -75,9 +73,8 @@ const COPY: Record<Language, FAQCopy> = {
     ],
   },
   "zh-hk": {
-    title: "FOIHK 常見問題：身份與一般問題",
+    title: "常見問題",
     description: "直接解答有關香港家族辦公室學會身份及家辦行業的一般問題。",
-    intro: "直接解答有關 FOIHK 身份、角色及香港家族辦公室行業的常見問題。",
     home: "首頁",
     generalTitle: "一般問題",
     servicesTitle: "服務與費用",
@@ -117,9 +114,8 @@ const COPY: Record<Language, FAQCopy> = {
     ],
   },
   "zh-cn": {
-    title: "FOIHK 常见问题：身份与一般问题",
+    title: "常见问题",
     description: "直接解答有关香港家族办公室学会身份及家办行业的一般问题。",
-    intro: "直接解答有关 FOIHK 身份、角色及香港家族办公室行业的常见问题。",
     home: "首页",
     generalTitle: "一般问题",
     servicesTitle: "服务与费用",
@@ -209,7 +205,6 @@ const FAQ = () => {
         <Breadcrumbs items={[{ label: copy.home, to: "/" }, { label: copy.title }]} />
         <header className="mb-10">
           <h1 className="mb-4 text-4xl font-bold text-foreground">{copy.title}</h1>
-          <p className="mb-4 text-lg text-muted-foreground">{copy.intro}</p>
           <p className="text-sm text-muted-foreground">
             {copy.updatedLabel}: <time dateTime={UPDATED_ISO}>{copy.updated}</time>
           </p>

@@ -12,7 +12,7 @@ export const ORGANIZATION_FOUNDING_DATE = "2025-08-20";
 export const ORGANIZATION_BUSINESS_REGISTRATION_NUMBER = "78655051";
 export const SITE_CONTENT_REVIEWED_DATE = "2026-08-03";
 export const ORGANIZATION_EMAIL = "info@foihk.org";
-export const ORGANIZATION_LINKEDIN_URL = "https://www.linkedin.com/company/foihk";
+export const ORGANIZATION_LINKEDIN_URL = "https://www.linkedin.com/company/family-office-institute-hong-kong/";
 const configuredWikidataEntityId = String(import.meta.env.VITE_WIKIDATA_ENTITY_ID || "").trim();
 export const ORGANIZATION_WIKIDATA_ENTITY_ID = /^Q[1-9]\d*$/.test(configuredWikidataEntityId)
   ? configuredWikidataEntityId

@@ -37,6 +37,16 @@ try {
 requireNotIncludes("src/pages/Auth.tsx", "signUp", "Auth.tsx: public signup flow must not be present");
 requireNotIncludes("src/pages/Auth.tsx", "Sign Up", "Auth.tsx: Sign Up tab must not be present");
 requireIncludes("supabase/config.toml", "[functions.notify-indexnow]\nverify_jwt = true", "supabase/config.toml: notify-indexnow must require Supabase JWT verification");
+requireIncludes("supabase/config.toml", "[functions.site-deploy-admin]\nverify_jwt = true", "supabase/config.toml: site-deploy-admin must require Supabase JWT verification");
+requireIncludes("supabase/config.toml", "[functions.site-deploy-worker]\nverify_jwt = false", "supabase/config.toml: site-deploy-worker must use its dedicated machine secret");
+requireIncludes("supabase/functions/site-deploy-admin/index.ts", ".auth.getUser(accessToken)", "site-deploy-admin: authenticated session must be verified server-side");
+requireIncludes("supabase/functions/site-deploy-admin/index.ts", ".eq(\"role\", \"admin\")", "site-deploy-admin: administrator role check is missing");
+requireIncludes("supabase/functions/site-deploy-worker/index.ts", "CONTENT_DEPLOY_WORKER_SECRET", "site-deploy-worker: dedicated worker secret check is missing");
+requireIncludes("supabase/functions/site-deploy-worker/index.ts", "url.hostname !== \"api.vercel.com\"", "site-deploy-worker: Deploy Hook host allowlist is missing");
+requireIncludes("supabase/functions/site-deploy-worker/index.ts", "AbortSignal.timeout", "site-deploy-worker: outbound request timeout is missing");
+requireNotIncludes("src/components/admin/ArticleForm.tsx", "notifyIndexNow", "ArticleForm: IndexNow must not run before production verification");
+requireNotIncludes("src/components/admin/ArticleList.tsx", "notifyIndexNow", "ArticleList: IndexNow must not run before production verification");
+requireNotIncludes("supabase/migrations/20260817022313_site_content_deploy_pipeline.sql", "service_role_key", "site deploy migration must not store a service-role credential");
 
 requireNotIncludes("src/pages/Contact.tsx", ".from(\"contact_submissions\")", "Contact.tsx: browser must not insert contact_submissions directly");
 requireIncludes("src/pages/Contact.tsx", ".invoke(\"submit-contact\"", "Contact.tsx: contact form must use the submit-contact Edge Function");

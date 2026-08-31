@@ -6,6 +6,7 @@ const ROOT = resolve(import.meta.dirname, "..");
 const DIST = resolve(ROOT, "dist");
 const BASE_URL = "https://www.foihk.org";
 const sitemapPath = join(DIST, "sitemap.xml");
+const contentBuildPath = join(DIST, "content-build.json");
 const keywordMatrix = JSON.parse(readFileSync(join(ROOT, "content", "keyword-cluster-strategy.json"), "utf8")).priority_matrix;
 const keywordTargets = Object.values(keywordMatrix).flat();
 const ANONYMOUS_COMPARISON_SLUG = "hong-kong-family-office-institute-organisation-association-comparison";
@@ -31,7 +32,7 @@ const indexNowFunctionPath = join(ROOT, "supabase", "functions", "notify-indexno
 const authorityReadinessPath = join(ROOT, "content", "offsite-authority-readiness.json");
 const mediaPitchPath = join(ROOT, "content", "outreach", "foihk-2026-data-story-pitch.md");
 const evidenceDatasetPath = join(ROOT, "public", "data", "foihk-hong-kong-family-office-evidence-2026.csv");
-const FRESHNESS_AUDIT_DATE = new Date("2026-08-12T23:59:59Z");
+const FRESHNESS_AUDIT_DATE = new Date();
 const HIDDEN_FRONTEND_PATHS = [
   "press",
   "services",
@@ -54,6 +55,27 @@ const errors = [];
 const seenTitles = new Map();
 const seenDescriptions = new Map();
 const pages = new Map();
+
+if (!existsSync(contentBuildPath)) {
+  errors.push("content-build.json: missing production content manifest");
+} else {
+  try {
+    const contentBuild = JSON.parse(readFileSync(contentBuildPath, "utf8"));
+    if (!Number.isSafeInteger(contentBuild.revision) || contentBuild.revision < 0) {
+      errors.push("content-build.json: revision must be a non-negative safe integer");
+    }
+    if (!Number.isFinite(Date.parse(contentBuild.generatedAt))) {
+      errors.push("content-build.json: generatedAt must be an ISO date-time");
+    }
+    const manifestUrls = new Set(Array.isArray(contentBuild.urls) ? contentBuild.urls : []);
+    if (manifestUrls.size !== sitemapSet.size
+      || [...sitemapSet].some((url) => !manifestUrls.has(url))) {
+      errors.push("content-build.json: URL set must exactly match sitemap.xml");
+    }
+  } catch {
+    errors.push("content-build.json: invalid JSON");
+  }
+}
 
 const collectStructuredValues = (value, key, collected = []) => {
   if (!value || typeof value !== "object") return collected;
@@ -222,12 +244,7 @@ for (const url of urls) {
     }
   }
 
-  const freshnessTime = $("footer [data-page-freshness] time");
-  const visibleModified = freshnessTime.attr("datetime") || "";
   const modifiedSchema = schemas.find((item) => typeof item.dateModified === "string" && item.dateModified.length > 0);
-  if (freshnessTime.length !== 1 || !visibleModified || !freshnessTime.text().includes("2026")) {
-    errors.push(`${pathname}: every public page needs one visible current-year freshness date`);
-  }
 
   const auditRemovedArticleBlocks = () => {
     if ($("[data-article-byline]").length > 0) {
@@ -240,13 +257,13 @@ for (const url of urls) {
       errors.push(`${pathname}: article header should not link to the removed sources reviewed block`);
     }
   };
-  if (!modifiedSchema || modifiedSchema.dateModified !== visibleModified) {
-    errors.push(`${pathname}: visible freshness date must match a root schema dateModified`);
+  if (!modifiedSchema) {
+    errors.push(`${pathname}: every public page needs a root schema dateModified`);
   } else {
     const modifiedDate = new Date(modifiedSchema.dateModified);
     const ageInDays = (FRESHNESS_AUDIT_DATE.getTime() - modifiedDate.getTime()) / 86_400_000;
-    if (Number.isNaN(modifiedDate.getTime()) || ageInDays < 0 || ageInDays > 365) {
-      errors.push(`${pathname}: dateModified must be valid and within the previous 12 months`);
+    if (Number.isNaN(modifiedDate.getTime()) || ageInDays < 0 || (!isArticle && ageInDays > 365)) {
+      errors.push(`${pathname}: dateModified must be valid; non-article pages must be reviewed within 12 months`);
     }
   }
 
@@ -371,22 +388,11 @@ for (const url of urls) {
       if (articleSchema.author?.["@type"] !== "Organization" || articleSchema.author?.name !== "FOIHK Editorial Team" || !articleSchema.author?.description) {
         errors.push(`${pathname}: Article schema needs the institutional author role and credential description`);
       }
-      const articleText = $("article").text().replace(/\s+/g, " ").trim();
-      const hasVisibleSourceNote = $('article a[href^="http"]').length > 0
-        || /https?:\/\/\S+/.test(articleText)
-        || /(資料來源|资料来源|來源網址|来源网址|官方來源|官方来源|Official Sources|Source(?: URL| Platform)?:)/i.test(articleText);
-      if (pathname.includes("/articles/education-research/") && !articleSchema.citation?.length && !hasVisibleSourceNote) errors.push(`${pathname}: education article schema requires a citation or visible source note`);
       if (new Date(articleSchema.dateModified).getTime() < new Date(articleSchema.datePublished).getTime()) {
         errors.push(`${pathname}: article dateModified cannot precede datePublished`);
       }
     }
     if (!title) errors.push(`${pathname}: article needs a non-empty SEO title`);
-    if (!$("article").text().includes("FOIHK")) errors.push(`${pathname}: visible institutional authorship is missing`);
-    const visibleArticleText = $("article").text().replace(/\s+/g, " ").trim();
-    const hasVisibleSourceNote = $('article a[href^="http"]').length > 0
-      || /https?:\/\/\S+/.test(visibleArticleText)
-      || /(資料來源|资料来源|來源網址|来源网址|官方來源|官方来源|Official Sources|Source(?: URL| Platform)?:)/i.test(visibleArticleText);
-    if (pathname.includes("/articles/education-research/") && !hasVisibleSourceNote) errors.push(`${pathname}: education article needs one visible source note`);
 
     const slug = pathname.split("/").at(-1);
     if (CORE_SLUGS.has(slug)) {
@@ -450,9 +456,12 @@ for (const url of urls) {
     contentCards.each((index, card) => {
       const published = $(card).find("time[data-published-date]").attr("datetime");
       const updated = $(card).find("time[data-updated-date]").attr("datetime");
-      if (!published || !updated) errors.push(`${pathname}: content card ${index + 1} needs published and updated dates`);
-      if (published !== collectionItems[index]?.item?.datePublished || updated !== collectionItems[index]?.item?.dateModified) {
-        errors.push(`${pathname}: content card ${index + 1} dates must match CollectionPage schema`);
+      if (!published) errors.push(`${pathname}: content card ${index + 1} needs a published date`);
+      if (published && published !== collectionItems[index]?.item?.datePublished) {
+        errors.push(`${pathname}: content card ${index + 1} published date must match CollectionPage schema`);
+      }
+      if (updated && updated !== collectionItems[index]?.item?.dateModified) {
+        errors.push(`${pathname}: content card ${index + 1} updated date must match CollectionPage schema`);
       }
     });
     if (pathname.endsWith("/news-events") && contentCards.length < 5) errors.push(`${pathname}: latest news section needs at least five dated entries`);
@@ -468,8 +477,8 @@ for (const url of urls) {
     if (!aboutText.includes("Family Office Institute Hong Kong Limited") || !aboutText.includes("info@foihk.org")) {
       errors.push(`${pathname}: About page needs visible legal-name and email verification details`);
     }
-    if (aboutSchema?.dateModified !== "2026-08-03" || aboutSchema?.citation?.length !== 2 || !$("main time[datetime='2026-08-03']").length) {
-      errors.push(`${pathname}: About page needs matching review date and structured citations`);
+    if (aboutSchema?.dateModified !== "2026-08-03" || aboutSchema?.citation?.length !== 2) {
+      errors.push(`${pathname}: About page needs matching structured review date and citations`);
     }
     const evidenceItems = $("#authority-evidence [data-authority-evidence]");
     if (evidenceItems.length !== 2) errors.push(`${pathname}: About page needs two visible authority evidence items`);
@@ -489,7 +498,7 @@ for (const url of urls) {
     const contactText = $("main").text().replace(/\s+/g, " ").trim();
     const addressSignal = pathname.startsWith("/en/") ? "99 Queen's Road Central" : pathname.startsWith("/zh-hk/") ? "皇后大道中99號" : "皇后大道中99号";
     const companySignal = pathname.startsWith("/en/") ? "Family Office Institute Hong Kong" : pathname.startsWith("/zh-hk/") ? "香港家族辦公室學會" : "香港家族办公室学会";
-    for (const requiredContact of [companySignal, "info@foihk.org", addressSignal, "linkedin.com/company/foihk"]) {
+    for (const requiredContact of [companySignal, "info@foihk.org", addressSignal, "linkedin.com/company/family-office-institute-hong-kong"]) {
       if (!contactText.includes(requiredContact)) errors.push(`${pathname}: missing verified contact detail: ${requiredContact}`);
     }
   }

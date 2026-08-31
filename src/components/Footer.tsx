@@ -6,27 +6,19 @@ import {
   ORGANIZATION_EMAIL,
   ORGANIZATION_LEGAL_NAME,
   ORGANIZATION_LINKEDIN_URL,
-  SITE_CONTENT_REVIEWED_DATE,
 } from "@/lib/schema";
 
 interface FooterProps {
   lastUpdated?: string;
 }
 
-export const Footer = ({ lastUpdated = SITE_CONTENT_REVIEWED_DATE }: FooterProps) => {
+export const Footer = (_props: FooterProps = {}) => {
   const {
     t,
     language
   } = useLanguage();
   const faqLabel = language === "en" ? "FAQ" : language === "zh-cn" ? "常见问题" : "常見問題";
-  const contactLabel = language === "en" ? "Verified contact" : language === "zh-cn" ? "已核实联系方式" : "已核實聯絡資料";
-  const updatedLabel = language === "en" ? "Page content last updated" : language === "zh-cn" ? "页面内容最后更新" : "頁面內容最後更新";
-  const formattedUpdatedDate = new Date(lastUpdated).toLocaleDateString(language, {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    timeZone: "Asia/Hong_Kong",
-  });
+  const contactLabel = language === "en" ? "Contact" : language === "zh-cn" ? "联系方式" : "聯絡資料";
   return <footer className="border-t border-border bg-secondary/20 py-8 mt-12">
       <div className="container mx-auto px-4">
         <div className="grid gap-10 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] md:items-start">
@@ -73,9 +65,6 @@ export const Footer = ({ lastUpdated = SITE_CONTENT_REVIEWED_DATE }: FooterProps
             </Link>
           </nav>
         </div>
-        <p data-page-freshness className="mt-8 border-t border-border pt-5 text-xs font-medium text-muted-foreground">
-          {updatedLabel}: <time dateTime={lastUpdated}>{formattedUpdatedDate}</time>
-        </p>
       </div>
     </footer>;
 };

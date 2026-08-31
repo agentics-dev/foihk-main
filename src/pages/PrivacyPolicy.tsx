@@ -112,9 +112,6 @@ const PrivacyPolicy = () => {
         <header className="mb-10 border-b border-border pb-8">
           <h1 className="mb-4 text-4xl font-bold text-foreground">{copy.title}</h1>
           <p className="mb-4 text-lg leading-8 text-muted-foreground">{copy.intro}</p>
-          <p className="text-sm text-muted-foreground">
-            {copy.updatedLabel}: <time dateTime={UPDATED_ISO}>{copy.updated}</time>
-          </p>
         </header>
         <div className="space-y-10">
           {copy.sections.map((section) => (

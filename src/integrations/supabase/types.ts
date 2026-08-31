@@ -16,6 +16,15 @@ export type Database = {
     Tables: {
       articles: {
         Row: {
+          author_credential: string | null
+          author_credential_zhcn: string | null
+          author_credential_zhtw: string | null
+          author_name: string | null
+          author_name_zhcn: string | null
+          author_name_zhtw: string | null
+          author_title: string | null
+          author_title_zhcn: string | null
+          author_title_zhtw: string | null
           category: Database["public"]["Enums"]["article_category"]
           content: string
           content_zhcn: string | null
@@ -24,6 +33,30 @@ export type Database = {
           excerpt: string | null
           excerpt_zhcn: string | null
           excerpt_zhtw: string | null
+          event_address: string | null
+          event_address_zhcn: string | null
+          event_address_zhtw: string | null
+          event_attendance_mode: string | null
+          event_end_date: string | null
+          event_end_time: string | null
+          event_online_url: string | null
+          event_organizer_name: string | null
+          event_organizer_name_zhcn: string | null
+          event_organizer_name_zhtw: string | null
+          event_organizer_url: string | null
+          event_previous_start_date: string | null
+          event_previous_start_time: string | null
+          event_schema_enabled: boolean | null
+          event_start_date: string | null
+          event_start_time: string | null
+          event_status: string | null
+          event_timezone: string | null
+          event_unavailable_fields: string[] | null
+          event_venue_name: string | null
+          event_venue_name_zhcn: string | null
+          event_venue_name_zhtw: string | null
+          faq_include_schema: boolean | null
+          faq_show_on_page: boolean | null
           id: string
           image_metadata: Json | null
           image_urls: string[] | null
@@ -46,6 +79,15 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          author_credential?: string | null
+          author_credential_zhcn?: string | null
+          author_credential_zhtw?: string | null
+          author_name?: string | null
+          author_name_zhcn?: string | null
+          author_name_zhtw?: string | null
+          author_title?: string | null
+          author_title_zhcn?: string | null
+          author_title_zhtw?: string | null
           category: Database["public"]["Enums"]["article_category"]
           content: string
           content_zhcn?: string | null
@@ -54,6 +96,30 @@ export type Database = {
           excerpt?: string | null
           excerpt_zhcn?: string | null
           excerpt_zhtw?: string | null
+          event_address?: string | null
+          event_address_zhcn?: string | null
+          event_address_zhtw?: string | null
+          event_attendance_mode?: string | null
+          event_end_date?: string | null
+          event_end_time?: string | null
+          event_online_url?: string | null
+          event_organizer_name?: string | null
+          event_organizer_name_zhcn?: string | null
+          event_organizer_name_zhtw?: string | null
+          event_organizer_url?: string | null
+          event_previous_start_date?: string | null
+          event_previous_start_time?: string | null
+          event_schema_enabled?: boolean | null
+          event_start_date?: string | null
+          event_start_time?: string | null
+          event_status?: string | null
+          event_timezone?: string | null
+          event_unavailable_fields?: string[] | null
+          event_venue_name?: string | null
+          event_venue_name_zhcn?: string | null
+          event_venue_name_zhtw?: string | null
+          faq_include_schema?: boolean | null
+          faq_show_on_page?: boolean | null
           id?: string
           image_metadata?: Json | null
           image_urls?: string[] | null
@@ -76,6 +142,15 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          author_credential?: string | null
+          author_credential_zhcn?: string | null
+          author_credential_zhtw?: string | null
+          author_name?: string | null
+          author_name_zhcn?: string | null
+          author_name_zhtw?: string | null
+          author_title?: string | null
+          author_title_zhcn?: string | null
+          author_title_zhtw?: string | null
           category?: Database["public"]["Enums"]["article_category"]
           content?: string
           content_zhcn?: string | null
@@ -84,6 +159,30 @@ export type Database = {
           excerpt?: string | null
           excerpt_zhcn?: string | null
           excerpt_zhtw?: string | null
+          event_address?: string | null
+          event_address_zhcn?: string | null
+          event_address_zhtw?: string | null
+          event_attendance_mode?: string | null
+          event_end_date?: string | null
+          event_end_time?: string | null
+          event_online_url?: string | null
+          event_organizer_name?: string | null
+          event_organizer_name_zhcn?: string | null
+          event_organizer_name_zhtw?: string | null
+          event_organizer_url?: string | null
+          event_previous_start_date?: string | null
+          event_previous_start_time?: string | null
+          event_schema_enabled?: boolean | null
+          event_start_date?: string | null
+          event_start_time?: string | null
+          event_status?: string | null
+          event_timezone?: string | null
+          event_unavailable_fields?: string[] | null
+          event_venue_name?: string | null
+          event_venue_name_zhcn?: string | null
+          event_venue_name_zhtw?: string | null
+          faq_include_schema?: boolean | null
+          faq_show_on_page?: boolean | null
           id?: string
           image_metadata?: Json | null
           image_urls?: string[] | null
