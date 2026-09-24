@@ -1,0 +1,78 @@
+name: Website anomaly audit
+
+on:
+  deployment_status:
+  schedule:
+    - cron: "0 1 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: website-anomaly-foihk
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    if: >-
+      github.event_name != 'deployment_status' ||
+      (github.event.deployment_status.state == 'success' && startsWith(github.event.deployment_status.environment, 'Production'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      AUDIT_OUTPUT: audit-results/foihk
+      AUDIT_RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: .github/website-anomaly-agent/package-lock.json
+
+      - name: Install audit runtime
+        run: npm ci --prefix .github/website-anomaly-agent
+
+      - name: Run read-only audit
+        id: audit
+        continue-on-error: true
+        run: >-
+          node .github/website-anomaly-agent/bin/audit.mjs run
+          --config .github/website-anomaly-agent/sites/foihk.json
+          --output "$AUDIT_OUTPUT"
+
+      - name: Sync anomaly issues
+        if: always() && hashFiles('audit-results/foihk/run.json') != ''
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: >-
+          node .github/website-anomaly-agent/bin/audit.mjs issues sync
+          --run "$AUDIT_OUTPUT/run.json"
+          --repo "${{ github.repository }}"
+          --run-url "$AUDIT_RUN_URL"
+
+      - name: Report audit runtime failure
+        if: always() && hashFiles('audit-results/foihk/run.json') == ''
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: >-
+          node .github/website-anomaly-agent/bin/audit.mjs issues failure
+          --repo "${{ github.repository }}"
+          --message "巡检进程未生成 run.json，请查看工作流日志。"
+          --run-url "$AUDIT_RUN_URL"
+
+      - name: Upload audit evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: website-anomaly-foihk-${{ github.run_id }}
+          path: audit-results/foihk
+          if-no-files-found: warn
+          retention-days: 90
+
+      - name: Preserve incomplete or blocking result
+        if: always() && steps.audit.outcome == 'failure'
+        run: exit 1
