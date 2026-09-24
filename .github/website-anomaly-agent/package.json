@@ -1,0 +1,26 @@
+{
+  "name": "website-anomaly-agent",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "audit": "./bin/audit.mjs"
+  },
+  "exports": {
+    ".": "./src/index.mjs",
+    "./security": "./src/security.mjs"
+  },
+  "scripts": {
+    "audit": "node ./bin/audit.mjs",
+    "test": "node --test test/*.test.mjs",
+    "lint": "node --check bin/audit.mjs && node --check src/*.mjs && node --check scripts/*.mjs"
+  },
+  "dependencies": {
+    "cheerio": "1.2.0",
+    "puppeteer": "25.4.0",
+    "zod": "3.25.76"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

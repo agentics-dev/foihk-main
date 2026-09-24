@@ -1,0 +1,75 @@
+{
+  "siteId": "foihk",
+  "name": "Family Office Institute Hong Kong",
+  "baseUrl": "https://www.foihk.org",
+  "sourceRoot": ".",
+  "sourceRootEnv": "GITHUB_WORKSPACE",
+  "allowedHosts": [
+    "www.foihk.org",
+    "foihk.org"
+  ],
+  "sitemapPath": "/sitemap.xml",
+  "manifestPath": "/content-build.json",
+  "articlePathPattern": "^/(en|zh-hk|zh-cn)/articles/[^/]+/[^/]+$",
+  "locales": [
+    "en",
+    "zh-hk",
+    "zh-cn"
+  ],
+  "htmlLangByLocale": {
+    "en": "en",
+    "zh-hk": "zh-Hant",
+    "zh-cn": "zh-Hans"
+  },
+  "keyRoutes": [
+    "/en",
+    "/zh-hk",
+    "/zh-cn",
+    "/en/about",
+    "/en/contact",
+    "/en/articles/education-research",
+    "/en/articles/news-events",
+    "/en/articles/philanthropy"
+  ],
+  "browserRoutes": [
+    "/en",
+    "/zh-hk",
+    "/en/articles/education-research",
+    "/en/articles/news-events",
+    "/en/contact"
+  ],
+  "redirectChecks": [
+    {
+      "from": "/en/articles/education_research/adjustment-to-individual-income-tax-on-dividends-and-bonuses-for-foreign-individuals-in-mainland-china",
+      "to": "/en/articles/education-research/adjustment-to-individual-income-tax-on-dividends-and-bonuses-for-foreign-individuals-in-mainland-china"
+    }
+  ],
+  "expectedArticleUrls": [],
+  "maxPages": 200,
+  "linkCheckLimit": 160,
+  "browserTimeoutMs": 30000,
+  "requestTimeoutMs": 12000,
+  "observationUntil": "2026-10-08T01:00:00.000Z",
+  "security": {
+    "enabled": true,
+    "cliPath": "../vendor/security-cli.mjs",
+    "excludedPaths": [
+      ".env.local",
+      ".local",
+      ".trae",
+      ".github/website-anomaly-agent",
+      "fohk-website",
+      "tests",
+      "supabase/.temp",
+      "supabase/seed-data",
+      "scripts/generated",
+      "scripts/local",
+      "scripts/prerender.js"
+    ]
+  },
+  "github": {
+    "repository": "agentics-dev/foihk-main",
+    "issueLabel": "website-anomaly",
+    "stateLabel": "website-anomaly-state"
+  }
+}

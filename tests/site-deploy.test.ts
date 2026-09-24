@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  buildAuditDispatchRequest,
   isBuildTimedOut,
   mapWithConcurrency,
   secureEqual,
@@ -77,4 +78,15 @@ test("public noindex pages are valid, but indexing and revision mismatches fail"
   assert.ok(validateArticleHtml(html, ARTICLE_URL, true, 8).includes("indexable page marked noindex"));
   assert.ok(validateArticleHtml(html, ARTICLE_URL, false, 9).includes("page revision mismatch"));
   assert.equal(validateBuildManifest({formatVersion:2,revision:8,generatedAt:new Date().toISOString(),urls:[ARTICLE_URL],publicUrls:[]}),null);
+});
+
+test("audit dispatch is fixed to the FOIHK repository and carries only the revision", () => {
+  const request = buildAuditDispatchRequest(42, "x".repeat(40));
+  assert.equal(request?.url, "https://api.github.com/repos/agentics-dev/foihk-main/dispatches");
+  assert.deepEqual(JSON.parse(String(request?.init.body)), {
+    event_type: "site-published",
+    client_payload: { revision: 42 },
+  });
+  assert.equal(buildAuditDispatchRequest(0, "x".repeat(40)), null);
+  assert.equal(buildAuditDispatchRequest(42, "short"), null);
 });
