@@ -1,4 +1,5 @@
 import puppeteer from "puppeteer";
+import chromium from "@sparticuz/chromium";
 import { createServer } from "node:http";
 import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { extname, join, normalize, resolve } from "node:path";
@@ -52,10 +53,16 @@ const origin = `http://127.0.0.1:${address.port}`;
 const failures = [];
 let browser;
 
-const launchBrowser = () => puppeteer.launch({
-  headless: true,
-  args: ["--disable-dev-shm-usage", "--no-sandbox"],
-});
+const launchBrowser = async () => {
+  const useServerlessChromium = process.env.VERCEL === "1";
+  return puppeteer.launch({
+    headless: true,
+    args: useServerlessChromium
+      ? [...chromium.args, "--disable-dev-shm-usage"]
+      : ["--disable-dev-shm-usage", "--no-sandbox"],
+    executablePath: useServerlessChromium ? await chromium.executablePath() : undefined,
+  });
+};
 
 const withTimeout = (promise, timeoutMs, label) => Promise.race([
   promise,
