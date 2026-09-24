@@ -1,7 +1,6 @@
 export const SITE_BASE_URL = "https://www.foihk.org";
 export const BUILD_TIMEOUT_MS = 10 * 60 * 1000;
 export const MAX_ARTICLE_HTML_BYTES = 1_500_000;
-export const AUDIT_REPOSITORY = "agentics-dev/foihk-main";
 
 export type DeployChange = {
   url: string;
@@ -15,25 +14,6 @@ export type BuildManifest = {
   revision: number;
   generatedAt: string;
   urls: string[];
-};
-
-export const buildAuditDispatchRequest = (revision: number, token: string) => {
-  if (!Number.isSafeInteger(revision) || revision < 1 || token.length < 20 || /\s/.test(token)) return null;
-  return {
-    url: `https://api.github.com/repos/${AUDIT_REPOSITORY}/dispatches`,
-    init: {
-      method: "POST",
-      headers: {
-        Accept: "application/vnd.github+json",
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-        "User-Agent": "FOIHK-Site-Deploy-Worker",
-        "X-GitHub-Api-Version": "2022-11-28",
-      },
-      body: JSON.stringify({ event_type: "site-published", client_payload: { revision } }),
-      redirect: "error" as const,
-    },
-  };
 };
 
 export const isBuildTimedOut = (

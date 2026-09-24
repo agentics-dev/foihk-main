@@ -52,7 +52,7 @@ npx tsc --noEmit -p tsconfig.app.json
 2. 保存文章資料、發布日期、權限與函式定義及上一個可回復的網站版本；暫停編輯寫入。核對 articles、FAQ、slug history 的既有欄位與 private schema。缺少 private schema 時只建立發布流程所需的私有 schema 並撤除 public／anon／authenticated 使用權限。
 3. 針對缺失的發布物件套用經比較後的 `20260817022313_site_content_deploy_pipeline.sql`，再套用 `20260924025038_article_edit_contract.sql`。不要執行無關聯絡表單、圖片政策等舊遷移。以管理員／非管理員角色確認 RPC 與直接寫入權限。
 4. 在交易內執行日期修復，保存每篇前後值及輸出；只有 ID 和已知錯誤日期吻合才更正。確認 10 篇及其他文章數量／狀態不變。
-5. 設定正式 Edge Functions 的 Vercel deploy hook、worker secret，以及 Vault 對應值。沿用既有 `private.install_site_deploy_cron()` 的需求，先保持 cron 關閉；密鑰只經環境／Vault 注入，不進聊天、Git 或前端。Edge 使用 `VERCEL_DEPLOY_HOOK_URL`、`CONTENT_DEPLOY_WORKER_SECRET`（至少 32 字元）；Vault 名稱為 `site_deploy_project_url`、`site_deploy_publishable_key`、`site_deploy_worker_secret`。`INDEXNOW_KEY` 用於搜尋通知。`GITHUB_AUDIT_TOKEN` 必須是只能向 `agentics-dev/foihk-main` 發送 `repository_dispatch` 的細粒度 token；部署驗證完成後用它觸發網站異常巡檢，缺失或調用失敗不回滾已驗證的部署，並在 worker 回應中明確返回 `auditDispatchError`。可先執行唯讀 `scripts/check-publishing.sql` 檢查物件、直接寫入權限、cron 與密鑰名稱是否齊全，不輸出密鑰值。
+5. 設定正式 Edge Functions 的 Vercel deploy hook、worker secret，以及 Vault 對應值。沿用既有 `private.install_site_deploy_cron()` 的需求，先保持 cron 關閉；密鑰只經環境／Vault 注入，不進聊天、Git 或前端。Edge 使用 `VERCEL_DEPLOY_HOOK_URL`、`CONTENT_DEPLOY_WORKER_SECRET`（至少 32 字元）；Vault 名稱為 `site_deploy_project_url`、`site_deploy_publishable_key`、`site_deploy_worker_secret`。`INDEXNOW_KEY` 用於搜尋通知。網站異常巡檢由 GitHub Actions 接收 Vercel 的正式部署成功事件後觸發，不需要 Edge Function 保存 GitHub token。可先執行唯讀 `scripts/check-publishing.sql` 檢查物件、直接寫入權限、cron 與密鑰名稱是否齊全，不輸出密鑰值。
 6. 發布新網站與新版 `site-deploy-admin`、`site-deploy-worker`，核對内容版本、111 個公開網址／96 個索引網址基線（正式內容變更時重新計算）、日期及 noindex。新建置不得使用本地 env、版本 0 或舊快照回退。
 7. 最後安裝／啟用 cron，執行受控的正式內容同步驗收。只有目標版本、靜態 HTML 版本、路由、移除／轉址及 sitemap 全部通過才可標記同步完成。IndexNow 結果與文章可訪問性分開確認。
 

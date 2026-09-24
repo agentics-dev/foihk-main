@@ -1,6 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.75.0";
 import {
-  buildAuditDispatchRequest,
   BUILD_TIMEOUT_MS,
   MAX_ARTICLE_HTML_BYTES,
   SITE_BASE_URL,
@@ -129,25 +128,6 @@ Deno.serve(async (request) => {
     return { submitted: success ? urls.length : 0, indexNowError: success ? null : failure };
   };
 
-  const dispatchWebsiteAudit = async (completedRevision: number) => {
-    const request = buildAuditDispatchRequest(
-      completedRevision,
-      Deno.env.get("GITHUB_AUDIT_TOKEN") || "",
-    );
-    if (!request) return { auditDispatched: false, auditDispatchError: "GitHub audit dispatch is not configured" };
-    try {
-      const response = await fetchWithTimeout(request.url, request.init);
-      await readLimitedText(response, 32_000);
-      if (response.status !== 204) throw new Error(`GitHub dispatch returned ${response.status}`);
-      return { auditDispatched: true, auditDispatchError: null };
-    } catch (error) {
-      return {
-        auditDispatched: false,
-        auditDispatchError: error instanceof Error ? error.message : "GitHub audit dispatch failed",
-      };
-    }
-  };
-
   const { data: next, error: nextError } = await supabase.rpc("site_deploy_worker_next");
   if (nextError) return json({ error: "Unable to claim deploy work" }, 500);
   const action = typeof next?.action === "string" ? next.action : "invalid";
@@ -271,11 +251,8 @@ Deno.serve(async (request) => {
       _revision: revision,
     });
     if (completeError) return json({ error: "Unable to complete deployment" }, 500);
-    const [indexNow, auditDispatch] = await Promise.all([
-      submitPendingIndexNow(),
-      dispatchWebsiteAudit(revision),
-    ]);
-    return json({ ok: true, status: "live", revision, ...indexNow, ...auditDispatch });
+    const indexNow = await submitPendingIndexNow();
+    return json({ ok: true, status: "live", revision, ...indexNow });
   }
 
   try {
