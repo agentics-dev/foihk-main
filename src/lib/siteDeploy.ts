@@ -1,6 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 
 export type SiteDeployStatus = {
+  receivedAt: number;
   status: "queued" | "building" | "live" | "failed";
   desiredRevision: number;
   activeRevision: number | null;
@@ -24,5 +25,11 @@ export const requestSiteDeployStatus = async (action: DeployAction = "status") =
   });
   if (error) throw error;
   if (!data?.deploy) throw new Error("Deployment status is unavailable");
-  return data.deploy as SiteDeployStatus;
+  const deploy = data.deploy;
+  if (!["queued", "building", "live", "failed"].includes(deploy.status)
+    || !Array.isArray(deploy.pendingArticleIds) || !Number.isSafeInteger(deploy.desiredRevision)
+    || !Number.isSafeInteger(deploy.deployedRevision)) throw new Error("Invalid deployment status");
+  return { ...deploy, receivedAt: Date.now() } as SiteDeployStatus;
 };
+
+export { getArticleSyncLabel } from "./articleSync";

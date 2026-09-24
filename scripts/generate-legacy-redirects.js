@@ -49,6 +49,13 @@ const ARTICLE_REDIRECT_DESTINATION_OVERRIDES = new Map([
     },
   ],
 ]);
+const MANUAL_ARTICLE_SLUG_REDIRECTS = [
+  {
+    from: "adjustment-to-individual-income-tax-on-dividends-and-bonuses-for-foreign-individuals-in-mainland-china",
+    to: "new-individual-income-tax-rules-for-offshore-trusts-take-effect-tax-transparency-and-mandatory-compliance-become-the-trend",
+    categoryPath: "education-research",
+  },
+];
 
 const redirects = [
   {
@@ -101,6 +108,26 @@ for (const slug of REMOVED_STATIC_EDUCATION_SLUGS) {
         `/${language}/articles/${categoryPath}/${slug}  /${language}/articles/education-research  301!`
       );
     }
+  }
+}
+
+for (const { from, to, categoryPath } of MANUAL_ARTICLE_SLUG_REDIRECTS) {
+  redirects.push({
+    source: `/articles/${categoryPath}/${from}`,
+    destination: `/en/articles/${categoryPath}/${to}`,
+    permanent: true,
+  });
+  netlifyRedirects.push(`/articles/${categoryPath}/${from}  /en/articles/${categoryPath}/${to}  301!`);
+
+  for (const language of LANGUAGES) {
+    redirects.push({
+      source: `/${language}/articles/${categoryPath}/${from}`,
+      destination: `/${language}/articles/${categoryPath}/${to}`,
+      permanent: true,
+    });
+    netlifyRedirects.push(
+      `/${language}/articles/${categoryPath}/${from}  /${language}/articles/${categoryPath}/${to}  301!`
+    );
   }
 }
 
@@ -181,7 +208,10 @@ const securityHeaders = [
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "X-Frame-Options", value: "DENY" },
 ];
-const noStoreHeaders = [{ key: "Cache-Control", value: "no-store, max-age=0" }];
+const noStoreHeaders = [
+  { key: "Cache-Control", value: "no-store, max-age=0" },
+  { key: "X-Robots-Tag", value: "noindex, nofollow" },
+];
 
 const vercelConfig = {
   buildCommand: "npm run build:seo",
@@ -208,6 +238,6 @@ netlifyRedirects.push("/admin  /index.html  200", "/admin-login  /index.html  20
 writeFileSync(resolve("public", "_redirects"), `${netlifyRedirects.join("\n")}\n`);
 writeFileSync(
   resolve("public", "_headers"),
-  `/*\n${securityHeaders.map(({ key, value }) => `  ${key}: ${value}`).join("\n")}\n\n/admin-login\n  Cache-Control: no-store, max-age=0\n\n/admin\n  Cache-Control: no-store, max-age=0\n\n/admin/*\n  Cache-Control: no-store, max-age=0\n\n/assets/*\n  Cache-Control: public, max-age=31536000, immutable\n`
+  `/*\n${securityHeaders.map(({ key, value }) => `  ${key}: ${value}`).join("\n")}\n\n/admin-login\n${noStoreHeaders.map(({ key, value }) => `  ${key}: ${value}`).join("\n")}\n\n/admin\n${noStoreHeaders.map(({ key, value }) => `  ${key}: ${value}`).join("\n")}\n\n/admin/*\n${noStoreHeaders.map(({ key, value }) => `  ${key}: ${value}`).join("\n")}\n\n/assets/*\n  Cache-Control: public, max-age=31536000, immutable\n`
 );
 console.log(`Generated ${redirects.length} permanent redirects`);

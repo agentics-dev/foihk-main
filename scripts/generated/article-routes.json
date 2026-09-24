@@ -1,9 +1,44 @@
 [
   {
+    "id": "cbb24a4b-4d57-4497-aa6d-705c8cac2461",
+    "slug": "adjustment-to-individual-income-tax-on-dividends-and-bonuses-for-foreign-individuals-in-mainland-china",
+    "category": "education_research",
+    "languages": [
+      "en",
+      "zh-hk",
+      "zh-cn"
+    ],
+    "indexableLanguages": [
+      "en",
+      "zh-hk",
+      "zh-cn"
+    ]
+  },
+  {
+    "id": "25c07dc1-3d84-4012-85b7-1473ff362de5",
+    "slug": "hkmu-tai-chi-video-game-event-over-a-hundred-elderly-participants-jointly-set-sdg-world-record",
+    "category": "philanthropy",
+    "languages": [
+      "en",
+      "zh-hk",
+      "zh-cn"
+    ],
+    "indexableLanguages": [
+      "en",
+      "zh-hk",
+      "zh-cn"
+    ]
+  },
+  {
     "id": "c3c9ef26-334f-4486-9567-8e9acfd67309",
     "slug": "industry-insights-what-is-a-family-office",
     "category": "education_research",
     "languages": [
+      "en",
+      "zh-hk",
+      "zh-cn"
+    ],
+    "indexableLanguages": [
       "en",
       "zh-hk",
       "zh-cn"
@@ -17,6 +52,11 @@
       "en",
       "zh-hk",
       "zh-cn"
+    ],
+    "indexableLanguages": [
+      "en",
+      "zh-hk",
+      "zh-cn"
     ]
   },
   {
@@ -27,95 +67,8 @@
       "en",
       "zh-hk",
       "zh-cn"
-    ]
-  },
-  {
-    "id": "ef1a63fe-2e06-4823-8935-ac897ff00f7f",
-    "slug": "foihk-innoesg-prize-training-course",
-    "category": "news_events",
-    "languages": [
-      "en",
-      "zh-hk",
-      "zh-cn"
-    ]
-  },
-  {
-    "id": "15280f8e-560b-4e2c-a474-8e8d7fa667b7",
-    "slug": "rfo-annual-forum-2025",
-    "category": "news_events",
-    "languages": [
-      "en",
-      "zh-hk",
-      "zh-cn"
-    ]
-  },
-  {
-    "id": "deafafdb-67d3-480c-bcb0-178c527ab778",
-    "slug": "rfo-annual-forum-2025-recap",
-    "category": "news_events",
-    "languages": [
-      "en",
-      "zh-hk",
-      "zh-cn"
-    ]
-  },
-  {
-    "id": "dbc7be31-e6cc-4545-935b-a0fffa927d8d",
-    "slug": "yunnan-hk-macau-entrepreneur-forum-2025",
-    "category": "news_events",
-    "languages": [
-      "en"
-    ]
-  },
-  {
-    "id": "d7e76260-7b14-41b3-9ea1-408347103c8c",
-    "slug": "chengdu-foreign-investment-roadshow-2025",
-    "category": "news_events",
-    "languages": [
-      "en",
-      "zh-hk",
-      "zh-cn"
-    ]
-  },
-  {
-    "id": "f82c372a-b208-4b62-9521-89453df14ca4",
-    "slug": "hk-economic-outlook-sme-summit-2026",
-    "category": "news_events",
-    "languages": [
-      "en"
-    ]
-  },
-  {
-    "id": "f12cb9ad-a409-4f9d-b7b9-f97155f88f73",
-    "slug": "foihk-speaker-hk-sme-summit-2026",
-    "category": "news_events",
-    "languages": [
-      "en"
-    ]
-  },
-  {
-    "id": "3fe1ff01-a208-487e-97a4-0713c10d51a8",
-    "slug": "asian-financial-forum-2026",
-    "category": "news_events",
-    "languages": [
-      "en"
-    ]
-  },
-  {
-    "id": "4a03fc5e-4b98-4f3d-98c5-fd0f7f2f48f2",
-    "slug": "revo-connect-2026",
-    "category": "news_events",
-    "languages": [
-      "en",
-      "zh-hk",
-      "zh-cn"
-    ]
-  },
-  {
-    "id": "ee05c0c8-13bb-4066-8092-d52ee6fdf937",
-    "slug": "asian-private-banker-alternative-investments-2026",
-    "category": "news_events",
-    "languages": [
+    ],
+    "indexableLanguages": [
       "en",
       "zh-hk",
       "zh-cn"
@@ -129,6 +82,11 @@
       "en",
       "zh-hk",
       "zh-cn"
+    ],
+    "indexableLanguages": [
+      "en",
+      "zh-hk",
+      "zh-cn"
     ]
   },
   {
@@ -139,13 +97,45 @@
       "en",
       "zh-hk",
       "zh-cn"
+    ],
+    "indexableLanguages": [
+      "en",
+      "zh-hk",
+      "zh-cn"
     ]
+  },
+  {
+    "id": "89e5e9cb-658f-4356-8cc5-1405dffcfd05",
+    "slug": "foihk-holds-exchange-meeting-with-tsinghua-university-alumni-association",
+    "category": "news_events",
+    "languages": [
+      "en",
+      "zh-hk",
+      "zh-cn"
+    ],
+    "indexableLanguages": []
+  },
+  {
+    "id": "4d12f56b-0db6-4c50-b329-c9230de149cb",
+    "slug": "foihk-economic-digest-art-investment-interview",
+    "category": "news_events",
+    "languages": [
+      "en",
+      "zh-hk",
+      "zh-cn"
+    ],
+    "indexableLanguages": []
   },
   {
     "id": "5aa921dd-ee24-48f2-b030-8fb1db574865",
     "slug": "news-release-family-office-institute-hong-kong-awarded-sdg-esg-certified-impact-activity-center-accreditation-by-sdg-world-records",
     "category": "news_events",
     "languages": [
+      "en",
+      "zh-hk",
+      "zh-cn"
+    ],
+    "indexableLanguages": [
       "en",
       "zh-hk",
       "zh-cn"
@@ -159,6 +149,11 @@
       "en",
       "zh-hk",
       "zh-cn"
+    ],
+    "indexableLanguages": [
+      "en",
+      "zh-hk",
+      "zh-cn"
     ]
   },
   {
@@ -166,6 +161,11 @@
     "slug": "latest-event-exclusive-visit-to-singapore-family-office",
     "category": "news_events",
     "languages": [
+      "en",
+      "zh-hk",
+      "zh-cn"
+    ],
+    "indexableLanguages": [
       "en",
       "zh-hk",
       "zh-cn"
@@ -179,6 +179,11 @@
       "en",
       "zh-hk",
       "zh-cn"
+    ],
+    "indexableLanguages": [
+      "en",
+      "zh-hk",
+      "zh-cn"
     ]
   },
   {
@@ -189,6 +194,11 @@
       "en",
       "zh-hk",
       "zh-cn"
+    ],
+    "indexableLanguages": [
+      "en",
+      "zh-hk",
+      "zh-cn"
     ]
   },
   {
@@ -196,6 +206,11 @@
     "slug": "cityus-caring-for-children-dancing-for-a-rainbow-event-sets-a-new-record-1-400-people-dance-together-to-promote-un-sdg",
     "category": "philanthropy",
     "languages": [
+      "en",
+      "zh-hk",
+      "zh-cn"
+    ],
+    "indexableLanguages": [
       "zh-hk",
       "zh-cn"
     ]
@@ -205,6 +220,26 @@
     "slug": "policy-address-2025-cies-property-threshold",
     "category": "education_research",
     "languages": [
+      "en",
+      "zh-hk",
+      "zh-cn"
+    ],
+    "indexableLanguages": [
+      "en",
+      "zh-hk",
+      "zh-cn"
+    ]
+  },
+  {
+    "id": "4a03fc5e-4b98-4f3d-98c5-fd0f7f2f48f2",
+    "slug": "revo-connect-2026",
+    "category": "news_events",
+    "languages": [
+      "en",
+      "zh-hk",
+      "zh-cn"
+    ],
+    "indexableLanguages": [
       "en",
       "zh-hk",
       "zh-cn"
@@ -218,6 +253,138 @@
       "en",
       "zh-hk",
       "zh-cn"
+    ],
+    "indexableLanguages": [
+      "en",
+      "zh-hk",
+      "zh-cn"
+    ]
+  },
+  {
+    "id": "3fe1ff01-a208-487e-97a4-0713c10d51a8",
+    "slug": "asian-financial-forum-2026",
+    "category": "news_events",
+    "languages": [
+      "en",
+      "zh-hk",
+      "zh-cn"
+    ],
+    "indexableLanguages": [
+      "en"
+    ]
+  },
+  {
+    "id": "deafafdb-67d3-480c-bcb0-178c527ab778",
+    "slug": "rfo-annual-forum-2025-recap",
+    "category": "news_events",
+    "languages": [
+      "en",
+      "zh-hk",
+      "zh-cn"
+    ],
+    "indexableLanguages": [
+      "en",
+      "zh-hk",
+      "zh-cn"
+    ]
+  },
+  {
+    "id": "15280f8e-560b-4e2c-a474-8e8d7fa667b7",
+    "slug": "rfo-annual-forum-2025",
+    "category": "news_events",
+    "languages": [
+      "en",
+      "zh-hk",
+      "zh-cn"
+    ],
+    "indexableLanguages": [
+      "en",
+      "zh-hk",
+      "zh-cn"
+    ]
+  },
+  {
+    "id": "f82c372a-b208-4b62-9521-89453df14ca4",
+    "slug": "hk-economic-outlook-sme-summit-2026",
+    "category": "news_events",
+    "languages": [
+      "en",
+      "zh-hk",
+      "zh-cn"
+    ],
+    "indexableLanguages": [
+      "en"
+    ]
+  },
+  {
+    "id": "ee05c0c8-13bb-4066-8092-d52ee6fdf937",
+    "slug": "asian-private-banker-alternative-investments-2026",
+    "category": "news_events",
+    "languages": [
+      "en",
+      "zh-hk",
+      "zh-cn"
+    ],
+    "indexableLanguages": [
+      "en",
+      "zh-hk",
+      "zh-cn"
+    ]
+  },
+  {
+    "id": "f12cb9ad-a409-4f9d-b7b9-f97155f88f73",
+    "slug": "foihk-speaker-hk-sme-summit-2026",
+    "category": "news_events",
+    "languages": [
+      "en",
+      "zh-hk",
+      "zh-cn"
+    ],
+    "indexableLanguages": [
+      "en"
+    ]
+  },
+  {
+    "id": "d7e76260-7b14-41b3-9ea1-408347103c8c",
+    "slug": "chengdu-foreign-investment-roadshow-2025",
+    "category": "news_events",
+    "languages": [
+      "en",
+      "zh-hk",
+      "zh-cn"
+    ],
+    "indexableLanguages": [
+      "en",
+      "zh-hk",
+      "zh-cn"
+    ]
+  },
+  {
+    "id": "dbc7be31-e6cc-4545-935b-a0fffa927d8d",
+    "slug": "yunnan-hk-macau-entrepreneur-forum-2025",
+    "category": "news_events",
+    "languages": [
+      "en",
+      "zh-hk",
+      "zh-cn"
+    ],
+    "indexableLanguages": [
+      "en"
+    ]
+  },
+  {
+    "id": "ef1a63fe-2e06-4823-8935-ac897ff00f7f",
+    "slug": "foihk-innoesg-prize-training-course",
+    "category": "news_events",
+    "languages": [
+      "en",
+      "zh-hk",
+      "zh-cn"
+    ],
+    "indexableLanguages": [
+      "en",
+      "zh-hk",
+      "zh-cn"
     ]
   },
   {
@@ -228,6 +395,11 @@
       "en",
       "zh-hk",
       "zh-cn"
+    ],
+    "indexableLanguages": [
+      "en",
+      "zh-hk",
+      "zh-cn"
     ]
   },
   {
@@ -235,6 +407,11 @@
     "slug": "cies-asset-holding-period-reduced-jan-2025",
     "category": "education_research",
     "languages": [
+      "en",
+      "zh-hk",
+      "zh-cn"
+    ],
+    "indexableLanguages": [
       "en",
       "zh-hk",
       "zh-cn"

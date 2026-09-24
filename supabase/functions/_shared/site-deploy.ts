@@ -9,6 +9,8 @@ export type DeployChange = {
 };
 
 export type BuildManifest = {
+  formatVersion: 2;
+  publicUrls: string[];
   revision: number;
   generatedAt: string;
   urls: string[];
@@ -26,12 +28,14 @@ export const isBuildTimedOut = (
 export const validateBuildManifest = (value: unknown): BuildManifest | null => {
   if (!value || typeof value !== "object") return null;
   const candidate = value as Record<string, unknown>;
-  if (!Number.isSafeInteger(candidate.revision) || Number(candidate.revision) < 0) return null;
+  if (!Number.isSafeInteger(candidate.revision) || Number(candidate.revision) < 1) return null;
   if (typeof candidate.generatedAt !== "string" || !Number.isFinite(Date.parse(candidate.generatedAt))) {
     return null;
   }
+  if (candidate.formatVersion !== 2 || !Array.isArray(candidate.publicUrls)) return null;
   if (!Array.isArray(candidate.urls) || candidate.urls.length > 5000) return null;
-  if (candidate.urls.some((url) => {
+  if (candidate.publicUrls.length > 5000 || candidate.urls.some((url) => !(candidate.publicUrls as unknown[]).includes(url))) return null;
+  if ([...candidate.urls, ...candidate.publicUrls].some((url) => {
     if (typeof url !== "string" || url.length > 500) return true;
     try {
       const parsed = new URL(url);
@@ -43,8 +47,12 @@ export const validateBuildManifest = (value: unknown): BuildManifest | null => {
   return candidate as BuildManifest;
 };
 
-export const validateArticleHtml = (html: string, expectedUrl: string) => {
+export const validateArticleHtml = (html: string, expectedUrl: string, indexable = true, revision?: number) => {
   const errors: string[] = [];
+  const robotTags = html.match(/<meta\b[^>]*>/gi) || [];
+  const noindex = robotTags.some((tag) => /\bname=["']robots["']/i.test(tag) && /noindex/i.test(tag));
+  if (indexable === noindex) errors.push(indexable ? "indexable page marked noindex" : "non-indexable page missing noindex");
+  if (revision !== undefined && !robotTags.some((tag) => tag.includes('name="foihk-content-revision"') && tag.includes(`content="${revision}"`))) errors.push("page revision mismatch");
   if (!/<h1(?:\s|>)/i.test(html)) errors.push("missing H1");
 
   const linkTags = html.match(/<link\b[^>]*>/gi) || [];

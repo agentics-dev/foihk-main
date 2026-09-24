@@ -1,7 +1,8 @@
 import { createClient } from "@supabase/supabase-js";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { isArticleVisible } from "../src/lib/articlePublication.ts";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const SUPABASE_URL = process.env.VITE_SUPABASE_URL;
@@ -22,12 +23,16 @@ const STATIC_LAST_MODIFIED = "2026-08-03";
 const STATIC_LAST_MODIFIED_BY_PATH = new Map([
   ["", "2026-08-04"],
 ]);
-const SNAPSHOT_PATH = resolve(ROOT, "public", "published-articles.json");
 const MAX_SNAPSHOT_ATTEMPTS = 3;
 
 if (!SUPABASE_URL || !SUPABASE_KEY) {
   console.error("Missing VITE_SUPABASE_URL or VITE_SUPABASE_PUBLISHABLE_KEY");
   process.exit(1);
+}
+
+if ((process.env.VERCEL || process.env.CONTENT_BUILD_TARGET === "production")
+  && new URL(SUPABASE_URL).hostname !== "qrypqhzxbvfvtgxeerzi.supabase.co") {
+  throw new Error("Production content build requires the verified FOIHK Supabase project");
 }
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
@@ -167,6 +172,7 @@ const attachSeoRelations = (articles, faqRows, slugHistoryRows) => {
     });
     return {
       ...article,
+      faq_items: items,
       faq: getFaq("question", "answer"),
       faq_zhtw: getFaq("question_zhtw", "answer_zhtw"),
       faq_zhcn: getFaq("question_zhcn", "answer_zhcn"),
@@ -221,24 +227,15 @@ const fetchContentSnapshot = async () => {
     .eq("published", true)
     .order("published_at", { ascending: false, nullsFirst: false });
 
-  let cmsArticles = remoteArticles || [];
-  if (error) {
-    if (process.env.ALLOW_SNAPSHOT_FALLBACK !== "1" || !existsSync(SNAPSHOT_PATH)) {
-      throw new Error(`Failed to fetch published articles: ${error.message}`);
-    }
-    console.warn(`Supabase fetch failed; using the explicitly allowed local snapshot: ${error.message}`);
-    cmsArticles = JSON.parse(readFileSync(SNAPSHOT_PATH, "utf8")).filter((article) => !article.static_content);
-  }
-
-  if (error) {
-    return cmsArticles.map(normalizePublicUpdatedAt).map(addSingleSourceNoteWhenMissing);
-  }
+  if (error) throw new Error(`Failed to fetch published articles: ${error.message}`);
+  const cmsArticles = remoteArticles || [];
 
   const [faqRows, slugHistoryRows] = await Promise.all([
     fetchOptionalRows("article_faq_items", (query) => query.eq("enabled", true).order("position", { ascending: true })),
     fetchOptionalRows("article_slug_history", (query) => query.order("created_at", { ascending: true })),
   ]);
   return attachSeoRelations(cmsArticles, faqRows, slugHistoryRows)
+
     .map(normalizePublicUpdatedAt)
     .map(addSingleSourceNoteWhenMissing);
 };
@@ -253,10 +250,7 @@ async function generateSitemap() {
     const after = await fetchContentRevision();
 
     if (!before.available || !after.available) {
-      contentRevision = 0;
-      stableSnapshot = true;
-      console.warn("Content revision table is not available; emitting bootstrap revision 0");
-      break;
+      throw new Error("Content revision is unavailable. Configure the publishing schema before building.");
     }
     if (before.revision === after.revision) {
       contentRevision = after.revision;
@@ -285,16 +279,19 @@ async function generateSitemap() {
   }
 
   const routeManifest = [];
+  const publicUrls = urls.map(({ loc }) => `${BASE_URL}${loc}`);
   for (const article of articles) {
     const slug = normalizeSlug(article.slug);
     const categoryPath = getCategoryPath(article.category);
     const availableLanguages = LANGUAGES.filter((language) => isIndexable(article, language));
-    if (availableLanguages.length === 0) continue;
+    const visibleLanguages = LANGUAGES.filter((language) => isArticleVisible(article, language));
+    if (visibleLanguages.length === 0) continue;
+    publicUrls.push(...visibleLanguages.map((language) => `${BASE_URL}/${language}/articles/${categoryPath}/${slug}`));
     const alternates = availableLanguages.map((language) => ({
       language,
       loc: `/${language}/articles/${categoryPath}/${slug}`,
     }));
-    const lastmod = (article.public_updated_at || article.published_at || article.created_at).split("T")[0];
+    const lastmod = new Date(Math.max(Date.parse(article.public_updated_at || article.published_at || article.created_at), Date.parse(article.published_at || article.created_at))).toISOString().split("T")[0];
     for (const alternate of alternates) {
       urls.push({ loc: alternate.loc, lastmod, alternates });
     }
@@ -302,7 +299,8 @@ async function generateSitemap() {
       id: article.id,
       slug,
       category: article.category,
-      languages: availableLanguages,
+      languages: visibleLanguages,
+      indexableLanguages: availableLanguages,
     });
   }
 
@@ -327,7 +325,9 @@ ${urls.map(renderUrl).join("\n")}
   writeFileSync(
     resolve(publicPath, "content-build.json"),
     `${JSON.stringify({
+      formatVersion: 2,
       revision: contentRevision,
+      publicUrls: [...new Set(publicUrls)].sort(),
       generatedAt: new Date().toISOString(),
       urls: [...new Set(urls.map(({ loc }) => `${BASE_URL}${loc}`))].sort(),
     }, null, 2)}\n`

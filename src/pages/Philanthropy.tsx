@@ -1,3 +1,4 @@
+import { ArticleLoadError } from "@/components/ArticleLoadError";
 import { useEffect, useState } from "react";
 import { LocalizedLink as Link } from "@/components/LocalizedLink";
 import { Navigation } from "@/components/Navigation";
@@ -26,6 +27,8 @@ const Philanthropy = () => {
   const { t, language } = useLanguage();
   const [articles, setArticles] = useState<ArticleRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const [retry, setRetry] = useState(0);
   
   const titleAnim = useScrollAnimation(0.3);
   const descriptionAnim = useScrollAnimation(0.3);
@@ -36,11 +39,17 @@ const Philanthropy = () => {
   const articlesAnim = useScrollAnimation(0.3);
 
   useEffect(() => {
+    let active = true;
     const fetchArticles = async () => {
       setLoading(true);
+      setLoadError(false);
       try {
-        setArticles(await loadPublishedArticles("philanthropy", language));
+        const result = await loadPublishedArticles("philanthropy", language);
+        if (!active) return;
+        setArticles(result);
       } catch (error) {
+        if (!active) return;
+        setLoadError(true);
         console.error("Error fetching philanthropy articles:", error);
         setArticles([]);
       }
@@ -48,7 +57,8 @@ const Philanthropy = () => {
     };
 
     fetchArticles();
-  }, [language]);
+    return () => { active = false; };
+  }, [language, retry]);
   const homeLabel = language === "en" ? "Home" : language === "zh-hk" ? "首頁" : "首页";
   const meta = language === "en"
     ? { title: "Family Office Philanthropy in Hong Kong", description: "Explore FOIHK education, dialogue, and community initiatives concerning responsible family philanthropy and social impact in Hong Kong." }
@@ -77,7 +87,7 @@ const Philanthropy = () => {
         }}
       />
       <Navigation />
-      <main>
+      <main data-content-ready={!loading && !loadError ? "true" : "false"}>
       
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto">
@@ -119,7 +129,7 @@ const Philanthropy = () => {
               {t("philanthropy.articlesDesc")}
             </p>
 
-            {loading ? (
+            {loadError ? <ArticleLoadError onRetry={() => setRetry((value) => value + 1)} /> : loading ? (
               <div className="text-center py-12">
                 <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent"></div>
                 <p className="mt-4 text-muted-foreground">{t("articles.loading")}</p>

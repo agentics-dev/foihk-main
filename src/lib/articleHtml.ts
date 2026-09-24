@@ -45,7 +45,7 @@ const SPACER_CLASSES = ["foihk-spacer-1", "foihk-spacer-2", "foihk-spacer-sectio
 
 const normalizeWhitespace = (value: string) =>
   ["\u00a0", "\u200b", "\u200c", "\u200d", "\ufeff"].reduce(
-    (normalizedValue, character) => normalizedValue.replaceAll(character, " "),
+    (normalizedValue, character) => normalizedValue.split(character).join(" "),
     value,
   )
     .replace(/\s+/g, " ")
@@ -66,7 +66,7 @@ const normalizeEmptyParagraphs = (documentFragment: Document) => {
     if (!firstParagraph.isConnected) continue;
     if (firstParagraph.closest("li, td, th")) continue;
 
-    const run = [firstParagraph];
+    const run: Element[] = [firstParagraph];
     let nextElement = firstParagraph.nextElementSibling;
     while (nextElement && isEmptyParagraph(nextElement)) {
       run.push(nextElement);

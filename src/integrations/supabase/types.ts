@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       articles: {
         Row: {
+          edit_version: number
           author_credential: string | null
           author_credential_zhcn: string | null
           author_credential_zhtw: string | null
@@ -79,6 +80,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          edit_version?: number
           author_credential?: string | null
           author_credential_zhcn?: string | null
           author_credential_zhtw?: string | null
@@ -142,6 +144,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          edit_version?: number
           author_credential?: string | null
           author_credential_zhcn?: string | null
           author_credential_zhtw?: string | null
@@ -353,6 +356,9 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      save_article: { Args: { _patch: Json; _id?: string; _expected_version?: number; _date_action?: string; _published_at?: string }; Returns: Json }
+      delete_article: { Args: { _id: string; _expected_version: number }; Returns: Json }
+
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

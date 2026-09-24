@@ -1,0 +1,15 @@
+import { readFileSync, writeFileSync } from 'node:fs';
+import { randomBytes } from 'node:crypto';
+import { createClient } from '@supabase/supabase-js';
+const env=JSON.parse(readFileSync('.local/supabase.json','utf8'));
+if(env.API_URL !== 'http://127.0.0.1:54321') throw new Error('Local database required');
+const db=createClient(env.API_URL,env.SERVICE_ROLE_KEY,{auth:{persistSession:false}});
+const snapshot=JSON.parse(readFileSync('.local/original-published-articles.json','utf8'));
+const news=JSON.parse(readFileSync('tests/fixtures/news-publication.json','utf8')).articles;
+const articles=snapshot.map(({faq,faq_zhtw,faq_zhcn,faq_items,previous_slugs,...row})=>({...row,published_at:news.find(a=>a.id===row.id)?.published_at||row.published_at}));
+const {error}=await db.from('articles').upsert(articles); if(error)throw error;
+const email='editor@foihk.local';const password=randomBytes(18).toString('base64url');
+const {data:user,error:authError}=await db.auth.admin.createUser({email,password,email_confirm:true});if(authError)throw authError;
+const {error:roleError}=await db.from('user_roles').insert({user_id:user.user.id,role:'admin'});if(roleError)throw roleError;
+writeFileSync('.local/admin-access.json',JSON.stringify({email,password},null,2),{mode:0o600});
+console.log(`Seeded ${articles.length} articles and one isolated test administrator. Credentials: .local/admin-access.json`);

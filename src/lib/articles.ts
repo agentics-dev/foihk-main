@@ -1,7 +1,8 @@
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
-import type { ArticleCategory } from "@/lib/utils";
+import { normalizeArticleSlug, type ArticleCategory } from "@/lib/utils";
 import type { Language } from "@/contexts/LanguageContext";
+import { isArticleVisible, comparePublication } from "@/lib/articlePublication";
 
 export type PublishedArticle = Tables<"articles"> & { static_content?: boolean };
 
@@ -23,46 +24,21 @@ export const getModifiedDate = (article: Pick<PublishedArticle, "published_at" |
   return new Date(updated).getTime() >= new Date(published).getTime() ? updated : published;
 };
 
-const byNewest = (left: PublishedArticle, right: PublishedArticle) => {
-  const leftDate = getModifiedDate(left);
-  const rightDate = getModifiedDate(right);
-  return new Date(rightDate).getTime() - new Date(leftDate).getTime();
-};
-
-const stripHtml = (value: string | null | undefined) => (value || "")
-  .replace(/<[^>]+>/g, " ")
-  .replace(/&nbsp;/gi, " ")
-  .replace(/\s+/g, " ")
-  .trim();
-
-export const isArticleIndexable = (article: PublishedArticle, language: Language) => {
-  const suffix = language === "zh-hk" ? "_zhtw" : language === "zh-cn" ? "_zhcn" : "";
-  const record = article as unknown as Record<string, string | null | undefined>;
-  return stripHtml(record[`title${suffix}`]).length > 0
-    && stripHtml(record[`content${suffix}`]).length >= 80;
-};
-
 export const loadPublishedArticles = async (category?: ArticleCategory, language?: Language): Promise<PublishedArticle[]> => {
-  let snapshot: PublishedArticle[] = [];
-  try {
-    const response = await fetch("/published-articles.json");
-    if (response.ok) snapshot = await response.json() as PublishedArticle[];
-  } catch {
-    // The live query below remains available when a static snapshot cannot be read.
-  }
-
   let query = supabase.from("articles").select("*").eq("published", true);
   if (category) query = query.eq("category", category);
-  const { data: liveArticles, error } = await query.order("created_at", { ascending: false });
+  const { data, error } = await query.abortSignal(AbortSignal.timeout(10000));
+  if (error) throw error;
+  return [...new Map((data || []).map((article) => [article.id, article])).values()]
+    .filter((article) => isArticleVisible(article, language)).sort(comparePublication);
+};
 
-  if (error && snapshot.length === 0) throw error;
-
-  const merged = new Map<string, PublishedArticle>();
-  for (const article of snapshot) {
-    if (!category || article.category === category) merged.set(article.slug, article);
-  }
-  for (const article of liveArticles || []) merged.set(article.slug, article);
-
-  const articles = [...merged.values()];
-  return (language ? articles.filter((article) => isArticleIndexable(article, language)) : articles).sort(byNewest);
+export const loadPublishedArticle = async (category: ArticleCategory, key: string, language: Language) => {
+  const articles = await loadPublishedArticles(category, language);
+  const direct = articles.find((article) => article.id === key || normalizeArticleSlug(article.slug) === key);
+  if (direct) return direct;
+  const { data, error } = await supabase.from("article_slug_history").select("article_id")
+    .eq("old_slug", key).eq("category", category).abortSignal(AbortSignal.timeout(10000));
+  if (error) throw error;
+  return articles.find((article) => data?.some((history) => history.article_id === article.id)) || null;
 };

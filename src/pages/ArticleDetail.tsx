@@ -43,6 +43,8 @@ import Autoplay from "embla-carousel-autoplay";
 import { ORGANIZATION_URL } from "@/lib/schema";
 import { sanitizeArticleHtml } from "@/lib/articleHtml";
 import { getModifiedDate, getPublishedDate } from "@/lib/articles";
+import { loadPublishedArticle } from "@/lib/articles";
+import { ArticleLoadError } from "@/components/ArticleLoadError";
 import {
   buildArticleStructuredData,
   getArticleAuthor,
@@ -56,7 +58,6 @@ import { meaningfulSchemaValue } from "@/lib/schemaBuilders";
 
 const META_DESCRIPTION_MAX_LENGTH = 160;
 const DEFAULT_ARTICLE_IMAGE = `${ORGANIZATION_URL}/og-image.png`;
-const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const RESEARCH_BATCH_DATE = "2026-08-03";
 const ARTICLE_META_LABELS: Record<Language, {
   published: string;
@@ -271,11 +272,14 @@ const ArticleDetail = () => {
   const { language, t } = useLanguage();
   const [article, setArticle] = useState<ArticleRow | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const [retry, setRetry] = useState(0);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [zoomLevel, setZoomLevel] = useState(1);
   const [faqItems, setFaqItems] = useState<Tables<"article_faq_items">[] | null>(null);
 
   useEffect(() => {
+    let active = true;
     const fetchArticle = async () => {
       const validCategory = parseArticleCategory(category);
       if (!articleKey || !validCategory) {
@@ -285,42 +289,18 @@ const ArticleDetail = () => {
 
       setLoading(true);
       setFaqItems(null);
-      const lookupColumn = UUID_PATTERN.test(articleKey) ? "id" : "slug";
+      setLoadError(false);
+      setArticle(null);
       let data: ArticleRow | null = null;
-      let fetchError: Error | null = null;
+      let fetchError: unknown = null;
+      try { data = await loadPublishedArticle(validCategory, articleKey, language); }
+      catch (error) { fetchError = error; }
 
-      try {
-        const response = await fetch("/published-articles.json");
-        if (response.ok) {
-          const publishedArticles = await response.json() as ArticleRow[];
-          data = publishedArticles.find((candidate) =>
-            candidate.category === validCategory
-            && (lookupColumn === "id"
-              ? candidate.id === articleKey
-              : normalizeArticleSlug(candidate.slug) === articleKey)
-          ) || null;
-        }
-      } catch {
-        // The live Supabase query below remains the runtime fallback.
-      }
-
-      if (!data) {
-        const liveResult = await supabase
-          .from("articles")
-          .select("*")
-          .eq("category", validCategory)
-          .eq("published", true);
-        fetchError = liveResult.error;
-        data = liveResult.data?.find((candidate) =>
-          lookupColumn === "id"
-            ? candidate.id === articleKey
-            : normalizeArticleSlug(candidate.slug) === articleKey
-        ) || null;
-      }
-
+      if (!active) return;
       if (fetchError) {
         console.error("Error fetching article:", fetchError);
         setArticle(null);
+        setLoadError(true);
       } else {
         setArticle(data);
         if (data) {
@@ -329,14 +309,15 @@ const ArticleDetail = () => {
             .select("*")
             .eq("article_id", data.id)
             .eq("enabled", true)
-            .order("position", { ascending: true });
+            .order("position", { ascending: true }).abortSignal(AbortSignal.timeout(10000));
+          if (!active) return;
           if (!faqResult.error) {
             setFaqItems(faqResult.data || []);
           } else if (faqResult.error.code !== "42P01" && faqResult.error.code !== "PGRST205") {
             console.error("Error fetching article FAQ:", faqResult.error);
           }
         }
-        if (data && UUID_PATTERN.test(articleKey) && data.slug) {
+        if (data && articleKey !== normalizeArticleSlug(data.slug) && data.slug) {
           navigate(`/${language}/articles/${getArticleCategoryPath(data.category)}/${normalizeArticleSlug(data.slug)}`, { replace: true });
         }
       }
@@ -345,7 +326,8 @@ const ArticleDetail = () => {
     };
 
     fetchArticle();
-  }, [articleKey, category, language, navigate]);
+    return () => { active = false; };
+  }, [articleKey, category, language, navigate, retry]);
 
   const getCategoryTitle = (cat: string) => {
     return cat === "education_research"
@@ -380,6 +362,8 @@ const ArticleDetail = () => {
       </div>
     );
   }
+
+  if (loadError) return <><Navigation /><main className="container mx-auto py-12"><SEO title="Temporarily unavailable" description="Please retry loading the article." noindex /><ArticleLoadError onRetry={() => setRetry((value) => value + 1)} /></main></>;
 
   if (!article) {
     return (
@@ -549,7 +533,8 @@ const ArticleDetail = () => {
                 {new Date(publishedDate).toLocaleDateString(language, {
                   year: 'numeric',
                   month: 'long',
-                  day: 'numeric'
+                  day: 'numeric',
+                  timeZone: 'Asia/Hong_Kong'
                 })}
               </time>
             </div>
@@ -685,8 +670,8 @@ const ArticleDetail = () => {
                       alt={getArticleImageAlt(article, article.image_urls[0], language, localizedTitle)}
                       width="1600"
                       height="900"
+                      loading="eager"
                       decoding="async"
-                      fetchPriority="high"
                       onError={(event) => { event.currentTarget.src = "/og-image.png"; }}
                       className="w-full max-h-[600px] object-contain bg-muted rounded-lg"
                     />

@@ -20,11 +20,12 @@ const MIME_TYPES = {
   ".xml": "application/xml; charset=utf-8",
 };
 
-const sitemap = readFileSync(join(DIST, "sitemap.xml"), "utf8");
-const sitemapRoutes = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)]
-  .map((match) => new URL(match[1]).pathname);
+const manifest = JSON.parse(readFileSync(join(DIST, "content-build.json"), "utf8"));
+if (manifest.formatVersion !== 2) throw new Error("Public route manifest v2 required");
+const snapshot = JSON.parse(readFileSync(join(DIST, "published-articles.json"), "utf8"));
+const publicRoutes = manifest.publicUrls.map((url) => new URL(url).pathname);
 const routeFilter = process.env.PRERENDER_ROUTE;
-const routes = routeFilter ? sitemapRoutes.filter((route) => route === routeFilter) : sitemapRoutes;
+const routes = routeFilter ? publicRoutes.filter((route) => route === routeFilter) : publicRoutes;
 const adminSpaRoutes = ["/admin", "/admin-login", "/admin/dashboard"];
 
 const server = createServer((request, response) => {
@@ -95,13 +96,26 @@ for (let index = 0; index < routes.length; index += 1) {
       page = await openPageWithRetry(route);
       await page.setRequestInterception(true);
       page.on("request", (request) => {
+        const url = new URL(request.url());
+        if (url.pathname === "/rest/v1/articles") {
+          const category = url.searchParams.get("category")?.replace(/^eq\./, "");
+          return request.respond({status: 200, contentType: "application/json", headers: {"access-control-allow-origin":"*","access-control-allow-headers":"*","access-control-allow-methods":"GET,OPTIONS"},
+            body: JSON.stringify(snapshot.filter((article) => !category || article.category === category))});
+        }
+        if (url.pathname === "/rest/v1/article_faq_items" || url.pathname === "/rest/v1/article_slug_history") {
+          const articleId = url.searchParams.get("article_id")?.replace(/^eq\./, "");
+          const rows = url.pathname.endsWith("article_faq_items")
+            ? snapshot.filter((article) => article.id === articleId).flatMap((article) => article.faq_items || [])
+            : snapshot.flatMap((article) => (article.previous_slugs || []).map((old) => ({article_id: article.id, old_slug: old.slug})));
+          return request.respond({status: 200, contentType: "application/json", headers: {"access-control-allow-origin":"*","access-control-allow-headers":"*","access-control-allow-methods":"GET,OPTIONS"},body:JSON.stringify(rows)});
+        }
         if (["font", "image", "media"].includes(request.resourceType())) {
           request.abort();
         } else {
           request.continue();
         }
       });
-      await page.goto(`${origin}${route}`, { waitUntil: "networkidle2", timeout: 45_000 });
+      await page.goto(`${origin}${route}`, { waitUntil: "domcontentloaded", timeout: 45_000 });
       await page.waitForSelector("h1", { timeout: 15_000 });
       await page.waitForFunction(
         (expectedCanonical) =>
@@ -129,7 +143,8 @@ for (let index = 0; index < routes.length; index += 1) {
       if (/\/articles\/(?:education-research|news-events|philanthropy)$/.test(route)) {
         await page.waitForSelector('main[data-content-ready="true"]', { timeout: 30_000 });
       }
-      const html = await page.content();
+      await page.waitForFunction(() => !document.querySelector("main[data-content-ready]") || document.querySelector("main[data-content-ready]").getAttribute("data-content-ready") === "true");
+      const html = (await page.content()).replace("</head>", `<meta name="foihk-content-revision" content="${manifest.revision}"></head>`);
       const outputDir = join(DIST, route.replace(/^\/+/, ""));
       mkdirSync(outputDir, { recursive: true });
       writeFileSync(join(outputDir, "index.html"), html);
@@ -145,7 +160,7 @@ for (let index = 0; index < routes.length; index += 1) {
 if (browser && !routeFilter) {
   const notFoundPage = await browser.newPage();
   try {
-    await notFoundPage.goto(`${origin}/en/seo-audit-not-found`, { waitUntil: "networkidle2", timeout: 45_000 });
+    await notFoundPage.goto(`${origin}/en/seo-audit-not-found`, { waitUntil: "domcontentloaded", timeout: 45_000 });
     await notFoundPage.waitForSelector("h1", { timeout: 15_000 });
     await notFoundPage.waitForFunction(
       () => document.querySelector('meta[name="robots"]')?.content.includes("noindex"),
@@ -176,4 +191,4 @@ if (!routeFilter) {
   });
 }
 
-console.log(`\nPrerendered ${routes.length} routes from ${BASE_URL}/sitemap.xml`);
+console.log(`\nPrerendered ${routes.length} routes from the v2 public route manifest`);

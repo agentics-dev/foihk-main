@@ -14,6 +14,8 @@ const ARTICLE_URL = "https://www.foihk.org/en/articles/news-events/family-office
 
 test("build manifest accepts only FOIHK URLs and a safe revision", () => {
   const valid = validateBuildManifest({
+    formatVersion: 2,
+    publicUrls: [ARTICLE_URL],
     revision: 42,
     generatedAt: "2026-08-17T01:02:03.000Z",
     urls: [ARTICLE_URL],
@@ -67,4 +69,12 @@ test("worker secret comparison rejects length and value differences", async () =
   assert.equal(await secureEqual("a".repeat(32), "a".repeat(32)), true);
   assert.equal(await secureEqual("a".repeat(32), "b".repeat(32)), false);
   assert.equal(await secureEqual("a".repeat(32), "a".repeat(31)), false);
+});
+
+test("public noindex pages are valid, but indexing and revision mismatches fail", () => {
+  const html = `<html><head><meta name="robots" content="noindex, follow"><meta name="foihk-content-revision" content="8"><meta name="description" content="Picture article"><link rel="canonical" href="${ARTICLE_URL}"><script type="application/ld+json">{"@type":"NewsArticle"}</script></head><body><h1>Picture</h1></body></html>`;
+  assert.deepEqual(validateArticleHtml(html, ARTICLE_URL, false, 8), []);
+  assert.ok(validateArticleHtml(html, ARTICLE_URL, true, 8).includes("indexable page marked noindex"));
+  assert.ok(validateArticleHtml(html, ARTICLE_URL, false, 9).includes("page revision mismatch"));
+  assert.equal(validateBuildManifest({formatVersion:2,revision:8,generatedAt:new Date().toISOString(),urls:[ARTICLE_URL],publicUrls:[]}),null);
 });

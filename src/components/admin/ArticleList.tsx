@@ -7,6 +7,9 @@ import { Edit, Trash2, Eye, EyeOff, Calendar } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import type { Tables } from "@/integrations/supabase/types";
 import type { SiteDeployStatus } from "@/lib/siteDeploy";
+import { saveArticle, deleteArticle } from "@/lib/articleEditor";
+import { canPublishArticle } from "@/lib/articlePublication";
+import { getArticleSyncLabel } from "@/lib/siteDeploy";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -57,53 +60,23 @@ export const ArticleList = ({ category, onEdit, deployStatus, onContentChanged }
     fetchArticles();
   }, [fetchArticles]);
 
-  const handleDelete = async (article: ArticleRow) => {
-    const { error } = await supabase.from("articles").delete().eq("id", article.id);
-
-    if (error) {
-      toast({
-        title: "Error",
-        description: "Failed to delete article",
-        variant: "destructive",
-      });
-    } else {
-      toast({
-        title: "Article deleted",
-        description: article.published
-          ? "Production removal has been queued and will be verified before IndexNow is notified."
-          : "The draft was deleted.",
-      });
+  const [writing, setWriting] = useState(false);
+  const mutate = async (operation: () => Promise<unknown>) => {
+    setWriting(true);
+    try {
+      await operation();
+      toast({ title: "Article saved", description: "The change is saved. Static synchronization is shown separately." });
+      await onContentChanged();
       await fetchArticles();
-      void onContentChanged();
-    }
+    } catch (error) {
+      toast({ title: "Change not saved", description: error instanceof Error ? error.message : "Please retry", variant: "destructive" });
+    } finally { setWriting(false); }
   };
-
-  const togglePublished = async (article: ArticleRow) => {
-    const publishedAt = !article.published ? new Date().toISOString() : null;
-    const { error } = await supabase
-      .from("articles")
-      .update({ 
-        published: !article.published,
-        published_at: publishedAt,
-        public_updated_at: !article.published ? article.public_updated_at || publishedAt : article.public_updated_at,
-      })
-      .eq("id", article.id);
-
-    if (error) {
-      toast({
-        title: "Error",
-        description: "Failed to update article",
-        variant: "destructive",
-      });
-    } else {
-      toast({
-        title: `Article ${!article.published ? "published" : "unpublished"}`,
-        description: "Production publishing has been queued. Live status appears after raw HTML verification.",
-      });
-      await fetchArticles();
-      void onContentChanged();
-    }
-  };
+  const handleDelete = (article: ArticleRow) => mutate(() => deleteArticle(article));
+  const togglePublished = (article: ArticleRow) => mutate(async () => {
+    if (!article.published && !canPublishArticle(article)) throw new Error("Add a title and text or an image before publishing.");
+    return saveArticle({ published: !article.published }, article);
+  });
 
   if (loading) {
     return <div className="text-center py-8">Loading...</div>;
@@ -122,13 +95,8 @@ export const ArticleList = ({ category, onEdit, deployStatus, onContentChanged }
   return (
     <div className="grid gap-6">
       {articles.map((article) => {
-        const pending = deployStatus?.pendingArticleIds.includes(article.id) ?? false;
-        const deliveryFailed = pending && deployStatus?.status === "failed";
-        const deliveryLabel = deliveryFailed
-          ? "Failed"
-          : pending
-            ? (article.published ? "Publishing" : "Unpublishing")
-            : article.published ? "Live" : "Draft";
+        const deliveryLabel = getArticleSyncLabel(deployStatus, article.id);
+        const deliveryFailed = deliveryLabel === "Sync failed";
         return (
         <Card key={article.id}>
           <CardHeader>
@@ -159,8 +127,8 @@ export const ArticleList = ({ category, onEdit, deployStatus, onContentChanged }
                   })}</span>
                 </div>
               </div>
-              <Badge variant={deliveryFailed ? "destructive" : article.published && !pending ? "default" : "secondary"} className="flex-shrink-0">
-                {deliveryLabel}
+              <Badge variant={deliveryFailed ? "destructive" : deliveryLabel === "Sync verified" ? "default" : "secondary"} className="flex-shrink-0">
+                {article.published ? "Published" : "Draft"} · {deliveryLabel}
               </Badge>
             </div>
           </CardHeader>
@@ -173,7 +141,7 @@ export const ArticleList = ({ category, onEdit, deployStatus, onContentChanged }
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => togglePublished(article)}
+                disabled={writing} onClick={() => togglePublished(article)}
               >
                 {article.published ? (
                   <>
@@ -203,7 +171,7 @@ export const ArticleList = ({ category, onEdit, deployStatus, onContentChanged }
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={() => handleDelete(article)}>
+                    <AlertDialogAction disabled={writing} onClick={() => handleDelete(article)}>
                       Delete
                     </AlertDialogAction>
                   </AlertDialogFooter>

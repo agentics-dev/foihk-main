@@ -18,10 +18,9 @@ if (!existsSync(sitemapPath)) {
 }
 
 const appShell = readFileSync(indexPath, "utf8");
-const sitemap = readFileSync(sitemapPath, "utf8");
-const sitemapRoutes = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)]
-  .map((match) => new URL(match[1]).pathname);
-const routes = [...new Set([...sitemapRoutes, ...adminSpaRoutes])];
+const manifest = JSON.parse(readFileSync(join(DIST, "content-build.json"), "utf8"));
+if (manifest.formatVersion !== 2 || !Array.isArray(manifest.publicUrls)) throw new Error("Public route manifest v2 required");
+const routes = [...new Set([...manifest.publicUrls.map((url) => new URL(url).pathname), ...adminSpaRoutes])];
 
 for (const route of routes) {
   const outputDir = join(DIST, route.replace(/^\/+/, ""));
@@ -37,4 +36,4 @@ const notFoundHtml = appShell
   .replace(/<title>.*?<\/title>/, "<title>404 Page Not Found | FOIHK</title>");
 writeFileSync(join(DIST, "404.html"), notFoundHtml);
 
-console.log(`Generated static entry files for ${routes.length} routes from ${BASE_URL}/sitemap.xml`);
+console.log(`Generated static entry files for ${routes.length} routes from the public route manifest`);

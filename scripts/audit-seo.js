@@ -52,6 +52,9 @@ const sitemap = readFileSync(sitemapPath, "utf8");
 const urls = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map((match) => match[1]);
 const sitemapSet = new Set(urls);
 const errors = [];
+const manifest = JSON.parse(readFileSync(contentBuildPath, "utf8"));
+const publicUrlSet = new Set(manifest.publicUrls || []);
+if (manifest.formatVersion !== 2 || !publicUrlSet.size) errors.push("Public route manifest v2 is required");
 const seenTitles = new Map();
 const seenDescriptions = new Map();
 const pages = new Map();
@@ -61,12 +64,13 @@ if (!existsSync(contentBuildPath)) {
 } else {
   try {
     const contentBuild = JSON.parse(readFileSync(contentBuildPath, "utf8"));
-    if (!Number.isSafeInteger(contentBuild.revision) || contentBuild.revision < 0) {
+    if (!Number.isSafeInteger(contentBuild.revision) || contentBuild.revision < 1) {
       errors.push("content-build.json: revision must be a non-negative safe integer");
     }
     if (!Number.isFinite(Date.parse(contentBuild.generatedAt))) {
       errors.push("content-build.json: generatedAt must be an ISO date-time");
     }
+    if (contentBuild.formatVersion !== 2 || !Array.isArray(contentBuild.publicUrls) || contentBuild.urls.some((url) => !publicUrlSet.has(url))) errors.push("content-build.json: indexable URLs must be public routes");
     const manifestUrls = new Set(Array.isArray(contentBuild.urls) ? contentBuild.urls : []);
     if (manifestUrls.size !== sitemapSet.size
       || [...sitemapSet].some((url) => !manifestUrls.has(url))) {
@@ -128,7 +132,7 @@ if (/<(?:priority|changefreq)>/i.test(sitemap)) {
   errors.push("sitemap.xml: priority and changefreq must not be emitted");
 }
 
-for (const url of urls) {
+for (const url of publicUrlSet) {
   const pathname = new URL(url).pathname;
   const htmlPath = join(DIST, pathname.replace(/^\/+/, ""), "index.html");
   if (!existsSync(htmlPath)) {
@@ -144,6 +148,7 @@ for (const url of urls) {
   const h1s = $("body h1");
   const mains = $("body main");
   const robots = $('head > meta[name="robots"]').attr("content") || "";
+  if ($('head > meta[name="foihk-content-revision"]').attr("content") !== String(manifest.revision)) errors.push(`${pathname}: HTML content revision differs from manifest`);
   const title = titles.text().replace(/\s+/g, " ").trim();
   const description = (descriptions.attr("content") || "").replace(/\s+/g, " ").trim();
   const h1 = h1s.first().text().replace(/\s+/g, " ").trim();
@@ -155,7 +160,8 @@ for (const url of urls) {
   if (h1s.length !== 1 || !h1) errors.push(`${pathname}: expected one non-empty H1`);
   if (mains.length !== 1) errors.push(`${pathname}: expected exactly one main landmark`);
   if ($("html").attr("lang") !== language) errors.push(`${pathname}: incorrect html lang`);
-  if (/noindex/i.test(robots)) errors.push(`${pathname}: sitemap URL is marked noindex`);
+  if (sitemapSet.has(url) && /noindex/i.test(robots)) errors.push(`${pathname}: sitemap URL is marked noindex`);
+  if (!sitemapSet.has(url) && !/noindex/i.test(robots)) errors.push(`${pathname}: non-indexable public URL must be noindex`);
   if (/\/[0-9a-f]{8}-[0-9a-f-]{27,}$/i.test(pathname)) errors.push(`${pathname}: sitemap article URL uses a UUID`);
   if (/\/articles\/(education_research|news_events)(?:\/|$)/.test(pathname)) errors.push(`${pathname}: public category URL uses an underscore`);
   const languagePrefix = pathname.split("/")[1];
@@ -210,7 +216,7 @@ for (const url of urls) {
   const alternates = new Map();
   alternateLinks.each((_, element) => alternates.set($(element).attr("hreflang"), $(element).attr("href")));
   const isArticle = pathname.includes("/articles/") && !/\/articles\/[^/]+$/.test(pathname);
-  const requiredAlternates = isArticle
+  const requiredAlternates = !sitemapSet.has(url) ? [] : isArticle
     ? [pathname.startsWith("/zh-hk/") ? "zh-HK" : pathname.startsWith("/zh-cn/") ? "zh-CN" : "en", "x-default"]
     : ["en", "zh-HK", "zh-CN", "x-default"];
   for (const required of requiredAlternates) {
@@ -383,6 +389,7 @@ for (const url of urls) {
     else {
       if (articleSchema.headline !== h1) errors.push(`${pathname}: schema headline does not match visible H1`);
       for (const field of ["description", "inLanguage", "articleSection", "image", "datePublished", "dateModified", "author", "publisher", "mainEntityOfPage", "wordCount"]) {
+      if (field === "wordCount" && articleSchema[field] === 0 && !sitemapSet.has(url)) continue;
       if (!articleSchema[field] || (Array.isArray(articleSchema[field]) && articleSchema[field].length === 0)) errors.push(`${pathname}: article schema is missing ${field}`);
       }
       if (articleSchema.author?.["@type"] !== "Organization" || articleSchema.author?.name !== "FOIHK Editorial Team" || !articleSchema.author?.description) {
@@ -655,7 +662,7 @@ for (const url of urls) {
     const linked = new URL(href, BASE_URL);
     if (linked.origin !== BASE_URL || linked.pathname.startsWith("/admin")) return;
     const linkedUrl = `${BASE_URL}${linked.pathname.replace(/\/+$/, "") || "/"}`;
-    if (!sitemapSet.has(linkedUrl)) errors.push(`${pathname}: internal link is not indexable: ${linked.pathname}`);
+    if (!publicUrlSet.has(linkedUrl)) errors.push(`${pathname}: internal link has no public route: ${linked.pathname}`);
   });
 }
 
@@ -663,7 +670,7 @@ for (const [url, $] of pages) {
   $('head > link[rel="alternate"][hreflang]').each((_, element) => {
     const hreflang = $(element).attr("hreflang");
     const alternateUrl = $(element).attr("href");
-    if (!alternateUrl || hreflang === "x-default" || !pages.has(alternateUrl)) return;
+    if (!sitemapSet.has(url) || !alternateUrl || hreflang === "x-default" || !pages.has(alternateUrl)) return;
     const reciprocal = pages.get(alternateUrl)('head > link[rel="alternate"]').toArray().some((link) => pages.get(alternateUrl)(link).attr("href") === url);
     if (!reciprocal) errors.push(`${new URL(url).pathname}: hreflang is not reciprocal with ${new URL(alternateUrl).pathname}`);
   });

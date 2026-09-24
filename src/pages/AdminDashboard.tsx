@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Navigation } from "@/components/Navigation";
@@ -33,15 +33,21 @@ const AdminDashboard = () => {
   const { toast } = useToast();
   const { t } = useLanguage();
 
+  const statusRequest = useRef(0);
   const refreshDeployStatus = useCallback(async () => {
+    const requestId = ++statusRequest.current;
     setDeployLoading(true);
+    setDeployStatus(null);
     try {
-      setDeployStatus(await requestSiteDeployStatus());
+      const next = await requestSiteDeployStatus();
+      if (requestId !== statusRequest.current) return;
+      setDeployStatus(next);
       setDeployError(null);
     } catch (error) {
+      if (requestId !== statusRequest.current) return;
       setDeployError(error instanceof Error ? error.message : "Unable to load production publishing status");
     } finally {
-      setDeployLoading(false);
+      if (requestId === statusRequest.current) setDeployLoading(false);
     }
   }, []);
 
@@ -138,7 +144,7 @@ const AdminDashboard = () => {
 
   const handleFormSuccess = () => {
     handleFormClose();
-    window.setTimeout(() => void refreshDeployStatus(), 500);
+    void refreshDeployStatus();
   };
 
   const handleDeployAction = async (action: "retry" | "rebuild") => {

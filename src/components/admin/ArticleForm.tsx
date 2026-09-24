@@ -1,3 +1,5 @@
+import { saveArticle } from "@/lib/articleEditor";
+import { canPublishArticle } from "@/lib/articlePublication";
 import { useState, useEffect, useMemo, useCallback, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -169,6 +171,8 @@ export const ArticleForm = ({ article, category, onSuccess, onCancel }: ArticleF
   const [publicationDate, setPublicationDate] = useState<Date | null>(new Date());
   const [publicUpdatedDate, setPublicUpdatedDate] = useState<Date | null>(new Date());
   const [loading, setLoading] = useState(false);
+  const [publicationDateChanged, setPublicationDateChanged] = useState(false);
+  const [savedVersion, setSavedVersion] = useState<Tables<"articles"> | null>(null);
   const [langTab, setLangTab] = useState<EditorLanguage>("en");
   const [sidebarLangTab, setSidebarLangTab] = useState<EditorLanguage>("en");
   const [slugUnlocked, setSlugUnlocked] = useState(false);
@@ -186,7 +190,7 @@ export const ArticleForm = ({ article, category, onSuccess, onCancel }: ArticleF
       setTitle(article.title || "");
       setTitleZhTw(article.title_zhtw || "");
       setTitleZhCn(article.title_zhcn || "");
-      setSlug(article.slug || "");
+      setSlug(normalizeArticleSlug(article.slug || ""));
       setDescription(article.excerpt || "");
       setDescriptionZhTw(article.excerpt_zhtw || "");
       setDescriptionZhCn(article.excerpt_zhcn || "");
@@ -244,6 +248,8 @@ export const ArticleForm = ({ article, category, onSuccess, onCancel }: ArticleF
         setImageMetadata({});
       }
 
+      setSavedVersion(null);
+      setPublicationDateChanged(false);
       setPublished(article.published || false);
       setSlugUnlocked(false);
       setPublicationDate(article.published_at ? new Date(article.published_at) : null);
@@ -494,36 +500,7 @@ export const ArticleForm = ({ article, category, onSuccess, onCancel }: ArticleF
       const sanitizedContentZhTw = contentZhTw.trim() ? sanitizeArticleHtml(contentZhTw, titleZhTw || title || "Article image") : "";
       const sanitizedContentZhCn = contentZhCn.trim() ? sanitizeArticleHtml(contentZhCn, titleZhCn || title || "Article image") : "";
 
-      if (!sanitizedContent.trim()) {
-        toast({
-          title: "Missing content",
-          description: "English article content is required",
-          variant: "destructive",
-        });
-        setLoading(false);
-        return;
-      }
-
-      const unansweredEventFields = category === "news_events" && published ? getUnansweredEventFields() : [];
-      if (unansweredEventFields.length > 0) {
-        toast({
-          title: "Complete the Event details",
-          description: `Fill in or mark as “No data / 无”: ${unansweredEventFields.join(", ")}`,
-          variant: "destructive",
-        });
-        setLoading(false);
-        return;
-      }
-      const invalidEventFields = category === "news_events" && published ? getInvalidEventFields() : [];
-      if (invalidEventFields.length > 0) {
-        toast({
-          title: "Correct the Event details",
-          description: invalidEventFields.join(", "),
-          variant: "destructive",
-        });
-        setLoading(false);
-        return;
-      }
+      if (publicationDateChanged && !publicationDate) throw new Error("Choose a publication date; an existing publication date cannot be cleared.");
 
       // Upload new images
       const newImages = await uploadImages();
@@ -546,9 +523,7 @@ export const ArticleForm = ({ article, category, onSuccess, onCancel }: ArticleF
         }
       });
 
-      const now = new Date().toISOString();
-      const effectivePublishedAt = published ? (publicationDate || new Date()).toISOString() : article?.published_at || null;
-      const effectivePublicUpdatedAt = (publicUpdatedDate || (effectivePublishedAt ? new Date(effectivePublishedAt) : null))?.toISOString() || null;
+      const effectivePublicUpdatedAt = publicUpdatedDate?.toISOString() || article?.public_updated_at || null;
 
       const articleData = {
         title,
@@ -607,42 +582,23 @@ export const ArticleForm = ({ article, category, onSuccess, onCancel }: ArticleF
         image_metadata: Object.keys(finalImageMetadata).length > 0 ? (finalImageMetadata as unknown as Json) : null,
         category,
         published,
-        published_at: effectivePublishedAt,
         public_updated_at: effectivePublicUpdatedAt,
       };
 
-      let error;
-      let savedArticleId = article?.id;
-
-      if (article) {
-        const result = await supabase
-          .from("articles")
-          .update(articleData)
-          .eq("id", article.id);
-        error = result.error;
-      } else {
-        const result = await supabase.from("articles").insert([articleData]).select("id").single();
-        error = result.error;
-        savedArticleId = result.data?.id;
+      if (published && !canPublishArticle(articleData)) {
+        throw new Error("Add a title and text or an image in at least one language before publishing.");
       }
+      const saved = await saveArticle(articleData, savedVersion || article,
+        publicationDateChanged ? publicationDate?.toISOString() : undefined);
+      setSavedVersion(saved);
+      setPublicationDateChanged(false);
+      // FAQ persistence remains separate; a version conflict above stops before FAQ writes.
+      await saveFaqItems(saved.id);
+      toast({ title: "Article saved", description: saved.published
+        ? "Published content is saved. Static page synchronization is shown separately."
+        : "Draft saved." });
+      onSuccess();
 
-      if (error) {
-        toast({
-          title: "Error",
-          description: error.message,
-          variant: "destructive",
-        });
-      } else {
-        if (!savedArticleId) throw new Error("Article saved without an ID");
-        await saveFaqItems(savedArticleId);
-        toast({
-          title: "Article saved",
-          description: published || article?.published
-            ? "Production publishing has been queued. The article will be marked Live after raw HTML verification."
-            : `Article ${article ? "updated" : "created"} as a draft.`,
-        });
-        onSuccess();
-      }
     } catch (error: unknown) {
       toast({
         title: "Error",
@@ -927,12 +883,12 @@ export const ArticleForm = ({ article, category, onSuccess, onCancel }: ArticleF
 
         <TabsContent value="en" className="space-y-6 mt-0">
           <div className="space-y-2">
-            <Label htmlFor="title">Title * (English)</Label>
+            <Label htmlFor="title">Title (English)</Label>
             <Input
               id="title"
               value={title}
               onChange={(e) => handleTitleChange(e.target.value)}
-              required
+
               placeholder="Enter article title in English"
             />
           </div>
@@ -949,7 +905,7 @@ export const ArticleForm = ({ article, category, onSuccess, onCancel }: ArticleF
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="content">Content * (English)</Label>
+            <Label htmlFor="content">Content (English)</Label>
             <RichTextEditor
               id="content"
               value={content}
@@ -1064,6 +1020,7 @@ export const ArticleForm = ({ article, category, onSuccess, onCancel }: ArticleF
           value={publicationDate}
           onChange={(date) => {
             setPublicationDate(date);
+            setPublicationDateChanged(true);
             if (!publicUpdatedDate && date) setPublicUpdatedDate(date);
           }}
         />
@@ -1380,8 +1337,9 @@ export const ArticleForm = ({ article, category, onSuccess, onCancel }: ArticleF
                     {eventAttendanceMode === "online" && (
                       <p className="rounded-md border border-amber-300 bg-amber-50 p-3 text-xs text-amber-900">Pure online events can use Schema.org Event, but Google Event rich results currently require a physical location.</p>
                     )}
+                    {getInvalidEventFields().length > 0 && <p className="text-xs text-destructive">Check event information: {getInvalidEventFields().join(", ")}.</p>}
                     {getUnansweredEventFields().length > 0 && (
-                      <p className="text-xs text-muted-foreground">Before publishing, fill in or mark No data / 无: {getUnansweredEventFields().join(", ")}.</p>
+                      <p className="text-xs text-muted-foreground">For richer event information, fill in or mark No data / 无: {getUnansweredEventFields().join(", ")}.</p>
                     )}
                   </>
                 )}
@@ -1427,7 +1385,7 @@ export const ArticleForm = ({ article, category, onSuccess, onCancel }: ArticleF
             checked={published}
             onCheckedChange={setPublishChecked}
           />
-          <Label htmlFor="published">Publish immediately</Label>
+          <Label htmlFor="published">Publish article</Label>
         </div>
         <Button type="button" variant="outline" size="sm" onClick={() => setPreviewOpen(true)}>
           <Eye className="mr-2 h-4 w-4" />

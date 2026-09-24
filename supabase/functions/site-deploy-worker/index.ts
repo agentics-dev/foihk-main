@@ -51,6 +51,9 @@ const parseSitemapUrls = (xml: string) => new Set(
 Deno.serve(async (request) => {
   if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
 
+  if ((Deno.env.get("SUPABASE_URL") || "").includes("kong:")) {
+    return json({ error: "External deployment is disabled in the local environment" }, 503);
+  }
   const configuredSecret = Deno.env.get("CONTENT_DEPLOY_WORKER_SECRET") || "";
   const suppliedSecret = request.headers.get("x-foihk-worker-secret") || "";
   if (configuredSecret.length < 32 || !(await secureEqual(configuredSecret, suppliedSecret))) {
@@ -210,11 +213,12 @@ Deno.serve(async (request) => {
       );
       if (!sitemapResponse.ok) throw new Error(`Sitemap returned ${sitemapResponse.status}`);
       const sitemapUrls = parseSitemapUrls(await readLimitedText(sitemapResponse, 2_000_000));
-      const manifestUrls = new Set(manifest.urls);
+      const manifestUrls = new Set(manifest.publicUrls);
+      const indexableUrls = new Set(manifest.urls);
 
       const validationErrors = (await mapWithConcurrency(changes, 6, async (change) => {
         const expectedLive = manifestUrls.has(change.url);
-        if (expectedLive !== sitemapUrls.has(change.url)) {
+        if (indexableUrls.has(change.url) !== sitemapUrls.has(change.url)) {
           return `${change.url}: sitemap and build manifest disagree`;
         }
         const response = await fetchWithTimeout(change.url, {
@@ -232,7 +236,7 @@ Deno.serve(async (request) => {
           return `${change.url}: production response is not HTML`;
         }
         const html = await readLimitedText(response, MAX_ARTICLE_HTML_BYTES);
-        const errors = validateArticleHtml(html, change.url);
+        const errors = validateArticleHtml(html, change.url, indexableUrls.has(change.url), manifest.revision);
         return errors.length > 0 ? `${change.url}: ${errors.join(", ")}` : null;
       })).filter((error): error is string => Boolean(error));
 

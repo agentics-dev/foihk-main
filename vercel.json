@@ -500,6 +500,81 @@
       "permanent": true
     },
     {
+      "source": "/articles/education-research/adjustment-to-individual-income-tax-on-dividends-and-bonuses-for-foreign-individuals-in-mainland-china",
+      "destination": "/en/articles/education-research/new-individual-income-tax-rules-for-offshore-trusts-take-effect-tax-transparency-and-mandatory-compliance-become-the-trend",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/education-research/adjustment-to-individual-income-tax-on-dividends-and-bonuses-for-foreign-individuals-in-mainland-china",
+      "destination": "/en/articles/education-research/new-individual-income-tax-rules-for-offshore-trusts-take-effect-tax-transparency-and-mandatory-compliance-become-the-trend",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/education-research/adjustment-to-individual-income-tax-on-dividends-and-bonuses-for-foreign-individuals-in-mainland-china",
+      "destination": "/zh-hk/articles/education-research/new-individual-income-tax-rules-for-offshore-trusts-take-effect-tax-transparency-and-mandatory-compliance-become-the-trend",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/education-research/adjustment-to-individual-income-tax-on-dividends-and-bonuses-for-foreign-individuals-in-mainland-china",
+      "destination": "/zh-cn/articles/education-research/new-individual-income-tax-rules-for-offshore-trusts-take-effect-tax-transparency-and-mandatory-compliance-become-the-trend",
+      "permanent": true
+    },
+    {
+      "source": "/articles/education_research/cbb24a4b-4d57-4497-aa6d-705c8cac2461",
+      "destination": "/en/articles/education-research/adjustment-to-individual-income-tax-on-dividends-and-bonuses-for-foreign-individuals-in-mainland-china",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/education_research/cbb24a4b-4d57-4497-aa6d-705c8cac2461",
+      "destination": "/en/articles/education-research/adjustment-to-individual-income-tax-on-dividends-and-bonuses-for-foreign-individuals-in-mainland-china",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/education_research/adjustment-to-individual-income-tax-on-dividends-and-bonuses-for-foreign-individuals-in-mainland-china",
+      "destination": "/en/articles/education-research/adjustment-to-individual-income-tax-on-dividends-and-bonuses-for-foreign-individuals-in-mainland-china",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/education_research/cbb24a4b-4d57-4497-aa6d-705c8cac2461",
+      "destination": "/zh-hk/articles/education-research/adjustment-to-individual-income-tax-on-dividends-and-bonuses-for-foreign-individuals-in-mainland-china",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/education_research/adjustment-to-individual-income-tax-on-dividends-and-bonuses-for-foreign-individuals-in-mainland-china",
+      "destination": "/zh-hk/articles/education-research/adjustment-to-individual-income-tax-on-dividends-and-bonuses-for-foreign-individuals-in-mainland-china",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/education_research/cbb24a4b-4d57-4497-aa6d-705c8cac2461",
+      "destination": "/zh-cn/articles/education-research/adjustment-to-individual-income-tax-on-dividends-and-bonuses-for-foreign-individuals-in-mainland-china",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/education_research/adjustment-to-individual-income-tax-on-dividends-and-bonuses-for-foreign-individuals-in-mainland-china",
+      "destination": "/zh-cn/articles/education-research/adjustment-to-individual-income-tax-on-dividends-and-bonuses-for-foreign-individuals-in-mainland-china",
+      "permanent": true
+    },
+    {
+      "source": "/articles/philanthropy/25c07dc1-3d84-4012-85b7-1473ff362de5",
+      "destination": "/en/articles/philanthropy/hkmu-tai-chi-video-game-event-over-a-hundred-elderly-participants-jointly-set-sdg-world-record",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/philanthropy/25c07dc1-3d84-4012-85b7-1473ff362de5",
+      "destination": "/en/articles/philanthropy/hkmu-tai-chi-video-game-event-over-a-hundred-elderly-participants-jointly-set-sdg-world-record",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/philanthropy/25c07dc1-3d84-4012-85b7-1473ff362de5",
+      "destination": "/zh-hk/articles/philanthropy/hkmu-tai-chi-video-game-event-over-a-hundred-elderly-participants-jointly-set-sdg-world-record",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/philanthropy/25c07dc1-3d84-4012-85b7-1473ff362de5",
+      "destination": "/zh-cn/articles/philanthropy/hkmu-tai-chi-video-game-event-over-a-hundred-elderly-participants-jointly-set-sdg-world-record",
+      "permanent": true
+    },
+    {
       "source": "/articles/education_research/c3c9ef26-334f-4486-9567-8e9acfd67309",
       "destination": "/en/articles/education-research/industry-insights-what-is-a-family-office",
       "permanent": true
@@ -602,356 +677,6 @@
     {
       "source": "/zh-cn/articles/education_research/chinese-mainland-clarifies-individual-income-tax-rules-for-offshore-trusts-scope-of-application-taxation-stages-and-filing-arrangements",
       "destination": "/zh-cn/articles/education-research/chinese-mainland-clarifies-individual-income-tax-rules-for-offshore-trusts-scope-of-application-taxation-stages-and-filing-arrangements",
-      "permanent": true
-    },
-    {
-      "source": "/articles/news_events/ef1a63fe-2e06-4823-8935-ac897ff00f7f",
-      "destination": "/en/articles/news-events/foihk-innoesg-prize-training-course",
-      "permanent": true
-    },
-    {
-      "source": "/en/articles/news_events/ef1a63fe-2e06-4823-8935-ac897ff00f7f",
-      "destination": "/en/articles/news-events/foihk-innoesg-prize-training-course",
-      "permanent": true
-    },
-    {
-      "source": "/en/articles/news_events/foihk-innoesg-prize-training-course",
-      "destination": "/en/articles/news-events/foihk-innoesg-prize-training-course",
-      "permanent": true
-    },
-    {
-      "source": "/zh-hk/articles/news_events/ef1a63fe-2e06-4823-8935-ac897ff00f7f",
-      "destination": "/zh-hk/articles/news-events/foihk-innoesg-prize-training-course",
-      "permanent": true
-    },
-    {
-      "source": "/zh-hk/articles/news_events/foihk-innoesg-prize-training-course",
-      "destination": "/zh-hk/articles/news-events/foihk-innoesg-prize-training-course",
-      "permanent": true
-    },
-    {
-      "source": "/zh-cn/articles/news_events/ef1a63fe-2e06-4823-8935-ac897ff00f7f",
-      "destination": "/zh-cn/articles/news-events/foihk-innoesg-prize-training-course",
-      "permanent": true
-    },
-    {
-      "source": "/zh-cn/articles/news_events/foihk-innoesg-prize-training-course",
-      "destination": "/zh-cn/articles/news-events/foihk-innoesg-prize-training-course",
-      "permanent": true
-    },
-    {
-      "source": "/articles/news_events/15280f8e-560b-4e2c-a474-8e8d7fa667b7",
-      "destination": "/en/articles/news-events/rfo-annual-forum-2025",
-      "permanent": true
-    },
-    {
-      "source": "/en/articles/news_events/15280f8e-560b-4e2c-a474-8e8d7fa667b7",
-      "destination": "/en/articles/news-events/rfo-annual-forum-2025",
-      "permanent": true
-    },
-    {
-      "source": "/en/articles/news_events/rfo-annual-forum-2025",
-      "destination": "/en/articles/news-events/rfo-annual-forum-2025",
-      "permanent": true
-    },
-    {
-      "source": "/zh-hk/articles/news_events/15280f8e-560b-4e2c-a474-8e8d7fa667b7",
-      "destination": "/zh-hk/articles/news-events/rfo-annual-forum-2025",
-      "permanent": true
-    },
-    {
-      "source": "/zh-hk/articles/news_events/rfo-annual-forum-2025",
-      "destination": "/zh-hk/articles/news-events/rfo-annual-forum-2025",
-      "permanent": true
-    },
-    {
-      "source": "/zh-cn/articles/news_events/15280f8e-560b-4e2c-a474-8e8d7fa667b7",
-      "destination": "/zh-cn/articles/news-events/rfo-annual-forum-2025",
-      "permanent": true
-    },
-    {
-      "source": "/zh-cn/articles/news_events/rfo-annual-forum-2025",
-      "destination": "/zh-cn/articles/news-events/rfo-annual-forum-2025",
-      "permanent": true
-    },
-    {
-      "source": "/articles/news_events/deafafdb-67d3-480c-bcb0-178c527ab778",
-      "destination": "/en/articles/news-events/rfo-annual-forum-2025-recap",
-      "permanent": true
-    },
-    {
-      "source": "/en/articles/news_events/deafafdb-67d3-480c-bcb0-178c527ab778",
-      "destination": "/en/articles/news-events/rfo-annual-forum-2025-recap",
-      "permanent": true
-    },
-    {
-      "source": "/en/articles/news_events/rfo-annual-forum-2025-recap",
-      "destination": "/en/articles/news-events/rfo-annual-forum-2025-recap",
-      "permanent": true
-    },
-    {
-      "source": "/zh-hk/articles/news_events/deafafdb-67d3-480c-bcb0-178c527ab778",
-      "destination": "/zh-hk/articles/news-events/rfo-annual-forum-2025-recap",
-      "permanent": true
-    },
-    {
-      "source": "/zh-hk/articles/news_events/rfo-annual-forum-2025-recap",
-      "destination": "/zh-hk/articles/news-events/rfo-annual-forum-2025-recap",
-      "permanent": true
-    },
-    {
-      "source": "/zh-cn/articles/news_events/deafafdb-67d3-480c-bcb0-178c527ab778",
-      "destination": "/zh-cn/articles/news-events/rfo-annual-forum-2025-recap",
-      "permanent": true
-    },
-    {
-      "source": "/zh-cn/articles/news_events/rfo-annual-forum-2025-recap",
-      "destination": "/zh-cn/articles/news-events/rfo-annual-forum-2025-recap",
-      "permanent": true
-    },
-    {
-      "source": "/articles/news_events/dbc7be31-e6cc-4545-935b-a0fffa927d8d",
-      "destination": "/en/articles/news-events/yunnan-hk-macau-entrepreneur-forum-2025",
-      "permanent": true
-    },
-    {
-      "source": "/en/articles/news_events/dbc7be31-e6cc-4545-935b-a0fffa927d8d",
-      "destination": "/en/articles/news-events/yunnan-hk-macau-entrepreneur-forum-2025",
-      "permanent": true
-    },
-    {
-      "source": "/en/articles/news_events/yunnan-hk-macau-entrepreneur-forum-2025",
-      "destination": "/en/articles/news-events/yunnan-hk-macau-entrepreneur-forum-2025",
-      "permanent": true
-    },
-    {
-      "source": "/zh-hk/articles/news_events/dbc7be31-e6cc-4545-935b-a0fffa927d8d",
-      "destination": "/zh-hk/articles/news-events/yunnan-hk-macau-entrepreneur-forum-2025",
-      "permanent": true
-    },
-    {
-      "source": "/zh-hk/articles/news_events/yunnan-hk-macau-entrepreneur-forum-2025",
-      "destination": "/zh-hk/articles/news-events/yunnan-hk-macau-entrepreneur-forum-2025",
-      "permanent": true
-    },
-    {
-      "source": "/zh-cn/articles/news_events/dbc7be31-e6cc-4545-935b-a0fffa927d8d",
-      "destination": "/zh-cn/articles/news-events/yunnan-hk-macau-entrepreneur-forum-2025",
-      "permanent": true
-    },
-    {
-      "source": "/zh-cn/articles/news_events/yunnan-hk-macau-entrepreneur-forum-2025",
-      "destination": "/zh-cn/articles/news-events/yunnan-hk-macau-entrepreneur-forum-2025",
-      "permanent": true
-    },
-    {
-      "source": "/articles/news_events/d7e76260-7b14-41b3-9ea1-408347103c8c",
-      "destination": "/en/articles/news-events/chengdu-foreign-investment-roadshow-2025",
-      "permanent": true
-    },
-    {
-      "source": "/en/articles/news_events/d7e76260-7b14-41b3-9ea1-408347103c8c",
-      "destination": "/en/articles/news-events/chengdu-foreign-investment-roadshow-2025",
-      "permanent": true
-    },
-    {
-      "source": "/en/articles/news_events/chengdu-foreign-investment-roadshow-2025",
-      "destination": "/en/articles/news-events/chengdu-foreign-investment-roadshow-2025",
-      "permanent": true
-    },
-    {
-      "source": "/zh-hk/articles/news_events/d7e76260-7b14-41b3-9ea1-408347103c8c",
-      "destination": "/zh-hk/articles/news-events/chengdu-foreign-investment-roadshow-2025",
-      "permanent": true
-    },
-    {
-      "source": "/zh-hk/articles/news_events/chengdu-foreign-investment-roadshow-2025",
-      "destination": "/zh-hk/articles/news-events/chengdu-foreign-investment-roadshow-2025",
-      "permanent": true
-    },
-    {
-      "source": "/zh-cn/articles/news_events/d7e76260-7b14-41b3-9ea1-408347103c8c",
-      "destination": "/zh-cn/articles/news-events/chengdu-foreign-investment-roadshow-2025",
-      "permanent": true
-    },
-    {
-      "source": "/zh-cn/articles/news_events/chengdu-foreign-investment-roadshow-2025",
-      "destination": "/zh-cn/articles/news-events/chengdu-foreign-investment-roadshow-2025",
-      "permanent": true
-    },
-    {
-      "source": "/articles/news_events/f82c372a-b208-4b62-9521-89453df14ca4",
-      "destination": "/en/articles/news-events/hk-economic-outlook-sme-summit-2026",
-      "permanent": true
-    },
-    {
-      "source": "/en/articles/news_events/f82c372a-b208-4b62-9521-89453df14ca4",
-      "destination": "/en/articles/news-events/hk-economic-outlook-sme-summit-2026",
-      "permanent": true
-    },
-    {
-      "source": "/en/articles/news_events/hk-economic-outlook-sme-summit-2026",
-      "destination": "/en/articles/news-events/hk-economic-outlook-sme-summit-2026",
-      "permanent": true
-    },
-    {
-      "source": "/zh-hk/articles/news_events/f82c372a-b208-4b62-9521-89453df14ca4",
-      "destination": "/zh-hk/articles/news-events/hk-economic-outlook-sme-summit-2026",
-      "permanent": true
-    },
-    {
-      "source": "/zh-hk/articles/news_events/hk-economic-outlook-sme-summit-2026",
-      "destination": "/zh-hk/articles/news-events/hk-economic-outlook-sme-summit-2026",
-      "permanent": true
-    },
-    {
-      "source": "/zh-cn/articles/news_events/f82c372a-b208-4b62-9521-89453df14ca4",
-      "destination": "/zh-cn/articles/news-events/hk-economic-outlook-sme-summit-2026",
-      "permanent": true
-    },
-    {
-      "source": "/zh-cn/articles/news_events/hk-economic-outlook-sme-summit-2026",
-      "destination": "/zh-cn/articles/news-events/hk-economic-outlook-sme-summit-2026",
-      "permanent": true
-    },
-    {
-      "source": "/articles/news_events/f12cb9ad-a409-4f9d-b7b9-f97155f88f73",
-      "destination": "/en/articles/news-events/foihk-speaker-hk-sme-summit-2026",
-      "permanent": true
-    },
-    {
-      "source": "/en/articles/news_events/f12cb9ad-a409-4f9d-b7b9-f97155f88f73",
-      "destination": "/en/articles/news-events/foihk-speaker-hk-sme-summit-2026",
-      "permanent": true
-    },
-    {
-      "source": "/en/articles/news_events/foihk-speaker-hk-sme-summit-2026",
-      "destination": "/en/articles/news-events/foihk-speaker-hk-sme-summit-2026",
-      "permanent": true
-    },
-    {
-      "source": "/zh-hk/articles/news_events/f12cb9ad-a409-4f9d-b7b9-f97155f88f73",
-      "destination": "/zh-hk/articles/news-events/foihk-speaker-hk-sme-summit-2026",
-      "permanent": true
-    },
-    {
-      "source": "/zh-hk/articles/news_events/foihk-speaker-hk-sme-summit-2026",
-      "destination": "/zh-hk/articles/news-events/foihk-speaker-hk-sme-summit-2026",
-      "permanent": true
-    },
-    {
-      "source": "/zh-cn/articles/news_events/f12cb9ad-a409-4f9d-b7b9-f97155f88f73",
-      "destination": "/zh-cn/articles/news-events/foihk-speaker-hk-sme-summit-2026",
-      "permanent": true
-    },
-    {
-      "source": "/zh-cn/articles/news_events/foihk-speaker-hk-sme-summit-2026",
-      "destination": "/zh-cn/articles/news-events/foihk-speaker-hk-sme-summit-2026",
-      "permanent": true
-    },
-    {
-      "source": "/articles/news_events/3fe1ff01-a208-487e-97a4-0713c10d51a8",
-      "destination": "/en/articles/news-events/asian-financial-forum-2026",
-      "permanent": true
-    },
-    {
-      "source": "/en/articles/news_events/3fe1ff01-a208-487e-97a4-0713c10d51a8",
-      "destination": "/en/articles/news-events/asian-financial-forum-2026",
-      "permanent": true
-    },
-    {
-      "source": "/en/articles/news_events/asian-financial-forum-2026",
-      "destination": "/en/articles/news-events/asian-financial-forum-2026",
-      "permanent": true
-    },
-    {
-      "source": "/zh-hk/articles/news_events/3fe1ff01-a208-487e-97a4-0713c10d51a8",
-      "destination": "/zh-hk/articles/news-events/asian-financial-forum-2026",
-      "permanent": true
-    },
-    {
-      "source": "/zh-hk/articles/news_events/asian-financial-forum-2026",
-      "destination": "/zh-hk/articles/news-events/asian-financial-forum-2026",
-      "permanent": true
-    },
-    {
-      "source": "/zh-cn/articles/news_events/3fe1ff01-a208-487e-97a4-0713c10d51a8",
-      "destination": "/zh-cn/articles/news-events/asian-financial-forum-2026",
-      "permanent": true
-    },
-    {
-      "source": "/zh-cn/articles/news_events/asian-financial-forum-2026",
-      "destination": "/zh-cn/articles/news-events/asian-financial-forum-2026",
-      "permanent": true
-    },
-    {
-      "source": "/articles/news_events/4a03fc5e-4b98-4f3d-98c5-fd0f7f2f48f2",
-      "destination": "/en/articles/news-events/revo-connect-2026",
-      "permanent": true
-    },
-    {
-      "source": "/en/articles/news_events/4a03fc5e-4b98-4f3d-98c5-fd0f7f2f48f2",
-      "destination": "/en/articles/news-events/revo-connect-2026",
-      "permanent": true
-    },
-    {
-      "source": "/en/articles/news_events/revo-connect-2026",
-      "destination": "/en/articles/news-events/revo-connect-2026",
-      "permanent": true
-    },
-    {
-      "source": "/zh-hk/articles/news_events/4a03fc5e-4b98-4f3d-98c5-fd0f7f2f48f2",
-      "destination": "/zh-hk/articles/news-events/revo-connect-2026",
-      "permanent": true
-    },
-    {
-      "source": "/zh-hk/articles/news_events/revo-connect-2026",
-      "destination": "/zh-hk/articles/news-events/revo-connect-2026",
-      "permanent": true
-    },
-    {
-      "source": "/zh-cn/articles/news_events/4a03fc5e-4b98-4f3d-98c5-fd0f7f2f48f2",
-      "destination": "/zh-cn/articles/news-events/revo-connect-2026",
-      "permanent": true
-    },
-    {
-      "source": "/zh-cn/articles/news_events/revo-connect-2026",
-      "destination": "/zh-cn/articles/news-events/revo-connect-2026",
-      "permanent": true
-    },
-    {
-      "source": "/articles/news_events/ee05c0c8-13bb-4066-8092-d52ee6fdf937",
-      "destination": "/en/articles/news-events/asian-private-banker-alternative-investments-2026",
-      "permanent": true
-    },
-    {
-      "source": "/en/articles/news_events/ee05c0c8-13bb-4066-8092-d52ee6fdf937",
-      "destination": "/en/articles/news-events/asian-private-banker-alternative-investments-2026",
-      "permanent": true
-    },
-    {
-      "source": "/en/articles/news_events/asian-private-banker-alternative-investments-2026",
-      "destination": "/en/articles/news-events/asian-private-banker-alternative-investments-2026",
-      "permanent": true
-    },
-    {
-      "source": "/zh-hk/articles/news_events/ee05c0c8-13bb-4066-8092-d52ee6fdf937",
-      "destination": "/zh-hk/articles/news-events/asian-private-banker-alternative-investments-2026",
-      "permanent": true
-    },
-    {
-      "source": "/zh-hk/articles/news_events/asian-private-banker-alternative-investments-2026",
-      "destination": "/zh-hk/articles/news-events/asian-private-banker-alternative-investments-2026",
-      "permanent": true
-    },
-    {
-      "source": "/zh-cn/articles/news_events/ee05c0c8-13bb-4066-8092-d52ee6fdf937",
-      "destination": "/zh-cn/articles/news-events/asian-private-banker-alternative-investments-2026",
-      "permanent": true
-    },
-    {
-      "source": "/zh-cn/articles/news_events/asian-private-banker-alternative-investments-2026",
-      "destination": "/zh-cn/articles/news-events/asian-private-banker-alternative-investments-2026",
       "permanent": true
     },
     {
@@ -1295,6 +1020,41 @@
       "permanent": true
     },
     {
+      "source": "/articles/news_events/4a03fc5e-4b98-4f3d-98c5-fd0f7f2f48f2",
+      "destination": "/en/articles/news-events/revo-connect-2026",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/news_events/4a03fc5e-4b98-4f3d-98c5-fd0f7f2f48f2",
+      "destination": "/en/articles/news-events/revo-connect-2026",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/news_events/revo-connect-2026",
+      "destination": "/en/articles/news-events/revo-connect-2026",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/news_events/4a03fc5e-4b98-4f3d-98c5-fd0f7f2f48f2",
+      "destination": "/zh-hk/articles/news-events/revo-connect-2026",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/news_events/revo-connect-2026",
+      "destination": "/zh-hk/articles/news-events/revo-connect-2026",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/news_events/4a03fc5e-4b98-4f3d-98c5-fd0f7f2f48f2",
+      "destination": "/zh-cn/articles/news-events/revo-connect-2026",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/news_events/revo-connect-2026",
+      "destination": "/zh-cn/articles/news-events/revo-connect-2026",
+      "permanent": true
+    },
+    {
       "source": "/articles/education_research/2f621924-4881-46a0-b396-4a84d6573bf0",
       "destination": "/en/articles/education-research/over-200-family-offices-hong-kong",
       "permanent": true
@@ -1327,6 +1087,321 @@
     {
       "source": "/zh-cn/articles/education_research/over-200-family-offices-hong-kong",
       "destination": "/zh-cn/articles/education-research/over-200-family-offices-hong-kong",
+      "permanent": true
+    },
+    {
+      "source": "/articles/news_events/3fe1ff01-a208-487e-97a4-0713c10d51a8",
+      "destination": "/en/articles/news-events/asian-financial-forum-2026",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/news_events/3fe1ff01-a208-487e-97a4-0713c10d51a8",
+      "destination": "/en/articles/news-events/asian-financial-forum-2026",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/news_events/asian-financial-forum-2026",
+      "destination": "/en/articles/news-events/asian-financial-forum-2026",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/news_events/3fe1ff01-a208-487e-97a4-0713c10d51a8",
+      "destination": "/zh-hk/articles/news-events/asian-financial-forum-2026",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/news_events/asian-financial-forum-2026",
+      "destination": "/zh-hk/articles/news-events/asian-financial-forum-2026",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/news_events/3fe1ff01-a208-487e-97a4-0713c10d51a8",
+      "destination": "/zh-cn/articles/news-events/asian-financial-forum-2026",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/news_events/asian-financial-forum-2026",
+      "destination": "/zh-cn/articles/news-events/asian-financial-forum-2026",
+      "permanent": true
+    },
+    {
+      "source": "/articles/news_events/deafafdb-67d3-480c-bcb0-178c527ab778",
+      "destination": "/en/articles/news-events/rfo-annual-forum-2025-recap",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/news_events/deafafdb-67d3-480c-bcb0-178c527ab778",
+      "destination": "/en/articles/news-events/rfo-annual-forum-2025-recap",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/news_events/rfo-annual-forum-2025-recap",
+      "destination": "/en/articles/news-events/rfo-annual-forum-2025-recap",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/news_events/deafafdb-67d3-480c-bcb0-178c527ab778",
+      "destination": "/zh-hk/articles/news-events/rfo-annual-forum-2025-recap",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/news_events/rfo-annual-forum-2025-recap",
+      "destination": "/zh-hk/articles/news-events/rfo-annual-forum-2025-recap",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/news_events/deafafdb-67d3-480c-bcb0-178c527ab778",
+      "destination": "/zh-cn/articles/news-events/rfo-annual-forum-2025-recap",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/news_events/rfo-annual-forum-2025-recap",
+      "destination": "/zh-cn/articles/news-events/rfo-annual-forum-2025-recap",
+      "permanent": true
+    },
+    {
+      "source": "/articles/news_events/15280f8e-560b-4e2c-a474-8e8d7fa667b7",
+      "destination": "/en/articles/news-events/rfo-annual-forum-2025",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/news_events/15280f8e-560b-4e2c-a474-8e8d7fa667b7",
+      "destination": "/en/articles/news-events/rfo-annual-forum-2025",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/news_events/rfo-annual-forum-2025",
+      "destination": "/en/articles/news-events/rfo-annual-forum-2025",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/news_events/15280f8e-560b-4e2c-a474-8e8d7fa667b7",
+      "destination": "/zh-hk/articles/news-events/rfo-annual-forum-2025",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/news_events/rfo-annual-forum-2025",
+      "destination": "/zh-hk/articles/news-events/rfo-annual-forum-2025",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/news_events/15280f8e-560b-4e2c-a474-8e8d7fa667b7",
+      "destination": "/zh-cn/articles/news-events/rfo-annual-forum-2025",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/news_events/rfo-annual-forum-2025",
+      "destination": "/zh-cn/articles/news-events/rfo-annual-forum-2025",
+      "permanent": true
+    },
+    {
+      "source": "/articles/news_events/f82c372a-b208-4b62-9521-89453df14ca4",
+      "destination": "/en/articles/news-events/hk-economic-outlook-sme-summit-2026",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/news_events/f82c372a-b208-4b62-9521-89453df14ca4",
+      "destination": "/en/articles/news-events/hk-economic-outlook-sme-summit-2026",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/news_events/hk-economic-outlook-sme-summit-2026",
+      "destination": "/en/articles/news-events/hk-economic-outlook-sme-summit-2026",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/news_events/f82c372a-b208-4b62-9521-89453df14ca4",
+      "destination": "/zh-hk/articles/news-events/hk-economic-outlook-sme-summit-2026",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/news_events/hk-economic-outlook-sme-summit-2026",
+      "destination": "/zh-hk/articles/news-events/hk-economic-outlook-sme-summit-2026",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/news_events/f82c372a-b208-4b62-9521-89453df14ca4",
+      "destination": "/zh-cn/articles/news-events/hk-economic-outlook-sme-summit-2026",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/news_events/hk-economic-outlook-sme-summit-2026",
+      "destination": "/zh-cn/articles/news-events/hk-economic-outlook-sme-summit-2026",
+      "permanent": true
+    },
+    {
+      "source": "/articles/news_events/ee05c0c8-13bb-4066-8092-d52ee6fdf937",
+      "destination": "/en/articles/news-events/asian-private-banker-alternative-investments-2026",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/news_events/ee05c0c8-13bb-4066-8092-d52ee6fdf937",
+      "destination": "/en/articles/news-events/asian-private-banker-alternative-investments-2026",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/news_events/asian-private-banker-alternative-investments-2026",
+      "destination": "/en/articles/news-events/asian-private-banker-alternative-investments-2026",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/news_events/ee05c0c8-13bb-4066-8092-d52ee6fdf937",
+      "destination": "/zh-hk/articles/news-events/asian-private-banker-alternative-investments-2026",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/news_events/asian-private-banker-alternative-investments-2026",
+      "destination": "/zh-hk/articles/news-events/asian-private-banker-alternative-investments-2026",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/news_events/ee05c0c8-13bb-4066-8092-d52ee6fdf937",
+      "destination": "/zh-cn/articles/news-events/asian-private-banker-alternative-investments-2026",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/news_events/asian-private-banker-alternative-investments-2026",
+      "destination": "/zh-cn/articles/news-events/asian-private-banker-alternative-investments-2026",
+      "permanent": true
+    },
+    {
+      "source": "/articles/news_events/f12cb9ad-a409-4f9d-b7b9-f97155f88f73",
+      "destination": "/en/articles/news-events/foihk-speaker-hk-sme-summit-2026",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/news_events/f12cb9ad-a409-4f9d-b7b9-f97155f88f73",
+      "destination": "/en/articles/news-events/foihk-speaker-hk-sme-summit-2026",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/news_events/foihk-speaker-hk-sme-summit-2026",
+      "destination": "/en/articles/news-events/foihk-speaker-hk-sme-summit-2026",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/news_events/f12cb9ad-a409-4f9d-b7b9-f97155f88f73",
+      "destination": "/zh-hk/articles/news-events/foihk-speaker-hk-sme-summit-2026",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/news_events/foihk-speaker-hk-sme-summit-2026",
+      "destination": "/zh-hk/articles/news-events/foihk-speaker-hk-sme-summit-2026",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/news_events/f12cb9ad-a409-4f9d-b7b9-f97155f88f73",
+      "destination": "/zh-cn/articles/news-events/foihk-speaker-hk-sme-summit-2026",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/news_events/foihk-speaker-hk-sme-summit-2026",
+      "destination": "/zh-cn/articles/news-events/foihk-speaker-hk-sme-summit-2026",
+      "permanent": true
+    },
+    {
+      "source": "/articles/news_events/d7e76260-7b14-41b3-9ea1-408347103c8c",
+      "destination": "/en/articles/news-events/chengdu-foreign-investment-roadshow-2025",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/news_events/d7e76260-7b14-41b3-9ea1-408347103c8c",
+      "destination": "/en/articles/news-events/chengdu-foreign-investment-roadshow-2025",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/news_events/chengdu-foreign-investment-roadshow-2025",
+      "destination": "/en/articles/news-events/chengdu-foreign-investment-roadshow-2025",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/news_events/d7e76260-7b14-41b3-9ea1-408347103c8c",
+      "destination": "/zh-hk/articles/news-events/chengdu-foreign-investment-roadshow-2025",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/news_events/chengdu-foreign-investment-roadshow-2025",
+      "destination": "/zh-hk/articles/news-events/chengdu-foreign-investment-roadshow-2025",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/news_events/d7e76260-7b14-41b3-9ea1-408347103c8c",
+      "destination": "/zh-cn/articles/news-events/chengdu-foreign-investment-roadshow-2025",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/news_events/chengdu-foreign-investment-roadshow-2025",
+      "destination": "/zh-cn/articles/news-events/chengdu-foreign-investment-roadshow-2025",
+      "permanent": true
+    },
+    {
+      "source": "/articles/news_events/dbc7be31-e6cc-4545-935b-a0fffa927d8d",
+      "destination": "/en/articles/news-events/yunnan-hk-macau-entrepreneur-forum-2025",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/news_events/dbc7be31-e6cc-4545-935b-a0fffa927d8d",
+      "destination": "/en/articles/news-events/yunnan-hk-macau-entrepreneur-forum-2025",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/news_events/yunnan-hk-macau-entrepreneur-forum-2025",
+      "destination": "/en/articles/news-events/yunnan-hk-macau-entrepreneur-forum-2025",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/news_events/dbc7be31-e6cc-4545-935b-a0fffa927d8d",
+      "destination": "/zh-hk/articles/news-events/yunnan-hk-macau-entrepreneur-forum-2025",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/news_events/yunnan-hk-macau-entrepreneur-forum-2025",
+      "destination": "/zh-hk/articles/news-events/yunnan-hk-macau-entrepreneur-forum-2025",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/news_events/dbc7be31-e6cc-4545-935b-a0fffa927d8d",
+      "destination": "/zh-cn/articles/news-events/yunnan-hk-macau-entrepreneur-forum-2025",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/news_events/yunnan-hk-macau-entrepreneur-forum-2025",
+      "destination": "/zh-cn/articles/news-events/yunnan-hk-macau-entrepreneur-forum-2025",
+      "permanent": true
+    },
+    {
+      "source": "/articles/news_events/ef1a63fe-2e06-4823-8935-ac897ff00f7f",
+      "destination": "/en/articles/news-events/foihk-innoesg-prize-training-course",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/news_events/ef1a63fe-2e06-4823-8935-ac897ff00f7f",
+      "destination": "/en/articles/news-events/foihk-innoesg-prize-training-course",
+      "permanent": true
+    },
+    {
+      "source": "/en/articles/news_events/foihk-innoesg-prize-training-course",
+      "destination": "/en/articles/news-events/foihk-innoesg-prize-training-course",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/news_events/ef1a63fe-2e06-4823-8935-ac897ff00f7f",
+      "destination": "/zh-hk/articles/news-events/foihk-innoesg-prize-training-course",
+      "permanent": true
+    },
+    {
+      "source": "/zh-hk/articles/news_events/foihk-innoesg-prize-training-course",
+      "destination": "/zh-hk/articles/news-events/foihk-innoesg-prize-training-course",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/news_events/ef1a63fe-2e06-4823-8935-ac897ff00f7f",
+      "destination": "/zh-cn/articles/news-events/foihk-innoesg-prize-training-course",
+      "permanent": true
+    },
+    {
+      "source": "/zh-cn/articles/news_events/foihk-innoesg-prize-training-course",
+      "destination": "/zh-cn/articles/news-events/foihk-innoesg-prize-training-course",
       "permanent": true
     },
     {
@@ -1461,6 +1536,10 @@
         {
           "key": "Cache-Control",
           "value": "no-store, max-age=0"
+        },
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
         }
       ]
     },
@@ -1470,6 +1549,10 @@
         {
           "key": "Cache-Control",
           "value": "no-store, max-age=0"
+        },
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
         }
       ]
     },
@@ -1479,6 +1562,10 @@
         {
           "key": "Cache-Control",
           "value": "no-store, max-age=0"
+        },
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
         }
       ]
     },

@@ -1,3 +1,4 @@
+import { ArticleLoadError } from "@/components/ArticleLoadError";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Navigation } from "@/components/Navigation";
@@ -17,7 +18,7 @@ import foundingChairman from "@/assets/founding-chairman.webp";
 import foundingSecretary from "@/assets/founding-secretary.webp";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { getArticleCategoryPath, getLocalizedField, normalizeArticleSlug } from "@/lib/utils";
-import { getModifiedDate, loadPublishedArticles } from "@/lib/articles";
+import { getPublishedDate, loadPublishedArticles } from "@/lib/articles";
 import { SEO } from "@/components/SEO";
 import {
   ORGANIZATION_ADDRESS,
@@ -278,6 +279,8 @@ const Home = () => {
   const [educationArticles, setEducationArticles] = useState<ArticleRow[]>([]);
   const [newsArticles, setNewsArticles] = useState<ArticleRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const [retry, setRetry] = useState(0);
   
   // Scroll animations for the three feature cards
   const card1 = useScrollAnimation(0.3);
@@ -297,24 +300,32 @@ const Home = () => {
   const leadershipCards = useScrollAnimation(0.3);
 
   useEffect(() => {
+    let active = true;
     const fetchArticles = async () => {
       setLoading(true);
+      setLoadError(false);
       
       try {
         const [educationData, newsData] = await Promise.all([
           loadPublishedArticles("education_research", language),
           loadPublishedArticles("news_events", language),
         ]);
+        if (!active) return;
         setEducationArticles(educationData.slice(0, 5));
         setNewsArticles(newsData.slice(0, 5));
       } catch (error) {
+        if (!active) return;
+        setLoadError(true);
+        setEducationArticles([]);
+        setNewsArticles([]);
         console.error("Error fetching home articles:", error);
       }
       setLoading(false);
     };
 
     fetchArticles();
-  }, [language]);
+    return () => { active = false; };
+  }, [language, retry]);
   const ecosystem = ECOSYSTEM_COPY[language];
   const summary = SUMMARY_COPY[language];
   const homeMeta = HOME_META[language];
@@ -363,7 +374,7 @@ const Home = () => {
         ]}
       />
       <Navigation />
-      <main>
+      <main data-content-ready={!loading && !loadError ? "true" : "false"}>
       
       {/* Hero Section */}
       <section className="relative flex h-[720px] items-center justify-center overflow-hidden sm:h-[600px]">
@@ -372,7 +383,7 @@ const Home = () => {
           alt="Hong Kong skyline and Victoria Harbour"
           width="1920"
           height="1080"
-          fetchpriority="high"
+          loading="eager"
           decoding="async"
           className="absolute inset-0 h-full w-full object-cover object-center"
         />
@@ -600,7 +611,7 @@ const Home = () => {
             </p>
           </div>
 
-          {loading ? (
+          {loadError ? <ArticleLoadError onRetry={() => setRetry((value) => value + 1)} /> : loading ? (
             <div className="max-w-5xl mx-auto">
               <Skeleton className="h-64 w-full" />
             </div>
@@ -640,10 +651,11 @@ const Home = () => {
                           <div className="flex items-center gap-2 text-sm text-white/75">
                             <Calendar className="h-4 w-4" />
                             <span>
-                              {new Date(article.created_at).toLocaleDateString(language, {
+                              {new Date(getPublishedDate(article)).toLocaleDateString(language, {
                                 year: 'numeric',
                                 month: 'long',
-                                day: 'numeric'
+                                day: 'numeric',
+                                timeZone: 'Asia/Hong_Kong'
                               })}
                             </span>
                           </div>
@@ -682,7 +694,7 @@ const Home = () => {
             </p>
           </div>
 
-          {loading ? (
+          {loadError ? <ArticleLoadError onRetry={() => setRetry((value) => value + 1)} /> : loading ? (
             <div className="max-w-4xl mx-auto space-y-4">
               {[1, 2, 3].map((i) => (
                 <Skeleton key={i} className="h-32 w-full" />
@@ -710,7 +722,8 @@ const Home = () => {
                         <p className="text-muted-foreground mb-3 line-clamp-2">{getLocalizedField(article, 'excerpt', language)}</p>
                       )}
                       <p className="text-sm text-muted-foreground">
-                        {new Date(getModifiedDate(article)).toLocaleDateString(language, {
+                        {new Date(getPublishedDate(article)).toLocaleDateString(language, {
+                          timeZone: 'Asia/Hong_Kong',
                           year: 'numeric',
                           month: 'short',
                           day: 'numeric'

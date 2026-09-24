@@ -5,6 +5,10 @@ import type { Database } from './types';
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
+if (import.meta.env.DEV && !["127.0.0.1", "localhost"].includes(new URL(SUPABASE_URL).hostname)) {
+  throw new Error("Local development requires local Supabase. Follow docs/article-publication-repair.md.");
+}
+
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 

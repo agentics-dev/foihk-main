@@ -1,0 +1,7 @@
+import {spawnSync} from 'node:child_process';
+import {readFileSync} from 'node:fs';
+const replay = "BEGIN;\ndrop function public.save_article(jsonb,uuid,bigint,text,timestamptz);\ndrop function public.delete_article(uuid,bigint);\ndrop trigger guard_article_edit on public.articles;\nalter table public.articles drop column edit_version;\n" + readFileSync('supabase/migrations/20260924025038_article_edit_contract.sql','utf8') + "\nROLLBACK;\n";
+const dates = "BEGIN;\nupdate public.articles set published_at='2026-09-01T00:00:00Z' where id='ee05c0c8-13bb-4066-8092-d52ee6fdf937';\n" + readFileSync('update_news_published_dates.sql','utf8').replace(/^BEGIN;$/m,'').replace(/^COMMIT;$/m,'') + "\nDO $$ BEGIN IF (select published_at from public.articles where id='ee05c0c8-13bb-4066-8092-d52ee6fdf937') <> '2026-09-01T00:00:00Z'::timestamptz THEN RAISE EXCEPTION 'Later editorial date was overwritten'; END IF; END $$;\nROLLBACK;\n";
+const sql=replay + dates + "BEGIN;\nupdate private.site_deploy_state set status='live',deployed_revision=desired_revision,active_revision=null,burst_started_at=null,not_before=null;\ndelete from private.site_deploy_changes;\n"+readFileSync('tests/site-deploy-migration.sql','utf8')+'\nROLLBACK;\n';
+const result=spawnSync('docker',['--context','colima-foihk','exec','-i','supabase_db_foihk-local','psql','-U','postgres','-d','postgres','-v','ON_ERROR_STOP=1'],{input:sql,encoding:'utf8'});
+process.stdout.write(result.stdout||'');process.stderr.write(result.stderr||'');process.exit(result.status??1);

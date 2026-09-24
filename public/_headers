@@ -7,12 +7,15 @@
 
 /admin-login
   Cache-Control: no-store, max-age=0
+  X-Robots-Tag: noindex, nofollow
 
 /admin
   Cache-Control: no-store, max-age=0
+  X-Robots-Tag: noindex, nofollow
 
 /admin/*
   Cache-Control: no-store, max-age=0
+  X-Robots-Tag: noindex, nofollow
 
 /assets/*
   Cache-Control: public, max-age=31536000, immutable

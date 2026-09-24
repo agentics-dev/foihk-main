@@ -1,3 +1,4 @@
+import { ArticleLoadError } from "@/components/ArticleLoadError";
 import { useEffect, useState } from "react";
 import { LocalizedLink as Link } from "@/components/LocalizedLink";
 import { useParams } from "react-router-dom";
@@ -26,9 +27,12 @@ const Articles = () => {
   const categoryPath = category ? getArticleCategoryPath(category) : "";
   const [articles, setArticles] = useState<ArticleRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const [retry, setRetry] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
+    let active = true;
     const fetchArticles = async () => {
       if (!category) {
         setLoading(false);
@@ -36,9 +40,14 @@ const Articles = () => {
       }
       
       setLoading(true);
+      setLoadError(false);
       try {
-        setArticles(await loadPublishedArticles(category, language));
+        const result = await loadPublishedArticles(category, language);
+        if (!active) return;
+        setArticles(result);
       } catch (error) {
+        if (!active) return;
+        setLoadError(true);
         console.error("Error fetching articles:", error);
         setArticles([]);
       }
@@ -46,7 +55,8 @@ const Articles = () => {
     };
 
     fetchArticles();
-  }, [category, language]);
+    return () => { active = false; };
+  }, [category, language, retry]);
 
   const title = category === "education_research" 
     ? t("articles.educationTitle")
@@ -211,7 +221,7 @@ const Articles = () => {
 
         <h2 id="latest-content" className="mb-7 text-2xl font-bold text-foreground">{latestHeading}</h2>
 
-        {loading ? (
+        {loadError ? <ArticleLoadError onRetry={() => setRetry((value) => value + 1)} /> : loading ? (
           <div className="text-center py-12">
             <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent"></div>
             <p className="mt-4 text-muted-foreground">{t("articles.loading")}</p>
