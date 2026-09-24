@@ -55,6 +55,12 @@ const errors = [];
 const manifest = JSON.parse(readFileSync(contentBuildPath, "utf8"));
 const publicUrlSet = new Set(manifest.publicUrls || []);
 if (manifest.formatVersion !== 2 || !publicUrlSet.size) errors.push("Public route manifest v2 is required");
+const vercelConfig = JSON.parse(readFileSync(join(ROOT, "vercel.json"), "utf8"));
+for (const redirect of vercelConfig.redirects || []) {
+  if (/[:*]/.test(redirect.source)) continue;
+  const sourceUrl = `${BASE_URL}${redirect.source}`;
+  if (publicUrlSet.has(sourceUrl)) errors.push(`${redirect.source}: public route must not be redirected`);
+}
 const seenTitles = new Map();
 const seenDescriptions = new Map();
 const pages = new Map();

@@ -112,6 +112,11 @@ for (const slug of REMOVED_STATIC_EDUCATION_SLUGS) {
 }
 
 for (const { from, to, categoryPath } of MANUAL_ARTICLE_SLUG_REDIRECTS) {
+  const sourceIsPublished = articles.some(
+    (article) => getCategoryPath(article.category) === categoryPath && normalizeSlug(article.slug) === from
+  );
+  if (sourceIsPublished) continue;
+
   redirects.push({
     source: `/articles/${categoryPath}/${from}`,
     destination: `/en/articles/${categoryPath}/${to}`,
