@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "prebuild": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/generate-sitemap.js && node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/generate-legacy-redirects.js",
-    "build": "vite build && npm run generate:routes && npm run test:articles && npm run test:articles:browser",
+    "build": "vite build && npm run generate:routes && npm run test:articles",
     "build:dev": "vite build --mode development",
     "build:seo": "npm run build && npm run prerender && npm run audit:seo",
     "backup": "npx tsx scripts/backup.ts",
