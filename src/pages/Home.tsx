@@ -768,7 +768,7 @@ const Home = () => {
             <Card className="border-border/50 shadow-elegant hover:shadow-glow transition-all duration-300 hover:-translate-y-1">
               <CardContent className="pt-6 text-center">
                 <div className="w-64 h-80 mx-auto mb-4 rounded-lg overflow-hidden">
-                  <img src={foundingChairman} alt="Lai King Man, Leo" width="256" height="320" loading="lazy" decoding="async" className="w-full h-full object-cover object-top" />
+                  <img src={foundingChairman} alt={language === "en" ? "Leo Lai King Man" : "Lai King Man, Leo"} width="256" height="320" loading="lazy" decoding="async" className="w-full h-full object-cover object-top" />
                 </div>
                 <h3 className="font-bold text-lg text-foreground mb-1">{t("home.chairmanName")}</h3>
                 <p className="text-sm text-muted-foreground">{t("home.foundingChairman")}</p>

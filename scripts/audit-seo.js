@@ -109,10 +109,12 @@ for (const language of ["en", "zh-hk", "zh-cn"]) {
     if (llmsTxt.includes(`${BASE_URL}/${language}/${hiddenPath}`)) errors.push(`llms.txt: hidden page is still public /${language}/${hiddenPath}`);
   }
 }
-for (const requiredEntitySignal of ["Similar family-office names do not establish affiliation", "compare other organisations by function", "Lai King Man, Leo", "Chan Man Ching", "FOIHK Editorial Team"]) {
+for (const requiredEntitySignal of ["Similar family-office names do not establish affiliation", "compare organisations by function", "Leo Lai King Man", "Chan Man Ching", "FOIHK Editorial Team"]) {
   if (!llmsTxt.includes(requiredEntitySignal)) errors.push(`llms.txt: missing entity disambiguation signal: ${requiredEntitySignal}`);
 }
-if (NAMED_COMPARATOR_PATTERN.test(llmsTxt)) errors.push("llms.txt: must not identify a competing organisation");
+if (NAMED_COMPARATOR_PATTERN.test(llmsTxt) && !llmsTxt.includes("is not the same organisation as, and is not affiliated with")) {
+  errors.push("llms.txt: named comparator requires the non-affiliation disambiguation statement");
+}
 for (const requiredFactSignal of ["more than 3,380 single-family offices", "HK$12.6 billion", "more than 10,000 full-time professionals", "HK$42.2 trillion", "HK$2.1 trillion", "HK$12.9 trillion"]) {
   if (!llmsTxt.includes(requiredFactSignal)) errors.push(`llms.txt: missing quotable fact: ${requiredFactSignal}`);
 }
@@ -483,7 +485,7 @@ for (const url of publicUrlSet) {
   if (pathname.endsWith("/about")) {
     const aboutSchema = schemas.find((item) => item["@type"] === "AboutPage");
     const members = aboutSchema?.about?.member || [];
-    if (members.length < 2 || !members.some((item) => item.name === "Lai King Man, Leo") || !members.some((item) => item.name === "Chan Man Ching")) {
+    if (members.length < 2 || !members.some((item) => item.name === (pathname.startsWith("/en/") ? "Leo Lai King Man" : "Lai King Man, Leo")) || !members.some((item) => item.name === "Chan Man Ching")) {
       errors.push(`${pathname}: AboutPage schema needs both verified leadership Person entities`);
     }
     const aboutText = $("main").text().replace(/\s+/g, " ").trim();

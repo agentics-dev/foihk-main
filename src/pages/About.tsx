@@ -55,7 +55,7 @@ const TRUST_COPY: Record<Language, {
   en: {
     definition: "Family Office Institute Hong Kong (FOIHK) is a Hong Kong family office industry institution and professional community for education, research, events, philanthropy, and cross-sector exchange. It is not a family office, financial institution, regulator, or government agency.",
     leadershipIntro: "FOIHK's founding office holders help shape the institute's education, research, events, philanthropy, and cross-sector exchange agenda.",
-    chairmanBio: "Lai King Man, Leo serves as FOIHK's Founding Chairman. His work with the institute centres on convening family-office practitioners, supporting public education, and encouraging dialogue across wealth stewardship, legacy planning, philanthropy, culture, and professional services.",
+    chairmanBio: "Leo Lai King Man serves as FOIHK's Founding Chairman. His work with the institute centres on convening family-office practitioners, supporting public education, and encouraging dialogue across wealth stewardship, legacy planning, philanthropy, culture, and professional services.",
     secretaryBio: "Chan Man Ching serves as FOIHK's Founding Secretary. Her work supports the institute's governance, member communication, programme coordination, and day-to-day institutional development.",
     detailsTitle: "Verified organization details",
     detailsIntro: "Use these details to verify FOIHK and distinguish it from similarly named organizations.",
@@ -68,7 +68,7 @@ const TRUST_COPY: Record<Language, {
     evidenceTitle: "Independent evidence and public mentions",
     evidenceIntro: "These sources verify specific facts about FOIHK or its publicly identified leadership. A mention is evidence only for the statement described; it is not treated as a customer endorsement, accreditation, or regulatory approval.",
     evidenceItems: [
-      { title: "Independent media interview", statement: "Economic Digest named founding chairman Lai King Man, Leo in its March 2026 coverage of art allocation, diversification, philanthropy, and intergenerational legacy in family offices.", linkLabel: "Read the Economic Digest article", href: ORGANIZATION_MEDIA_MENTION_URL },
+      { title: "Independent media interview", statement: "Economic Digest named founding chairman Leo Lai King Man in its March 2026 coverage of art allocation, diversification, philanthropy, and intergenerational legacy in family offices.", linkLabel: "Read the Economic Digest article", href: ORGANIZATION_MEDIA_MENTION_URL },
       { title: "Public supporter acknowledgement", statement: "A Hong Kong Chinese Orchestra publication lists Family Office Institute Hong Kong in its public supporter acknowledgements.", linkLabel: "View the HKCO publication", href: ORGANIZATION_SUPPORTER_MENTION_URL },
     ],
     clientDisclosureTitle: "Customer and case-study disclosure",
@@ -176,7 +176,7 @@ const About = () => {
               {
                 "@type": "Person",
                 "@id": `${ORGANIZATION_URL}/#leo-lai`,
-                "name": "Lai King Man, Leo",
+                "name": language === "en" ? "Leo Lai King Man" : "Lai King Man, Leo",
                 "alternateName": "賴敬文",
                 "jobTitle": "Founding Chairman",
                 "image": `${ORGANIZATION_URL}${foundingChairman}`,
@@ -314,7 +314,7 @@ const About = () => {
             >
               <CardContent className="pt-6 text-center">
                 <div className="w-64 h-80 mx-auto mb-4 rounded-lg overflow-hidden">
-                  <img src={foundingChairman} alt="Lai King Man, Leo" width="256" height="320" loading="lazy" decoding="async" className="w-full h-full object-cover object-top" />
+                  <img src={foundingChairman} alt={language === "en" ? "Leo Lai King Man" : "Lai King Man, Leo"} width="256" height="320" loading="lazy" decoding="async" className="w-full h-full object-cover object-top" />
                 </div>
                 <h3 className="font-bold text-lg text-foreground mb-1 font-arial">{t("home.chairmanName")}</h3>
                 <p className="mt-1 text-sm font-medium text-foreground font-arial">{t("home.foundingChairman")}</p>

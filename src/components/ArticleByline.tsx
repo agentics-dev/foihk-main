@@ -24,7 +24,7 @@ const COPY: Record<Language, {
     authorName: "FOIHK Editorial Team",
     authorCredential: "The editorial unit of Family Office Institute Hong Kong Limited publishes source-led content under documented dating, correction, and independence standards.",
     leadershipLabel: "Public leadership profile",
-    leaderName: "Lai King Man, Leo",
+    leaderName: "Leo Lai King Man",
     leaderTitle: "Founding Chairman",
     leaderCredential: "Verified FOIHK founding role; named contributor in Economic Digest's March 2026 family-office coverage.",
     boundary: "This leadership profile provides institutional context. It does not claim that the named person wrote or reviewed this article unless the article explicitly says so.",

@@ -138,7 +138,7 @@ const translations: Record<Language, TranslationNode> = {
       leadershipDesc: "Meet the experts guiding Hong Kong's family office sector",
       foundingChairman: "Founding Chairman",
       foundingSecretary: "Founding Secretary",
-      chairmanName: "Lai King Man, Leo",
+      chairmanName: "Leo Lai King Man",
       secretaryName: "Chan Man Ching",
       directorEducation: "Director of Education",
       headResearch: "Head of Research",

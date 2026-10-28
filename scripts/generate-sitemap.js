@@ -1,8 +1,8 @@
 import { createClient } from "@supabase/supabase-js";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { isArticleVisible } from "../src/lib/articlePublication.ts";
+import { comparePublication, isArticleVisible } from "../src/lib/articlePublication.ts";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const SUPABASE_URL = process.env.VITE_SUPABASE_URL;
@@ -312,6 +312,36 @@ ${urls.map(renderUrl).join("\n")}
 
   const publicPath = resolve(ROOT, "public");
   const generatedPath = resolve(ROOT, "scripts", "generated");
+  const llmsPath = resolve(publicPath, "llms.txt");
+  const llmsText = readFileSync(llmsPath, "utf8");
+  const indexStart = "## Content index\n";
+  const indexEnd = "\n## Evidence and discovery";
+  if (!llmsText.includes(indexStart) || !llmsText.includes(indexEnd)) {
+    throw new Error("llms.txt content index markers are missing");
+  }
+  const newestArticles = articles
+    .filter((article) => isArticleVisible(article, "en"))
+    .sort(comparePublication)
+    .slice(0, 5);
+  const indexLines = newestArticles.map((article) => {
+    const date = new Intl.DateTimeFormat("en-CA", {
+      year: "numeric", month: "2-digit", day: "2-digit", timeZone: "Asia/Hong_Kong",
+    }).format(new Date(article.published_at || article.created_at));
+    const title = article.title.replace(/\s+/g, " ").trim();
+    const path = `/articles/${getCategoryPath(article.category)}/${normalizeSlug(article.slug)}`;
+    const links = LANGUAGES.filter((language) => isArticleVisible(article, language))
+      .map((language) => `${BASE_URL}/${language}${path}`);
+    return `- ${date} — ${title} — ${links.join(" · ")}`;
+  });
+  const indexDescription = llmsText.split(indexStart)[1].split("\n-")[0].trimEnd();
+  const generatedLlmsText = llmsText.replace(
+    /Public content index generated: \d{4}-\d{2}-\d{2}/,
+    `Public content index generated: ${new Intl.DateTimeFormat("en-CA", { year: "numeric", month: "2-digit", day: "2-digit", timeZone: "Asia/Hong_Kong" }).format(new Date())}`
+  ).replace(
+    new RegExp(`${indexStart}[\\s\\S]*?${indexEnd}`),
+    () => `${indexStart}\n${indexDescription}\n\n${indexLines.join("\n")}${indexEnd}`
+  );
+  writeFileSync(llmsPath, generatedLlmsText);
   mkdirSync(generatedPath, { recursive: true });
   writeFileSync(resolve(publicPath, "sitemap.xml"), xml);
   writeFileSync(

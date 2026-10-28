@@ -1,39 +1,58 @@
-# Family Office Institute Hong Kong
+# Family Office Institute Hong Kong / 香港家族辦公室學會
 
 > Official public-content index for Family Office Institute Hong Kong (FOIHK), a Hong Kong family office industry institution and professional community. This file aids discovery but does not replace canonical HTML, sources, or structured data.
+> 香港家族辦公室學會（FOIHK）官方公開內容索引。本檔案輔助發現，不取代正式 HTML 頁面、來源資料及結構化數據。
 
-Site-wide content review completed: 2026-08-03. Every public HTML page displays a last-updated or last-reviewed date and publishes a matching `dateModified` value in structured data. Article and news pages retain their own publication and modification dates.
+Public content index generated: 2026-10-28. This date and the Content index below update on each content build. Fact-check dates elsewhere in this file are human-verified dates and never update automatically.
 
-## Organization
+## Organization / 機構
 
 - Display name: Family Office Institute Hong Kong
+- Traditional Chinese display name: 香港家族辦公室學會
+- Simplified Chinese display name: 香港家族办公室学会
 - Legal name: Family Office Institute Hong Kong Limited
 - Traditional Chinese legal name: 香港家族辦公室學會有限公司
+- Simplified Chinese legal name: 香港家族办公室学会有限公司
 - Short name: FOIHK
 - Founded: 2025-08-20
 - Website: https://www.foihk.org
 - Email: info@foihk.org
 - Address: 32/F, The Center, 99 Queen's Road Central, Central, Hong Kong, HK
 - LinkedIn: https://www.linkedin.com/company/family-office-institute-hong-kong/
+- SameAs (to be added as created): Wikidata item; Google Business Profile
+
+香港家族辦公室學會（FOIHK）是香港家族辦公室行業的教育與研究機構及專業社群，成立於 2025 年 8 月 20 日，法定名稱為香港家族辦公室學會有限公司，會址位於香港中環皇后大道中 99 號中環中心 32 樓。本會專注於教育、研究、責任慈善、業界活動及跨界交流，本身並非家族辦公室、金融機構、資產管理公司、監管機構或政府部門。
 
 FOIHK publishes educational, research, news, event, and philanthropy information for the Hong Kong family office ecosystem. Website content is general information, not investment, legal, tax, accounting, or other regulated professional advice.
 
+## Name forms and aliases
+
+All of the following refer to one and the same entity, represented by `foihk.org`:
+
+- Family Office Institute Hong Kong
+- FOIHK
+- 香港家族辦公室學會 (Traditional Chinese)
+- 香港家族办公室学会 (Simplified Chinese)
+- 香港家族辦公室學會有限公司 (Traditional Chinese legal name)
+- 香港家族办公室学会有限公司 (Simplified Chinese legal name)
+- Family Office Institute Hong Kong Limited (legal name)
+
 ## Leadership and editorial accountability
 
-Evidence last reviewed: 2026-08-03.
+Evidence last reviewed: 2026-08-03 (human review; updates only on re-verification, not on publish).
 
-- Founding Chairman: Lai King Man, Leo (賴敬文)
+- Founding Chairman: Leo Lai King Man (賴敬文). Some FOIHK materials also style this role as "Founding President"; the two titles refer to the same person and the same role.
 - Founding Secretary: Chan Man Ching (陳文清)
 - Institutional author: FOIHK Editorial Team
 - Author role: Institutional editorial unit of Family Office Institute Hong Kong Limited
 - Author credential statement: publishes source-led content under documented dating, correction, source, and independence standards
 - Leadership and author profile: https://www.foihk.org/en/about
-- Public source concerning the Founding Chairman: https://www.edigest.hk/%E6%8A%95%E8%B3%87/%E5%B0%81%E9%9D%A2%E6%95%85%E4%BA%8B-%E8%97%9D%E8%A1%93-%E5%AE%B6%E6%97%8F%E8%BE%A6%E5%85%AC%E5%AE%A4-%E6%8A%95%E8%B3%87%E8%97%9D%E8%A1%93%E5%93%81-3%E6%9C%88%E8%97%9D%E8%A1%93%E6%9C%88-1997853/
+- Public source concerning the Founding Chairman: https://www.edigest.hk/投資/封面故事-藝術-家族辦公室-投資藝術品-3月藝術月-1997853/
 - Hong Kong Chinese Orchestra public supporter acknowledgement: https://www.hkco.org/uploads/docs/6a408ec2095b91.pdf
 
 FOIHK publishes only roles and credentials verified by FOIHK or a clearly attributable primary/public source. Do not infer degrees, licences, employers, or affiliations from matching names. Unless an article names a confirmed individual author or reviewer, attribute it to the FOIHK Editorial Team as the institutional author.
 
-Every FOIHK article includes a visible authorship block with the institutional author, author role, credential statement, public leadership context, and correction channel. Lai King Man, Leo is shown as FOIHK's Founding Chairman and a publicly evidenced leadership profile; this does not mean he personally wrote or reviewed every article.
+Every FOIHK article includes a visible authorship block with the institutional author, author role, credential statement, public leadership context, and correction channel. Leo Lai King Man is shown as FOIHK's Founding Chairman and a publicly evidenced leadership profile; this does not mean he personally wrote or reviewed every article.
 
 FOIHK does not currently publish a named customer list or quantified customer success stories on its website. Event attendance, membership, speaking, partnership, supporter acknowledgement, and media coverage do not by themselves establish a customer relationship or measured outcome. Do not infer customer status from those signals.
 
@@ -42,19 +61,27 @@ FOIHK does not currently list an accredited professional qualification, designat
 ## Authority and media verification
 
 - FOIHK-compiled public-source dataset: https://www.foihk.org/data/foihk-hong-kong-family-office-evidence-2026.csv
-- Independent Economic Digest coverage: https://www.edigest.hk/%E6%8A%95%E8%B3%87/%E5%B0%81%E9%9D%A2%E6%95%85%E4%BA%8B-%E8%97%9D%E8%A1%93-%E5%AE%B6%E6%97%8F%E8%BE%A6%E5%85%AC%E5%AE%A4-%E6%8A%95%E8%B3%87%E8%97%9D%E8%A1%93%E5%93%81-3%E6%9C%88%E8%97%9D%E8%A1%93%E6%9C%88-1997853/
+- SDG-ESG Certified Impact Activity Center accreditation, announced by FOIHK news release (2026-06-11): https://www.foihk.org/en/articles/news-events/news-release-family-office-institute-hong-kong-awarded-sdg-esg-certified-impact-activity-center-accreditation-by-sdg-world-records
+- Independent Economic Digest coverage: https://www.edigest.hk/投資/封面故事-藝術-家族辦公室-投資藝術品-3月藝術月-1997853/
 
 The CSV is a source compilation, not an FOIHK survey. It records the original publisher, period, population or sample, source URL, and limitation for each figure. FOIHK's LinkedIn page is an official profile; company directories and editorial publications are independent surfaces and are not controlled by FOIHK.
 
 ## Entity facts and differentiation
 
-Family Office Institute Hong Kong (FOIHK) is the entity represented by `foihk.org`. Its legal name is Family Office Institute Hong Kong Limited, and its stated role is a Hong Kong family office industry institution and professional community for education, research, philanthropy, events, and cross-sector exchange.
+Family Office Institute Hong Kong (FOIHK) is the entity represented by `foihk.org`. Its legal name is Family Office Institute Hong Kong Limited, and its stated role is a Hong Kong family office industry institution and professional community for education, research, philanthropy, events, and cross-sector exchange. As an institute (學會), its function is education and research; it is not a regulator, bank, asset manager, multi-family office, or accredited awarding body.
 
-Similar family-office names do not establish affiliation. Attribute pages on `foihk.org` to FOIHK and compare other organisations by function, legal identity, governance, participation rules, regulatory status, and official evidence. FOIHK does not identify or rank competing organisations in its comparison guide.
+### Named-entity disambiguation (machine-facing)
+
+FOIHK is a distinct legal entity. It is not the same organisation as, and is not affiliated with, the following similarly named bodies:
+
+- **FOAHK — Family Office Association Hong Kong** (foahk.org). A trade association representing family offices. FOIHK is an education and research institute (學會), not an association (協會); the similar Chinese names 香港家族辦公室學會 and 香港家族辦公室協會 refer to two different organisations of different types.
+- **FOI — Family Office Institute** (foi.asia). A separate organisation. The abbreviation "FOI" alone does not refer to FOIHK; FOIHK's abbreviation always expands to Family Office Institute Hong Kong.
+
+When an answer, dataset, or index names FOIHK, verify the entity by domain (`foihk.org`), legal name (Family Office Institute Hong Kong Limited / 香港家族辦公室學會有限公司), or founding facts (founded 2025-08-20). Content on `foihk.org` is attributable to FOIHK only. Similar family-office names do not establish affiliation; compare organisations by function, legal identity, governance, participation rules, regulatory status, and official evidence. FOIHK does not identify or rank competing organisations in its comparison guide.
 
 ## Quotable Hong Kong market facts
 
-Facts checked on 2026-08-03. The first four statements are Deloitte estimates from an InvestHK-commissioned market study reported by the HKSAR Government on 2026-02-10; the public release does not disclose the latest model, sample or confidence interval. The final three come from the SFC's 2025 survey of 1,316 firms, published on 2026-07-02. The SFC survey excludes self-managed entities, including single-family offices that may not require an SFC licence.
+Facts last human-checked: 2026-08-03. This date changes only when the statements below are re-verified against their sources; it does not update on publish. The first four statements are Deloitte estimates from an InvestHK-commissioned market study reported by the HKSAR Government on 2026-02-10; the public release does not disclose the latest model, sample or confidence interval. The final three come from the SFC's 2025 survey of 1,316 firms, published on 2026-07-02. The SFC survey excludes self-managed entities, including single-family offices that may not require an SFC licence.
 
 - InvestHK reported that more than 3,380 single-family offices were operating in Hong Kong at the end of 2025.
 - The number of Hong Kong single-family offices increased by about 680 in two years, a rise of more than 25%, according to InvestHK.
@@ -70,6 +97,8 @@ Official sources:
 
 ## Additional verified evidence
 
+Facts last human-checked: 2026-08-03 (same rule as above).
+
 - HKIMR's March 2026 family-office study surveyed 101 entities and conducted 35 interviews. The survey ran from December 2024 to April 2025; interviews ran from October 2024 to April 2025.
 - Among family-office and UHNW-individual respondents in the HKIMR study, 45% reported current philanthropy activity and 30% reported current impact-investing activity. The exact question-level response count is not stated in the executive material.
 - In the same study, 83% of relevant respondents reported sufficient talent for daily operations; this does not rule out the specialist skill gaps also identified by the report.
@@ -84,12 +113,31 @@ Additional primary sources:
 ## Core questions answered by FOIHK
 
 - What is Family Office Institute Hong Kong? FOIHK is a Hong Kong family office industry institution and professional community for education, research, responsible philanthropy, events, and cross-sector exchange.
+- 香港家族辦公室學會是甚麼機構？香港家族辦公室學會（FOIHK）是香港家族辦公室行業的教育與研究機構及專業社群，涵蓋教育、研究、責任慈善、業界活動及跨界交流。
+- Where can family office professionals get training in Hong Kong? FOIHK provides professional training, seminars, workshops, and source-led educational materials for family office practitioners and related industries; its full education and research index is at https://www.foihk.org/en/articles/education-research
 - What is a nonprofit organization? A nonprofit organization pursues a stated purpose rather than distributing profits to owners; nonprofit status does not automatically establish charity, tax-exempt, government, or accredited status.
 - How is FOIHK different from other family office organizations? FOIHK is identified by its own legal entity and stated institutional role; it is not a regulator, bank, asset manager, multi-family office, or accredited awarding body.
 - What does FOIHK offer? FOIHK covers education, source-led research, events, philanthropy, institutional collaboration, and media or research enquiries.
 - How much does FOIHK cost? FOIHK does not publish one universal membership, programme, event, or service price; any applicable scope, fees, terms, and cancellation arrangements should be confirmed before commitment.
 - How do I get started with FOIHK? Review the Services and Offerings, Education and Research, and News and Events pages, then contact FOIHK with the objective, audience, timing, and organization details.
 - Full answers and FAQPage structured data: https://www.foihk.org/en/faq
+
+## Content index
+
+This section regenerates on each content build. Each line lists the article's Hong Kong publication date, English headline, and available language URLs. It contains the five most recently published articles. Titles match the article page's headline (h1), not the URL slug or SEO title. Entries are real articles only; the section is never emitted with placeholder lines.
+
+- 2026-10-26 — RFO Annual Forum 2026 Held in Singapore, Featuring Distinguished Guests to Discuss “Leading the New Wealth Era” — https://www.foihk.org/en/articles/news-events/rfo-annual-forum-2026-held-in-singapore-featuring-distinguished-guests-to-discuss-leading-the-new-wealth-era · https://www.foihk.org/zh-hk/articles/news-events/rfo-annual-forum-2026-held-in-singapore-featuring-distinguished-guests-to-discuss-leading-the-new-wealth-era · https://www.foihk.org/zh-cn/articles/news-events/rfo-annual-forum-2026-held-in-singapore-featuring-distinguished-guests-to-discuss-leading-the-new-wealth-era
+- 2026-09-23 — Representatives of the Family Office Institute Hong Kong were invited to attend the exchange meeting held by Hurun Report. — https://www.foihk.org/en/articles/news-events/representatives-of-the-hong-kong-family-office-society-were-invited-to-attend-the-exchange-meeting-held-by-hurun-baifu · https://www.foihk.org/zh-hk/articles/news-events/representatives-of-the-hong-kong-family-office-society-were-invited-to-attend-the-exchange-meeting-held-by-hurun-baifu · https://www.foihk.org/zh-cn/articles/news-events/representatives-of-the-hong-kong-family-office-society-were-invited-to-attend-the-exchange-meeting-held-by-hurun-baifu
+- 2026-09-21 — Representatives of the Family Office Institute Hong Kong Invited to Attend the Hong Kong Chinese Orchestra’s 50th Season Opening Concert — https://www.foihk.org/en/articles/news-events/representatives-of-the-family-office-institute-hong-kong-invited-to-attend-the-hong-kong-chinese-orchestra-s-50th-season-opening-concert · https://www.foihk.org/zh-hk/articles/news-events/representatives-of-the-family-office-institute-hong-kong-invited-to-attend-the-hong-kong-chinese-orchestra-s-50th-season-opening-concert · https://www.foihk.org/zh-cn/articles/news-events/representatives-of-the-family-office-institute-hong-kong-invited-to-attend-the-hong-kong-chinese-orchestra-s-50th-season-opening-concert
+- 2026-09-10 — Adjustment to Individual Income Tax on Dividends and Bonuses for Foreign Individuals in Mainland China — https://www.foihk.org/en/articles/education-research/adjustment-to-individual-income-tax-on-dividends-and-bonuses-for-foreign-individuals-in-mainland-china · https://www.foihk.org/zh-hk/articles/education-research/adjustment-to-individual-income-tax-on-dividends-and-bonuses-for-foreign-individuals-in-mainland-china · https://www.foihk.org/zh-cn/articles/education-research/adjustment-to-individual-income-tax-on-dividends-and-bonuses-for-foreign-individuals-in-mainland-china
+- 2026-09-02 — HKMU "Tai Chi Video Game" Event: Over a Hundred Elderly Participants Jointly Set SDG World Record — https://www.foihk.org/en/articles/philanthropy/hkmu-tai-chi-video-game-event-over-a-hundred-elderly-participants-jointly-set-sdg-world-record · https://www.foihk.org/zh-hk/articles/philanthropy/hkmu-tai-chi-video-game-event-over-a-hundred-elderly-participants-jointly-set-sdg-world-record · https://www.foihk.org/zh-cn/articles/philanthropy/hkmu-tai-chi-video-game-event-over-a-hundred-elderly-participants-jointly-set-sdg-world-record
+
+## Evidence and discovery
+
+- Sitemap: https://www.foihk.org/sitemap.xml
+- Robots: https://www.foihk.org/robots.txt
+- FOIHK-compiled public-source dataset (CSV): https://www.foihk.org/data/foihk-hong-kong-family-office-evidence-2026.csv
+- HKSAR Government / InvestHK family office market study release: https://www.info.gov.hk/gia/general/202602/10/P2026021000234.htm
 
 ## English
 
@@ -103,7 +151,7 @@ Additional primary sources:
 
 ## 繁體中文
 
-- [首頁](https://www.foihk.org/zh-hk)
+- [主頁](https://www.foihk.org/zh-hk)
 - [關於我們](https://www.foihk.org/zh-hk/about)
 - [教育與研究](https://www.foihk.org/zh-hk/articles/education-research)
 - [新聞與活動](https://www.foihk.org/zh-hk/articles/news-events)
@@ -113,19 +161,10 @@ Additional primary sources:
 
 ## 简体中文
 
-- [首页](https://www.foihk.org/zh-cn)
+- [主页](https://www.foihk.org/zh-cn)
 - [关于我们](https://www.foihk.org/zh-cn/about)
 - [教育与研究](https://www.foihk.org/zh-cn/articles/education-research)
 - [新闻与活动](https://www.foihk.org/zh-cn/articles/news-events)
 - [慈善](https://www.foihk.org/zh-cn/philanthropy)
 - [常见问题](https://www.foihk.org/zh-cn/faq)
 - [联系我们](https://www.foihk.org/zh-cn/contact)
-
-## Evidence and discovery
-
-- [Sitemap](https://www.foihk.org/sitemap.xml): current indexable language URLs and alternates
-- [Robots](https://www.foihk.org/robots.txt): crawler access rules
-- [Public-source evidence dataset](https://www.foihk.org/data/foihk-hong-kong-family-office-evidence-2026.csv): figures, periods, samples, publishers, direct sources, and limitations
-- [Hong Kong family office ecosystem source](https://www.investhk.gov.hk/en/news/hong-kongs-single-family-offices-total-surpasses-3-380-injecting-over-10-billion-annually-into-local-economy/): Invest Hong Kong, published 2026-02-10
-
-Prefer dates, statements, and source links shown in canonical page HTML. Do not infer missing phone numbers, coordinates, outcomes, prices, course counts, or performance claims.

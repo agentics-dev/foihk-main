@@ -1,6 +1,6 @@
-import { saveArticle } from "@/lib/articleEditor";
+import { ArticleWriteError, saveArticle } from "@/lib/articleEditor";
 import { canPublishArticle } from "@/lib/articlePublication";
-import { useState, useEffect, useMemo, useCallback, type ReactNode } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -48,6 +48,8 @@ import { ORGANIZATION_URL } from "@/lib/schema";
 import { CharCounter, CollapsibleSection, KeywordTagInput, SerpPreview } from "./seo";
 import { SeoHealthScore } from "./SeoHealthScore";
 import { computeSeoScore } from "@/lib/seoScore";
+import { MAX_ARTICLE_IMAGES, validateArticleImageCount, validateArticleImageFile } from "@/lib/articleImageLimits";
+import { removeUploadedArticleImages, uploadArticleImage } from "@/lib/articleImageUpload";
 import type { EventAttendanceMode, EventStatus } from "@/lib/schemaBuilders";
 
 interface ArticleFormProps {
@@ -65,47 +67,7 @@ const toSchemaLanguage = (language: EditorLanguage): Language => language === "z
 
 const getUnavailableKey = (field: string, language?: EditorLanguage) => language ? `${field}:${language}` : field;
 
-const MAX_ARTICLE_IMAGES = 5;
-const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
-const ALLOWED_IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
-const ALLOWED_IMAGE_EXTENSIONS = new Set(["jpg", "jpeg", "png", "webp"]);
-
-type AllowedImageKind = "jpeg" | "png" | "webp";
-
-const detectImageSignature = async (file: File): Promise<AllowedImageKind | null> => {
-  const bytes = new Uint8Array(await file.slice(0, 12).arrayBuffer());
-  const isJpeg = bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff;
-  const isPng = bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47
-    && bytes[4] === 0x0d && bytes[5] === 0x0a && bytes[6] === 0x1a && bytes[7] === 0x0a;
-  const isWebp = bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46
-    && bytes[8] === 0x57 && bytes[9] === 0x45 && bytes[10] === 0x42 && bytes[11] === 0x50;
-  if (isJpeg) return "jpeg";
-  if (isPng) return "png";
-  if (isWebp) return "webp";
-  return null;
-};
-
-const validateArticleImageFile = async (file: File): Promise<string | null> => {
-  const extension = file.name.split(".").pop()?.toLowerCase() || "";
-  const expectedKind = extension === "jpg" ? "jpeg" : extension as AllowedImageKind;
-  if (!ALLOWED_IMAGE_EXTENSIONS.has(extension)) {
-    return `${file.name}: only JPEG, PNG, and WebP files are allowed`;
-  }
-  if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
-    return `${file.name}: the file type is not JPEG, PNG, or WebP`;
-  }
-  if (file.size > MAX_IMAGE_SIZE_BYTES) {
-    return `${file.name}: each image must be 5MB or smaller`;
-  }
-  const signatureKind = await detectImageSignature(file);
-  if (!signatureKind) {
-    return `${file.name}: the file contents do not match JPEG, PNG, or WebP`;
-  }
-  if (signatureKind !== expectedKind || file.type !== `image/${signatureKind}`) {
-    return `${file.name}: extension, MIME type, and file contents must match`;
-  }
-  return null;
-};
+type PendingImage = { id: string; file: File; url: string; path: string };
 
 export const ArticleForm = ({ article, category, onSuccess, onCancel }: ArticleFormProps) => {
   const [title, setTitle] = useState("");
@@ -161,9 +123,12 @@ export const ArticleForm = ({ article, category, onSuccess, onCancel }: ArticleF
   const [eventOrganizerUrl, setEventOrganizerUrl] = useState("");
   const [eventUnavailableFields, setEventUnavailableFields] = useState<string[]>([]);
   const [faqItems, setFaqItems] = useState<ArticleFaqDraft[]>([]);
-  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [imageFiles, setImageFiles] = useState<PendingImage[]>([]);
   const [existingImages, setExistingImages] = useState<string[]>([]);
   const [imageMetadata, setImageMetadata] = useState<Record<string, ImageCropData>>({});
+  const imageObjectUrls = useRef(new Set<string>());
+  const [uploadProgress, setUploadProgress] = useState<string | null>(null);
+  const [saveNeedsReload, setSaveNeedsReload] = useState(false);
   const [cropDialogOpen, setCropDialogOpen] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [currentCropImage, setCurrentCropImage] = useState<{ id: string; url: string; isNew: boolean } | null>(null);
@@ -177,6 +142,13 @@ export const ArticleForm = ({ article, category, onSuccess, onCancel }: ArticleF
   const [sidebarLangTab, setSidebarLangTab] = useState<EditorLanguage>("en");
   const [slugUnlocked, setSlugUnlocked] = useState(false);
   const { toast } = useToast();
+
+  useEffect(() => {
+    const urls = imageObjectUrls.current;
+    return () => urls.forEach((url) => URL.revokeObjectURL(url));
+  }, []);
+
+  useEffect(() => setSaveNeedsReload(false), [article]);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -362,13 +334,14 @@ export const ArticleForm = ({ article, category, onSuccess, onCancel }: ArticleF
   };
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (loading) return;
     const files = Array.from(e.target.files || []);
-    const totalImages = existingImages.length + imageFiles.length + files.length;
-    
-    if (totalImages > MAX_ARTICLE_IMAGES) {
+    const countError = validateArticleImageCount(existingImages.length, imageFiles.length + files.length);
+
+    if (countError) {
       toast({
         title: "Too many images",
-        description: `You can upload a maximum of ${MAX_ARTICLE_IMAGES} images`,
+        description: countError,
         variant: "destructive",
       });
       e.target.value = "";
@@ -388,24 +361,42 @@ export const ArticleForm = ({ article, category, onSuccess, onCancel }: ArticleF
       }
     }
     
-    setImageFiles((current) => [...current, ...files]);
+    const pending = files.map((file): PendingImage => {
+      const id = crypto.randomUUID();
+      const url = URL.createObjectURL(file);
+      imageObjectUrls.current.add(url);
+      return { id, file, url, path: `${id}.${file.name.split(".").pop()?.toLowerCase()}` };
+    });
+    setImageFiles((current) => [...current, ...pending]);
     e.target.value = "";
   };
 
   const removeImageFile = (index: number) => {
+    if (loading) return;
+    const removed = imageFiles[index];
+    URL.revokeObjectURL(removed.url);
+    imageObjectUrls.current.delete(removed.url);
     setImageFiles(imageFiles.filter((_, i) => i !== index));
+    setImageMetadata((current) => {
+      const next = { ...current };
+      delete next[removed.id];
+      return next;
+    });
   };
 
   const removeExistingImage = (index: number) => {
+    if (loading) return;
     setExistingImages(existingImages.filter((_, i) => i !== index));
   };
 
   const openCropDialog = (id: string, url: string, isNew: boolean) => {
+    if (loading) return;
     setCurrentCropImage({ id, url, isNew });
     setCropDialogOpen(true);
   };
 
   const handleSaveCrop = (cropData: ImageCropData) => {
+    if (loading) return;
     if (currentCropImage) {
       setImageMetadata(prev => ({
         ...prev,
@@ -415,6 +406,7 @@ export const ArticleForm = ({ article, category, onSuccess, onCancel }: ArticleF
   };
 
   const handleDragEndExisting = (event: DragEndEvent) => {
+    if (loading) return;
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
@@ -427,41 +419,31 @@ export const ArticleForm = ({ article, category, onSuccess, onCancel }: ArticleF
   };
 
   const handleDragEndNew = (event: DragEndEvent) => {
+    if (loading) return;
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
       setImageFiles((items) => {
-        const oldIndex = items.findIndex((_, i) => `new-${i}` === active.id);
-        const newIndex = items.findIndex((_, i) => `new-${i}` === over.id);
+        const oldIndex = items.findIndex((item) => item.id === active.id);
+        const newIndex = items.findIndex((item) => item.id === over.id);
         return arrayMove(items, oldIndex, newIndex);
       });
     }
   };
 
-  const uploadImages = async (): Promise<{ url: string; oldId: string }[]> => {
-    const uploadedUrls: { url: string; oldId: string }[] = [];
+  const uploadImages = async (uploadedPaths: string[]): Promise<{ url: string; id: string }[]> => {
+    const uploadedUrls: { url: string; id: string }[] = [];
 
     for (let i = 0; i < imageFiles.length; i++) {
-      const file = imageFiles[i];
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
-      const filePath = `${fileName}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from("article-images")
-        .upload(filePath, file, { contentType: file.type });
-
-      if (uploadError) {
-        throw uploadError;
-      }
-
-      const { data: { publicUrl } } = supabase.storage
-        .from("article-images")
-        .getPublicUrl(filePath);
-
-      uploadedUrls.push({ url: publicUrl, oldId: `new-${i}` });
+      const image = imageFiles[i];
+      uploadedPaths.push(image.path);
+      const url = await uploadArticleImage(image.file, image.path, (percent) => {
+        setUploadProgress(`Uploading image ${i + 1}/${imageFiles.length}: ${percent}%`);
+      });
+      uploadedUrls.push({ url, id: image.id });
     }
 
+    setUploadProgress(null);
     return uploadedUrls;
   };
 
@@ -493,7 +475,10 @@ export const ArticleForm = ({ article, category, onSuccess, onCancel }: ArticleF
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (loading || saveNeedsReload) return;
     setLoading(true);
+    const uploadedPaths: string[] = [];
+    let saveAttempted = false;
 
     try {
       const sanitizedContent = sanitizeArticleHtml(content, title || "Article image");
@@ -502,8 +487,15 @@ export const ArticleForm = ({ article, category, onSuccess, onCancel }: ArticleF
 
       if (publicationDateChanged && !publicationDate) throw new Error("Choose a publication date; an existing publication date cannot be cleared.");
 
+      const countError = validateArticleImageCount(existingImages.length, imageFiles.length);
+      if (countError) throw new Error(countError);
+      for (const image of imageFiles) {
+        const validationError = await validateArticleImageFile(image.file);
+        if (validationError) throw new Error(validationError);
+      }
+
       // Upload new images
-      const newImages = await uploadImages();
+      const newImages = await uploadImages(uploadedPaths);
       const allImageUrls = [...existingImages, ...newImages.map(img => img.url)];
       
       // Remap image metadata keys
@@ -516,10 +508,10 @@ export const ArticleForm = ({ article, category, onSuccess, onCancel }: ArticleF
         }
       });
       
-      // Map new images (key is "new-0", "new-1")
+      // Map new images by their stable IDs, including after reordering.
       newImages.forEach(img => {
-        if (imageMetadata[img.oldId]) {
-          finalImageMetadata[img.url] = imageMetadata[img.oldId];
+        if (imageMetadata[img.id]) {
+          finalImageMetadata[img.url] = imageMetadata[img.id];
         }
       });
 
@@ -588,6 +580,7 @@ export const ArticleForm = ({ article, category, onSuccess, onCancel }: ArticleF
       if (published && !canPublishArticle(articleData)) {
         throw new Error("Add a title and text or an image in at least one language before publishing.");
       }
+      saveAttempted = true;
       const saved = await saveArticle(articleData, savedVersion || article,
         publicationDateChanged ? publicationDate?.toISOString() : undefined);
       setSavedVersion(saved);
@@ -600,13 +593,24 @@ export const ArticleForm = ({ article, category, onSuccess, onCancel }: ArticleF
       onSuccess();
 
     } catch (error: unknown) {
+      let cleanupError: unknown = null;
+      if (uploadedPaths.length > 0 && (!saveAttempted || error instanceof ArticleWriteError)) {
+        try {
+          await removeUploadedArticleImages(uploadedPaths);
+        } catch (failure) {
+          cleanupError = failure;
+        }
+      } else if (uploadedPaths.length > 0 && saveAttempted) {
+        setSaveNeedsReload(true);
+      }
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Unable to save article",
+        description: `${error instanceof Error ? error.message : "Unable to save article"}${cleanupError ? ". Uploaded images could not be cleaned up; contact an administrator." : ""}${saveAttempted && !(error instanceof ArticleWriteError) && uploadedPaths.length > 0 ? ". Reopen the article before trying again." : ""}`,
         variant: "destructive",
       });
     }
 
+    setUploadProgress(null);
     setLoading(false);
   };
 
@@ -823,7 +827,7 @@ export const ArticleForm = ({ article, category, onSuccess, onCancel }: ArticleF
   ];
   const sidebarLanguage = sidebarLanguages.find((candidate) => candidate.value === sidebarLangTab) || sidebarLanguages[0];
   const articleUrlPreview = `${ORGANIZATION_URL}/${schemaLanguage}/articles/${getArticleCategoryPath(category)}/${normalizeArticleSlug(slug || title)}`;
-  const imageKeys = [...existingImages, ...imageFiles.map((_, index) => `new-${index}`)];
+  const imageKeys = [...existingImages, ...imageFiles.map((image) => image.id)];
   const altKey = sidebarLangTab === "zhtw" ? "alt_zhtw" : sidebarLangTab === "zhcn" ? "alt_zhcn" : "alt";
   const bodyH1Count = (sidebarLanguage.content.match(/<h1[\s>]/gi) || []).length;
   const faqCount = faqItems.filter((item) => {
@@ -847,17 +851,7 @@ export const ArticleForm = ({ article, category, onSuccess, onCancel }: ArticleF
     internalLinkCount: countInternalLinks(sidebarLanguage.content),
   });
 
-  const previewImageUrl = useMemo(() => {
-    if (existingImages.length > 0) return existingImages[0];
-    if (imageFiles.length === 0) return null;
-    const objectUrl = URL.createObjectURL(imageFiles[0]);
-    return objectUrl;
-  }, [existingImages, imageFiles]);
-
-  useEffect(() => {
-    if (!previewImageUrl?.startsWith("blob:")) return;
-    return () => URL.revokeObjectURL(previewImageUrl);
-  }, [previewImageUrl]);
+  const previewImageUrl = existingImages[0] || imageFiles[0]?.url || null;
 
   const setPublishChecked = (nextPublished: boolean) => {
     setPublished(nextPublished);
@@ -869,7 +863,8 @@ export const ArticleForm = ({ article, category, onSuccess, onCancel }: ArticleF
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit}>
+      <fieldset disabled={loading} className="min-w-0 space-y-6">
       <div className="grid min-w-0 gap-8 lg:grid-cols-[minmax(0,1fr)_420px]">
         <div className="min-w-0 space-y-6">
       <Tabs value={langTab} onValueChange={(value) => setLangTab(value as EditorLanguage)}>
@@ -1035,7 +1030,7 @@ export const ArticleForm = ({ article, category, onSuccess, onCancel }: ArticleF
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="images">Images (Max 5, JPEG/PNG/WebP, 5MB each)</Label>
+        <Label htmlFor="images">Images (Max 10, JPEG/PNG/WebP, 10MB each)</Label>
         <div className="flex items-center gap-2">
           <Input
             id="images"
@@ -1043,19 +1038,20 @@ export const ArticleForm = ({ article, category, onSuccess, onCancel }: ArticleF
             accept="image/jpeg,image/png,image/webp"
             multiple
             onChange={handleImageChange}
-            disabled={existingImages.length + imageFiles.length >= MAX_ARTICLE_IMAGES}
+            disabled={loading || existingImages.length + imageFiles.length >= MAX_ARTICLE_IMAGES}
             className="hidden"
           />
           <Button
             type="button"
             variant="outline"
             onClick={() => document.getElementById("images")?.click()}
-            disabled={existingImages.length + imageFiles.length >= MAX_ARTICLE_IMAGES}
+            disabled={loading || existingImages.length + imageFiles.length >= MAX_ARTICLE_IMAGES}
           >
             <Upload className="mr-2 h-4 w-4" />
             Upload Images ({existingImages.length + imageFiles.length}/{MAX_ARTICLE_IMAGES})
           </Button>
         </div>
+        {uploadProgress && <p role="status" className="text-sm text-muted-foreground">{uploadProgress}</p>}
         
         {/* Existing Images */}
         {existingImages.length > 0 && (
@@ -1107,26 +1103,26 @@ export const ArticleForm = ({ article, category, onSuccess, onCancel }: ArticleF
               onDragEnd={handleDragEndNew}
             >
               <SortableContext
-                items={imageFiles.map((_, i) => `new-${i}`)}
+                items={imageFiles.map((image) => image.id)}
                 strategy={verticalListSortingStrategy}
               >
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                  {imageFiles.map((file, index) => (
-                    <div key={`new-${file.name}-${index}`} className="space-y-2">
+                  {imageFiles.map((image, index) => (
+                    <div key={image.id} className="space-y-2">
                       <SortableImageItem
-                        id={`new-${index}`}
-                        url={URL.createObjectURL(file)}
-                        alt={imageMetadata[`new-${index}`]?.alt || title || `Upload ${index + 1}`}
+                        id={image.id}
+                        url={image.url}
+                        alt={imageMetadata[image.id]?.alt || title || `Upload ${index + 1}`}
                         onRemove={() => removeImageFile(index)}
-                        onCrop={() => openCropDialog(`new-${index}`, URL.createObjectURL(file), true)}
-                        cropData={imageMetadata[`new-${index}`] || null}
+                        onCrop={() => openCropDialog(image.id, image.url, true)}
+                        cropData={imageMetadata[image.id] || null}
                       />
                       <ImageAltFields
-                        id={`new-${index}`}
-                        metadata={imageMetadata[`new-${index}`]}
+                        id={image.id}
+                        metadata={imageMetadata[image.id]}
                         onChange={(patch) => setImageMetadata((current) => ({
                           ...current,
-                          [`new-${index}`]: { ...defaultImageMetadata(), ...current[`new-${index}`], ...patch },
+                          [image.id]: { ...defaultImageMetadata(), ...current[image.id], ...patch },
                         }))}
                       />
                     </div>
@@ -1394,11 +1390,11 @@ export const ArticleForm = ({ article, category, onSuccess, onCancel }: ArticleF
       </div>
 
       <div className="flex gap-4">
-        <Button type="submit" disabled={loading}>
+        <Button type="submit" disabled={loading || saveNeedsReload}>
           {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           {article ? "Update" : "Create"} Article
         </Button>
-        <Button type="button" variant="outline" onClick={onCancel}>
+        <Button type="button" variant="outline" onClick={onCancel} disabled={loading}>
           Cancel
         </Button>
       </div>
@@ -1421,8 +1417,9 @@ export const ArticleForm = ({ article, category, onSuccess, onCancel }: ArticleF
         content={langTab === "en" ? content : langTab === "zhtw" ? contentZhTw : contentZhCn}
         displayDate={publicationDate || publicUpdatedDate || new Date()}
         imageUrl={previewImageUrl}
-        imageMetadata={existingImages.length > 0 ? imageMetadata[existingImages[0]] : imageFiles.length > 0 ? imageMetadata["new-0"] : null}
+        imageMetadata={existingImages.length > 0 ? imageMetadata[existingImages[0]] : imageFiles.length > 0 ? imageMetadata[imageFiles[0].id] : null}
       />
+      </fieldset>
     </form>
   );
 };
