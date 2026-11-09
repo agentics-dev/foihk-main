@@ -349,6 +349,7 @@ const Spacer = Node.create({
 
 export const RichTextEditor = ({ id, value, onChange, placeholder, required }: RichTextEditorProps) => {
   const editor = useEditor({
+    shouldRerenderOnTransaction: true,
     extensions: [
       StarterKit,
       Underline,
